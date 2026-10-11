@@ -238,16 +238,13 @@ body.dark-mode ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
 }
 
 .sidebar-brand .brand-logo {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #FFFFFF;
+  width: 75px;
+  height: 75px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  overflow: hidden;
-  box-shadow: 0 0 0 2px var(--gold);
+  /*REMOVED: border-radius, background, overflow, box-shadow */
 }
 
 .sidebar-brand .brand-logo img {
