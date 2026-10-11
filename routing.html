@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Routing &amp; Tracking — UPHSD Molino | Office of the School Director</title>
+<link rel="stylesheet" href="shared.css" />
+
+<style>
+  /* =====================================================================
+     ROUTING & TRACKING — PAGE-SPECIFIC STYLES
+     ===================================================================== */
+
+  /* ---------- Read-only notice ---------- */
+  .view-only-notice {
+    background: rgba(212,175,55,0.12);
+    border: 1.5px solid var(--gold);
+    border-left: 5px solid var(--gold);
+    border-radius: var(--radius-lg);
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+  .view-only-notice svg {
+    width: 22px;
+    height: 22px;
+    fill: var(--gold);
+    flex-shrink: 0;
+  }
+  .view-only-notice strong { color: var(--text-primary); }
+
+  /* ---------- Tabs ---------- */
+  .routing-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 18px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--border-light);
+    scrollbar-width: none;
+  }
+  .routing-tabs::-webkit-scrollbar { display: none; }
+
+  .routing-tab {
+    padding: 12px 18px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.86rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    top: 1px;
+  }
+  .routing-tab:hover { color: var(--maroon); }
+  body.dark-mode .routing-tab:hover { color: var(--gold); }
+
+  .routing-tab.active {
+    color: var(--maroon);
+    border-bottom-color: var(--maroon);
+  }
+  body.dark-mode .routing-tab.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+
+  .routing-tab .tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 20px;
+    padding: 0 7px;
+    background: var(--bg-input);
+    color: var(--text-secondary);
+    font-size: 0.68rem;
+    font-weight: 700;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+  }
+
+  .routing-tab.active .tab-count {
+    background: var(--maroon);
+    color: var(--gold);
+  }
+  body.dark-mode .routing-tab.active .tab-count {
+    background: var(--gold);
+    color: #1a1414;
+  }
+
+  /* ---------- Document cell ---------- */
+  .doc-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 260px;
+    max-width: 380px;
+  }
+
+  .doc-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.62rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .doc-icon.pdf   { background: linear-gradient(135deg, #d94452, #b62e3c); }
+  .doc-icon.doc   { background: linear-gradient(135deg, #4682dc, #3565b0); }
+  .doc-icon.xls   { background: linear-gradient(135deg, #1e8a4d, #146b3a); }
+  .doc-icon.ppt   { background: linear-gradient(135deg, #d97706, #b45309); }
+  .doc-icon.img   { background: linear-gradient(135deg, #8b5cf6, #6d3fd4); }
+  .doc-icon.other { background: linear-gradient(135deg, #7B1113, #5A0C0E); }
+
+  .doc-info { min-width: 0; flex: 1; }
+  .doc-info .doc-name {
+    font-weight: 600;
+    font-size: 0.86rem;
+    color: var(--text-primary);
+    line-height: 1.25;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .doc-info .doc-meta {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+
+  /* ---------- Route flow (from → to) ---------- */
+  .route-flow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    min-width: 200px;
+  }
+  .route-flow .route-dept {
+    font-weight: 600;
+    color: var(--text-primary);
+    padding: 3px 8px;
+    background: var(--bg-input);
+    border-radius: 6px;
+    white-space: nowrap;
+    font-size: 0.75rem;
+  }
+  .route-flow .route-arrow {
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  /* ---------- Routing status badges ---------- */
+  .routing-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    border: 1.5px solid transparent;
+  }
+  .routing-status::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .routing-status.draft       { background: rgba(120,120,120,0.12); color: #5a5a5a; border-color: rgba(120,120,120,0.4); }
+  .routing-status.in-transit  { background: rgba(70,130,220,0.12);  color: #4682dc; border-color: rgba(70,130,220,0.4); }
+  .routing-status.received    { background: rgba(139,92,246,0.12);  color: #8b5cf6; border-color: rgba(139,92,246,0.4); }
+  .routing-status.under-review{ background: rgba(244,196,48,0.15);  color: #8a6d1f; border-color: rgba(212,175,55,0.55); }
+  .routing-status.completed   { background: rgba(46,213,115,0.12);  color: #1e8a4d; border-color: rgba(46,213,115,0.4); }
+  .routing-status.returned    { background: rgba(255,71,87,0.12);   color: #d43a45; border-color: rgba(255,71,87,0.4); }
+
+  body.dark-mode .routing-status.draft       { color: #a0a0a0; }
+  body.dark-mode .routing-status.in-transit  { color: #7ea8ee; }
+  body.dark-mode .routing-status.received    { color: #b298fa; }
+  body.dark-mode .routing-status.under-review{ color: var(--gold); }
+  body.dark-mode .routing-status.completed   { color: #4ade80; }
+  body.dark-mode .routing-status.returned    { color: #ff8b96; }
+
+  /* ---------- Priority ---------- */
+  .priority {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+  .priority::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+  .priority.high   { color: #d43a45; }
+  .priority.high::before { background: #ff4757; box-shadow: 0 0 0 3px rgba(255,71,87,0.18); }
+  .priority.normal { color: var(--text-muted); }
+  .priority.normal::before { background: var(--text-muted); }
+  .priority.low    { color: #1e8a4d; }
+  .priority.low::before { background: #2ed573; }
+
+  /* ---------- Route Document Modal ---------- */
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 600px) {
+    .form-row { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Timeline (view modal) ---------- */
+  .route-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px 0;
+  }
+  .route-step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    position: relative;
+  }
+  .route-step .step-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bg-input);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 2px solid var(--border-light);
+    position: relative;
+    z-index: 2;
+  }
+  .route-step .step-dot svg {
+    width: 13px;
+    height: 13px;
+    fill: var(--text-muted);
+  }
+  .route-step.done .step-dot {
+    background: #2ed573;
+    border-color: #2ed573;
+  }
+  .route-step.done .step-dot svg { fill: #fff; }
+  .route-step.current .step-dot {
+    background: var(--gold);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 4px rgba(212,175,55,0.2);
+  }
+  .route-step.current .step-dot svg { fill: var(--maroon); }
+  .route-step.returned .step-dot {
+    background: #ff4757;
+    border-color: #ff4757;
+  }
+  .route-step.returned .step-dot svg { fill: #fff; }
+
+  .route-step .step-body { padding-top: 4px; flex: 1; }
+  .route-step .step-title {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+  .route-step .step-title strong { color: var(--text-heading); }
+  body.dark-mode .route-step .step-title strong { color: var(--gold); }
+  .route-step .step-time {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+  .route-step .step-note {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 6px;
+    padding: 8px 12px;
+    background: var(--bg-input);
+    border-radius: 8px;
+    border-left: 3px solid var(--gold);
+    line-height: 1.45;
+  }
+  .route-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 13px;
+    top: 28px;
+    bottom: -18px;
+    width: 2px;
+    background: var(--border-light);
+  }
+  .route-step.done:not(:last-child)::after {
+    background: rgba(46,213,115,0.4);
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============================================================
+       SIDEBAR
+       ============================================================ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <img src="uphsd-logo.png" alt="Logo">
+          <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h3>UPHSD Molino</h3>
+        <p>Director's Office</p>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Main</div>
+      <a class="nav-item" href="dashboard.html" data-page="dashboard.html">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item" href="documents.html" data-page="documents.html">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        Documents
+      </a>
+      <a class="nav-item active" href="routing.html" data-page="routing.html">
+        <svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
+        Routing &amp; Tracking
+      </a>
+      <a class="nav-item" href="approvals.html" data-page="approvals.html">
+        <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        Approvals
+        <span class="nav-badge" id="approvalBadgeSide">5</span>
+      </a>
+      <a class="nav-item" href="notifications.html" data-page="notifications.html">
+        <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+        Notifications
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Administration</div>
+      <a class="nav-item" href="accounts.html" data-page="accounts.html">
+        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        Account Management
+      </a>
+      <a class="nav-item" href="reports.html" data-page="reports.html">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+        Reports
+      </a>
+      <a class="nav-item" href="settings.html" data-page="settings.html">
+        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.484.484 0 00-.59.22L2.74 8.87a.47.47 0 00.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 00-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1112 8.4a3.6 3.6 0 010 7.2z"/></svg>
+        Settings
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      © <span data-year></span> UPHSD Molino<br/>
+      v1.0 · Director's Office
+    </div>
+  </aside>
+
+  <div class="overlay-backdrop" id="overlayBackdrop"></div>
+
+  <!-- ============================================================
+       MAIN
+       ============================================================ -->
+  <main class="main">
+
+    <!-- ========== TOP BAR ========== -->
+    <header class="topbar">
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
+      </button>
+
+      <div class="page-title">
+        <h1>Routing &amp; Tracking</h1>
+        <p>Route documents through the workflow and monitor their movement</p>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="role-switcher" title="Dev preview">
+          <label>View as</label>
+          <select id="roleSwitcher">
+            <option value="secretary">Secretary</option>
+            <option value="ea">Executive Assistant</option>
+            <option value="director">Director</option>
+          </select>
+        </div>
+
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg id="themeIcon" viewBox="0 0 24 24">
+            <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 7.06a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0z"/>
+          </svg>
+        </button>
+
+        <button class="icon-btn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+          <span class="dot"></span>
+        </button>
+
+        <div class="user-chip" id="userChip" title="Click to log out">
+          <div class="user-avatar" id="userAvatar">MC</div>
+          <div class="user-info">
+            <span class="name" id="userName">Maria Cruz</span>
+            <span class="role" id="userRoleLabel">Secretary</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ========== CONTENT ========== -->
+    <div class="content">
+
+      <!-- Director read-only notice -->
+      <div class="view-only-notice" id="viewOnlyNotice" style="display:none;">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        <span>
+          You are in <strong>Director mode</strong>. You can <strong>view</strong> the status of routed documents, but routing and status updates are handled by the Secretary and Executive Assistant.
+        </span>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon maroon">
+            <svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statTotal">0</div>
+            <div class="stat-label">Total Routed</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon blue">
+            <svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statInTransit">0</div>
+            <div class="stat-label">In Transit</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon gold">
+            <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statUnderReview">0</div>
+            <div class="stat-label">Under Review</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon green">
+            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statCompleted">0</div>
+            <div class="stat-label">Completed</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="routing-tabs" id="routingTabs">
+        <button class="routing-tab active" data-tab="all">
+          All Routes <span class="tab-count" data-count="all">0</span>
+        </button>
+        <button class="routing-tab" data-tab="draft">
+          Draft <span class="tab-count" data-count="draft">0</span>
+        </button>
+        <button class="routing-tab" data-tab="in-transit">
+          In Transit <span class="tab-count" data-count="in-transit">0</span>
+        </button>
+        <button class="routing-tab" data-tab="received">
+          Received <span class="tab-count" data-count="received">0</span>
+        </button>
+        <button class="routing-tab" data-tab="under-review">
+          Under Review <span class="tab-count" data-count="under-review">0</span>
+        </button>
+        <button class="routing-tab" data-tab="completed">
+          Completed <span class="tab-count" data-count="completed">0</span>
+        </button>
+        <button class="routing-tab" data-tab="returned">
+          Returned <span class="tab-count" data-count="returned">0</span>
+        </button>
+      </div>
+
+      <!-- BULK BAR -->
+      <div class="bulk-bar" id="bulkBar">
+        <span class="bulk-count" id="bulkCount">0 selected</span>
+        <div class="bulk-actions" id="bulkActions"></div>
+        <button class="btn btn-ghost" style="background:transparent;color:inherit;border-color:rgba(255,255,255,0.3);" onclick="Routing.clearSelection()">Clear</button>
+      </div>
+
+      <!-- TOOLBAR -->
+      <div class="toolbar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="text" id="searchInput" placeholder="Search by document name, route ID, or department..." />
+        </div>
+
+        <select class="filter-select" id="filterFromDept">
+          <option value="">From: All Departments</option>
+          <option value="Director's Office">Director's Office</option>
+          <option value="Registrar">Registrar</option>
+          <option value="Accounting">Accounting</option>
+          <option value="Human Resources">Human Resources</option>
+          <option value="Academics">Academics</option>
+          <option value="Student Affairs">Student Affairs</option>
+        </select>
+
+        <select class="filter-select" id="filterToDept">
+          <option value="">To: All Departments</option>
+          <option value="Director's Office">Director's Office</option>
+          <option value="Registrar">Registrar</option>
+          <option value="Accounting">Accounting</option>
+          <option value="Human Resources">Human Resources</option>
+          <option value="Academics">Academics</option>
+          <option value="Student Affairs">Student Affairs</option>
+        </select>
+
+        <select class="filter-select" id="filterPriority">
+          <option value="">All Priorities</option>
+          <option value="high">High</option>
+          <option value="normal">Normal</option>
+          <option value="low">Low</option>
+        </select>
+
+        <!-- Route Document button — hidden by default, shown only for Secretary -->
+        <button class="btn btn-primary" id="btnRouteDoc" style="margin-left:auto;display:none;">
+          <svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
+          Route Document
+        </button>
+      </div>
+
+      <!-- TABLE -->
+      <div class="table-card">
+        <div class="table-header-row">
+          <h2 id="tableTitle">All Routed Documents</h2>
+          <span class="count" id="resultCount">Showing 0 of 0 routes</span>
+        </div>
+
+        <div class="table-scroll">
+          <table id="routingTable">
+            <thead>
+              <tr>
+                <th style="width:40px;" class="center">
+                  <label class="checkbox-wrap">
+                    <input type="checkbox" id="selectAll" />
+                  </label>
+                </th>
+                <th>Document</th>
+                <th>Route</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Routed By</th>
+                <th>Date</th>
+                <th style="text-align:right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="routingBody"></tbody>
+          </table>
+        </div>
+
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">
+            <svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
+          </div>
+          <h3>No routed documents found</h3>
+          <p id="emptyCopy">Try adjusting your search or filters.</p>
+          <button class="btn btn-primary" id="btnEmptyRoute" style="display:none;" onclick="document.getElementById('btnRouteDoc').click()">
+            <svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
+            Route a Document
+          </button>
+        </div>
+
+        <div class="pagination" id="pagination">
+          <span class="page-info" id="pageInfo">Page 1 of 1</span>
+          <div class="page-controls">
+            <button class="page-btn" disabled>‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn" disabled>›</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ============================================================
+       MODAL — Route Document (Secretary only)
+       ============================================================ -->
+  <div class="modal-backdrop" id="routeModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div style="flex:1;">
+          <h2>Route Document</h2>
+          <p>Send a document to another department for action or review.</p>
+        </div>
+        <button class="modal-close" onclick="APP.Modal.close('routeModal')" aria-label="Close">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="routeDocSelect">Document <span class="req">*</span></label>
+          <select id="routeDocSelect">
+            <option value="">Select document...</option>
+            <option value="Budget Proposal FY 2025-2026.pdf">Budget Proposal FY 2025-2026.pdf</option>
+            <option value="HR Staffing Memo.docx">HR Staffing Memo.docx</option>
+            <option value="Faculty Evaluation Summary.docx">Faculty Evaluation Summary.docx</option>
+            <option value="Registrar Report Q4 2024.xlsx">Registrar Report Q4 2024.xlsx</option>
+            <option value="Board Resolution Jan 2025.pdf">Board Resolution Jan 2025.pdf</option>
+            <option value="Student Affairs Report.pdf">Student Affairs Report.pdf</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="routeFrom">From Department <span class="req">*</span></label>
+            <select id="routeFrom">
+              <option value="">Select origin...</option>
+              <option value="Director's Office">Director's Office</option>
+              <option value="Registrar">Registrar</option>
+              <option value="Accounting">Accounting</option>
+              <option value="Human Resources">Human Resources</option>
+              <option value="Academics">Academics</option>
+              <option value="Student Affairs">Student Affairs</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="routeTo">To Department <span class="req">*</span></label>
+            <select id="routeTo">
+              <option value="">Select destination...</option>
+              <option value="Director's Office">Director's Office</option>
+              <option value="Registrar">Registrar</option>
+              <option value="Accounting">Accounting</option>
+              <option value="Human Resources">Human Resources</option>
+              <option value="Academics">Academics</option>
+              <option value="Student Affairs">Student Affairs</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="routePriority">Priority</label>
+          <select id="routePriority">
+            <option value="normal">Normal</option>
+            <option value="high">High — needs immediate attention</option>
+            <option value="low">Low — informational</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="routeNotes">Routing Notes (optional)</label>
+          <textarea id="routeNotes" placeholder="Any special instructions for the receiving department..."></textarea>
+          <div class="form-hint">These notes will be visible to the recipient and logged in the routing history.</div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="APP.Modal.close('routeModal')">Cancel</button>
+        <button class="btn btn-primary" id="btnSubmitRoute">
+          <svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
+          Route Document
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL — View Route Details & Timeline
+       ============================================================ -->
+  <div class="modal-backdrop" id="viewModal">
+    <div class="modal" style="max-width:640px;">
+      <div class="modal-header">
+        <div style="flex:1;">
+          <h2 id="viewDocTitle">Route Details</h2>
+          <p id="viewDocSubtitle">—</p>
+        </div>
+        <button class="modal-close" onclick="APP.Modal.close('viewModal')" aria-label="Close">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="info-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;margin-bottom:20px;">
+          <div class="info-item">
+            <div class="info-label" style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:4px;">Route ID</div>
+            <div class="info-value" id="viewRouteId" style="font-size:0.86rem;color:var(--text-primary);font-weight:500;">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label" style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:4px;">Priority</div>
+            <div class="info-value" id="viewPriority" style="font-size:0.86rem;color:var(--text-primary);font-weight:500;">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label" style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:4px;">From</div>
+            <div class="info-value" id="viewFrom" style="font-size:0.86rem;color:var(--text-primary);font-weight:500;">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label" style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:4px;">To</div>
+            <div class="info-value" id="viewTo" style="font-size:0.86rem;color:var(--text-primary);font-weight:500;">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label" style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:4px;">Routed By</div>
+            <div class="info-value" id="viewRoutedBy" style="font-size:0.86rem;color:var(--text-primary);font-weight:500;">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label" style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:4px;">Current Status</div>
+            <div class="info-value" id="viewStatus" style="font-size:0.86rem;color:var(--text-primary);font-weight:500;">—</div>
+          </div>
+        </div>
+
+        <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:8px;">Routing Timeline</div>
+        <div class="route-timeline" id="routeTimeline"></div>
+      </div>
+
+      <div class="modal-footer" id="viewFooter">
+        <button class="btn btn-ghost" onclick="APP.Modal.close('viewModal')">Close</button>
+        <!-- 🔄 Status update button — shown to Secretary + EA only -->
+        <button class="btn btn-primary" id="btnUpdateStatus" style="display:none;">
+          <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4a8 8 0 00-7.73 6H2l4 4 4-4H6.07A6 6 0 1112 18a5.98 5.98 0 01-4.24-1.76l-1.41 1.41A8 8 0 1019.73 6H22l-4 4-4-4h3.65z"/></svg>
+          Update Status
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL — Update Status (Secretary + EA)
+       ============================================================ -->
+  <div class="modal-backdrop" id="updateModal">
+    <div class="modal" style="max-width:460px;">
+      <div class="modal-header">
+        <div style="flex:1;">
+          <h2>Update Route Status</h2>
+          <p id="updateSubtitle">—</p>
+        </div>
+        <button class="modal-close" onclick="APP.Modal.close('updateModal')" aria-label="Close">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="newStatus">New Status <span class="req">*</span></label>
+          <select id="newStatus">
+            <option value="">Select new status...</option>
+            <option value="in-transit">In Transit</option>
+            <option value="received">Received</option>
+            <option value="under-review">Under Review</option>
+            <option value="completed">Completed</option>
+            <option value="returned">Returned</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="statusNote">Note (optional)</label>
+          <textarea id="statusNote" placeholder="Add a note about this status change..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="APP.Modal.close('updateModal')">Cancel</button>
+        <button class="btn btn-primary" id="btnConfirmUpdate">
+          <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+          Update Status
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PAGE SCRIPT
+       ============================================================ -->
+  <script src="app.js"></script>
+  <script>
+  /* ==========================================================================
+     ROUTING & TRACKING — Page module (aligned with use case diagram)
+
+     Permissions (per diagram):
+       Secretary  → routing:route ✓, routing:update ✓, routing:track ✓, routing:view ✓
+       EA         → routing:route ✗, routing:update ✓, routing:track ✓, routing:view ✓
+       Director   → routing:route ✗, routing:update ✗, routing:track ✗, routing:view ✓
+     ========================================================================== */
+  (function () {
+    'use strict';
+
+    const { Role, Toast, Utils, Modal, Bus } = APP;
+
+       /* --------------------------------------------------------------------
+       DATA — loaded from backend
+       -------------------------------------------------------------------- */
+    let routes = [];
+
+    async function loadRoutes() {
+      try {
+        // TODO: Replace with real API call
+        // const res = await fetch('/api/routes');
+        // routes = await res.json();
+
+        routes = [];
+      } catch (err) {
+        console.error('[Routing] Failed to load:', err);
+        Toast.error('Load Failed', 'Could not load routed documents.');
+        routes = [];
+      }
+      renderRoutes();
+      updateStats();
+    }
+
+    /* --------------------------------------------------------------------
+       STATE
+       -------------------------------------------------------------------- */
+    let currentTab = 'all';
+    let filteredRoutes = [];
+    const selectedIds = new Set();
+    let currentViewRoute = null;
+    let currentUpdateRoute = null;
+
+    /* --------------------------------------------------------------------
+       DOM SHORTCUTS
+       -------------------------------------------------------------------- */
+    const $ = (id) => document.getElementById(id);
+    const els = {
+      tbody:        $('routingBody'),
+      emptyState:   $('emptyState'),
+      emptyCopy:    $('emptyCopy'),
+      btnEmptyRoute:$('btnEmptyRoute'),
+      table:        $('routingTable'),
+      pagination:   $('pagination'),
+      resultCount:  $('resultCount'),
+      pageInfo:     $('pageInfo'),
+      tableTitle:   $('tableTitle'),
+      searchInput:  $('searchInput'),
+      filterFromDept: $('filterFromDept'),
+      filterToDept:   $('filterToDept'),
+      filterPriority: $('filterPriority'),
+      btnRouteDoc:  $('btnRouteDoc'),
+      selectAll:    $('selectAll'),
+      bulkBar:      $('bulkBar'),
+      bulkCount:    $('bulkCount'),
+      bulkActions:  $('bulkActions'),
+      notice:       $('viewOnlyNotice')
+    };
+
+    /* --------------------------------------------------------------------
+       HELPERS
+       -------------------------------------------------------------------- */
+    function statusLabel(s) {
+      return {
+        draft:        'Draft',
+        'in-transit': 'In Transit',
+        received:     'Received',
+        'under-review':'Under Review',
+        completed:    'Completed',
+        returned:     'Returned'
+      }[s] || s;
+    }
+
+    function fileExtClass(ext) {
+      const map = {
+        pdf: 'pdf', doc: 'doc', docx: 'doc',
+        xls: 'xls', xlsx: 'xls',
+        ppt: 'ppt', pptx: 'ppt',
+        png: 'img', jpg: 'img', jpeg: 'img', gif: 'img', svg: 'img'
+      };
+      return map[ext] || 'other';
+    }
+
+    /* --------------------------------------------------------------------
+       RENDER — Stats + tab counts
+       -------------------------------------------------------------------- */
+    function updateStats() {
+      $('statTotal').textContent       = routes.length;
+      $('statInTransit').textContent   = routes.filter(r => r.status === 'in-transit').length;
+      $('statUnderReview').textContent = routes.filter(r => r.status === 'under-review').length;
+      $('statCompleted').textContent   = routes.filter(r => r.status === 'completed').length;
+
+      const counts = {
+        all:           routes.length,
+        draft:         routes.filter(r => r.status === 'draft').length,
+        'in-transit':  routes.filter(r => r.status === 'in-transit').length,
+        received:      routes.filter(r => r.status === 'received').length,
+        'under-review':routes.filter(r => r.status === 'under-review').length,
+        completed:     routes.filter(r => r.status === 'completed').length,
+        returned:      routes.filter(r => r.status === 'returned').length
+      };
+      Object.entries(counts).forEach(([k, v]) => {
+        const el = document.querySelector(`[data-count="${k}"]`);
+        if (el) el.textContent = v;
+      });
+    }
+
+    /* --------------------------------------------------------------------
+       RENDER — Action buttons per row (ALIGNED WITH DIAGRAM)
+       --------------------------------------------------------------------
+       Secretary  → Route ✓ Update ✓ Track ✓ View ✓
+       EA         → Route ✗ Update ✓ Track ✓ View ✓
+       Director   → Route ✗ Update ✗ Track ✗ View ✓
+       -------------------------------------------------------------------- */
+    function renderActions(route) {
+      const btns = [];
+
+      // VIEW — everyone
+      if (Role.can('routing:view')) {
+        btns.push(`
+          <button class="action-btn view" data-action="view" data-id="${route.id}" title="Track / View">
+            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
+          </button>
+        `);
+      }
+
+      // UPDATE STATUS — Secretary + EA
+      if (Role.can('routing:update')) {
+        btns.push(`
+          <button class="action-btn edit" data-action="update" data-id="${route.id}" title="Update Status">
+            <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4a8 8 0 00-7.73 6H2l4 4 4-4H6.07A6 6 0 1112 18a5.98 5.98 0 01-4.24-1.76l-1.41 1.41A8 8 0 1019.73 6H22l-4 4-4-4h3.65z"/></svg>
+          </button>
+        `);
+      }
+
+      // TRACK — Secretary + EA (opens view modal too, but as a "Track" icon)
+      if (Role.can('routing:track')) {
+        btns.push(`
+          <button class="action-btn" data-action="track" data-id="${route.id}" title="Track Progress" style="color:var(--gold);">
+            <svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
+          </button>
+        `);
+      }
+
+      return btns.join('');
+    }
+
+    /* --------------------------------------------------------------------
+       RENDER — Table
+       -------------------------------------------------------------------- */
+    function renderRoutes() {
+      const search    = els.searchInput.value.toLowerCase().trim();
+      const fromF     = els.filterFromDept.value;
+      const toF       = els.filterToDept.value;
+      const priorityF = els.filterPriority.value;
+
+      filteredRoutes = routes.filter(r => {
+        if (currentTab !== 'all' && r.status !== currentTab) return false;
+        const matchesSearch = !search ||
+          r.documentName.toLowerCase().includes(search) ||
+          r.id.toLowerCase().includes(search) ||
+          r.from.toLowerCase().includes(search) ||
+          r.to.toLowerCase().includes(search);
+        if (!matchesSearch) return false;
+        if (fromF && r.from !== fromF) return false;
+        if (toF && r.to !== toF) return false;
+        if (priorityF && r.priority !== priorityF) return false;
+        return true;
+      });
+
+      els.resultCount.textContent = `Showing ${filteredRoutes.length} of ${routes.length} routes`;
+
+      updateStats();
+
+      const tabLabels = {
+        all: 'All Routed Documents',
+        draft: 'Draft Routes',
+        'in-transit': 'Routes In Transit',
+        received: 'Received Routes',
+        'under-review': 'Routes Under Review',
+        completed: 'Completed Routes',
+        returned: 'Returned Routes'
+      };
+      els.tableTitle.textContent = tabLabels[currentTab] || 'Routed Documents';
+
+      if (filteredRoutes.length === 0) {
+        els.tbody.innerHTML = '';
+        els.table.style.display = 'none';
+        els.pagination.style.display = 'none';
+        els.emptyState.classList.add('show');
+        return;
+      } else {
+        els.table.style.display = '';
+        els.pagination.style.display = '';
+        els.emptyState.classList.remove('show');
+      }
+
+      els.tbody.innerHTML = filteredRoutes.map(r => {
+        const isSelected = selectedIds.has(r.id);
+        const extClass = fileExtClass(r.ext);
+        return `
+          <tr class="${isSelected ? 'selected' : ''}" data-id="${r.id}">
+            <td class="center">
+              <label class="checkbox-wrap">
+                <input type="checkbox" class="row-checkbox" data-id="${r.id}" ${isSelected ? 'checked' : ''}/>
+              </label>
+            </td>
+            <td>
+              <div class="doc-cell">
+                <div class="doc-icon ${extClass}">${Utils.escapeHtml(r.ext)}</div>
+                <div class="doc-info">
+                  <div class="doc-name" title="${Utils.escapeHtml(r.documentName)}">${Utils.escapeHtml(r.documentName)}</div>
+                  <div class="doc-meta">${Utils.escapeHtml(r.id)}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="route-flow">
+                <span class="route-dept">${Utils.escapeHtml(r.from)}</span>
+                <span class="route-arrow">→</span>
+                <span class="route-dept">${Utils.escapeHtml(r.to)}</span>
+              </div>
+            </td>
+            <td><span class="priority ${r.priority}">${Utils.capitalize(r.priority)}</span></td>
+            <td><span class="routing-status ${r.status}">${statusLabel(r.status)}</span></td>
+            <td>
+              <div style="font-size:0.82rem;font-weight:500;">${Utils.escapeHtml(r.routedBy)}</div>
+            </td>
+            <td>
+              <div style="font-size:0.78rem;color:var(--text-muted);">${Utils.escapeHtml(r.date)}</div>
+            </td>
+            <td>
+              <div class="actions">${renderActions(r)}</div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      els.tbody.querySelectorAll('.row-checkbox').forEach(cb => {
+        cb.addEventListener('change', (e) => {
+          const id = e.target.dataset.id;
+          if (e.target.checked) selectedIds.add(id);
+          else selectedIds.delete(id);
+          updateBulkBar();
+          e.target.closest('tr').classList.toggle('selected', e.target.checked);
+          updateSelectAllState();
+        });
+      });
+
+      els.tbody.querySelectorAll('[data-action]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          handleAction(btn.dataset.action, btn.dataset.id);
+        });
+      });
+
+      updateBulkBar();
+      updateSelectAllState();
+      els.pageInfo.textContent = `Page 1 of 1 · ${filteredRoutes.length} records`;
+    }
+
+    /* --------------------------------------------------------------------
+       ACTION HANDLER
+       -------------------------------------------------------------------- */
+    function handleAction(action, id) {
+      const route = routes.find(r => r.id === id);
+      if (!route) return;
+
+      switch (action) {
+        case 'view':
+        case 'track':
+          openViewModal(route);
+          break;
+        case 'update':
+          openUpdateModal(route);
+          break;
+      }
+    }
+
+    /* --------------------------------------------------------------------
+       VIEW MODAL
+       -------------------------------------------------------------------- */
+    function openViewModal(route) {
+      currentViewRoute = route;
+
+      $('viewDocTitle').textContent    = route.documentName;
+      $('viewDocSubtitle').textContent = route.id;
+      $('viewRouteId').textContent     = route.id;
+      $('viewPriority').innerHTML      = `<span class="priority ${route.priority}">${Utils.capitalize(route.priority)}</span>`;
+      $('viewFrom').textContent        = route.from;
+      $('viewTo').textContent          = route.to;
+      $('viewRoutedBy').textContent    = route.routedBy;
+      $('viewStatus').innerHTML        = `<span class="routing-status ${route.status}">${statusLabel(route.status)}</span>`;
+
+      // Build timeline
+      $('routeTimeline').innerHTML = route.timeline.map(step => {
+        const icon = step.state === 'done'
+          ? '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>'
+          : step.state === 'returned'
+          ? '<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>'
+          : '<path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>';
+        const extra = step.from && step.to
+          ? `<div class="step-time" style="margin-top:2px;">${Utils.escapeHtml(step.from)} → ${Utils.escapeHtml(step.to)}</div>`
+          : '';
+        return `
+          <div class="route-step ${step.state}">
+            <div class="step-dot">
+              <svg viewBox="0 0 24 24">${icon}</svg>
+            </div>
+            <div class="step-body">
+              <div class="step-title">${Utils.escapeHtml(step.title)} ${step.by ? `<strong>· ${Utils.escapeHtml(step.by)}</strong>` : ''}</div>
+              ${extra}
+              <div class="step-time">${Utils.escapeHtml(step.time)}</div>
+              ${step.note ? `<div class="step-note">${Utils.escapeHtml(step.note)}</div>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Show/hide "Update Status" in footer — Secretary + EA only
+      const btnUpdate = $('btnUpdateStatus');
+      if (btnUpdate) {
+        btnUpdate.style.display = Role.can('routing:update') ? 'inline-flex' : 'none';
+      }
+
+      Modal.open('viewModal');
+    }
+
+    $('btnUpdateStatus').addEventListener('click', () => {
+      if (!currentViewRoute) return;
+      if (!Role.can('routing:update')) {
+        Toast.error('Permission Denied', 'You do not have permission to update route status.');
+        return;
+      }
+      Modal.close('viewModal');
+      // Small delay so modal transition completes
+      setTimeout(() => openUpdateModal(currentViewRoute), 250);
+    });
+
+    /* --------------------------------------------------------------------
+       UPDATE STATUS MODAL
+       -------------------------------------------------------------------- */
+    function openUpdateModal(route) {
+      if (!Role.can('routing:update')) {
+        Toast.error('Permission Denied', 'Only Secretary and Executive Assistant can update route status.');
+        return;
+      }
+      currentUpdateRoute = route;
+      $('updateSubtitle').textContent = `${route.id} · ${route.documentName}`;
+      $('newStatus').value = '';
+      $('statusNote').value = '';
+      Modal.open('updateModal');
+    }
+
+    $('btnConfirmUpdate').addEventListener('click', async () => {
+      if (!currentUpdateRoute) return;
+      if (!Role.can('routing:update')) {
+        Toast.error('Permission Denied', 'You do not have permission to update route status.');
+        return;
+      }
+
+      const newStatus = $('newStatus').value;
+      const note = $('statusNote').value.trim();
+
+      if (!newStatus) {
+        Toast.error('Missing Status', 'Please select a new status.');
+        return;
+      }
+
+      const ok = await APP.confirm({
+        title: `Update route to "${statusLabel(newStatus)}"?`,
+        message: 'This will be recorded in the routing timeline.',
+        confirmText: 'Update'
+      });
+      if (!ok) return;
+
+      currentUpdateRoute.status = newStatus;
+      currentUpdateRoute.timeline.push({
+        title: `Status → ${statusLabel(newStatus)}`,
+        by: Role.current().userName,
+        time: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        state: newStatus === 'returned' ? 'returned' : newStatus === 'completed' ? 'done' : 'current',
+        note: note || undefined
+      });
+
+      // If there were "current" steps earlier, mark them done
+      currentUpdateRoute.timeline.forEach((s, i) => {
+        if (i < currentUpdateRoute.timeline.length - 1 && s.state === 'current') {
+          s.state = 'done';
+        }
+      });
+
+      Modal.close('updateModal');
+      Toast.success('Status Updated', `Route ${currentUpdateRoute.id} is now "${statusLabel(newStatus)}".`);
+      renderRoutes();
+    });
+
+    /* --------------------------------------------------------------------
+       BULK ACTIONS
+       -------------------------------------------------------------------- */
+    function updateBulkBar() {
+      if (selectedIds.size === 0) {
+        els.bulkBar.classList.remove('show');
+        return;
+      }
+
+      els.bulkBar.classList.add('show');
+      els.bulkCount.textContent = `${selectedIds.size} selected`;
+
+      const btns = [];
+
+      if (Role.can('routing:update')) {
+        btns.push(`<button class="btn" onclick="Routing.bulkUpdateStatus()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35A7.958 7.958 0 0012 4a8 8 0 00-7.73 6H2l4 4 4-4H6.07A6 6 0 1112 18a5.98 5.98 0 01-4.24-1.76l-1.41 1.41A8 8 0 1019.73 6H22l-4 4-4-4h3.65z"/></svg>
+          Bulk Update
+        </button>`);
+      }
+
+      btns.push(`<button class="btn" onclick="Routing.bulkExport()">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Export
+      </button>`);
+
+      els.bulkActions.innerHTML = btns.join('');
+    }
+
+    function clearSelection() {
+      selectedIds.clear();
+      renderRoutes();
+    }
+
+    async function bulkUpdateStatus() {
+      if (!Role.can('routing:update')) {
+        Toast.error('Permission Denied', 'You do not have permission to update route status.');
+        return;
+      }
+      const ok = await APP.confirm({
+        title: `Update status for ${selectedIds.size} route(s)?`,
+        message: 'You will be asked to select the new status next.',
+        confirmText: 'Continue'
+      });
+      if (!ok) return;
+      Toast.info('Bulk Update', 'Bulk status update UI coming soon.');
+    }
+
+    function bulkExport() {
+      Toast.info('Export Started', `Preparing CSV export for ${selectedIds.size} route(s)...`);
+    }
+
+    /* --------------------------------------------------------------------
+       SELECT ALL
+       -------------------------------------------------------------------- */
+    function updateSelectAllState() {
+      const visibleIds = filteredRoutes.map(r => r.id);
+      const allSelected = visibleIds.length > 0 && visibleIds.every(id => selectedIds.has(id));
+      const someSelected = visibleIds.some(id => selectedIds.has(id));
+      els.selectAll.checked = allSelected;
+      els.selectAll.indeterminate = !allSelected && someSelected;
+    }
+
+    els.selectAll.addEventListener('change', (e) => {
+      if (e.target.checked) filteredRoutes.forEach(r => selectedIds.add(r.id));
+      else filteredRoutes.forEach(r => selectedIds.delete(r.id));
+      renderRoutes();
+    });
+
+    /* --------------------------------------------------------------------
+       TABS
+       -------------------------------------------------------------------- */
+    document.querySelectorAll('.routing-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.routing-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentTab = tab.dataset.tab;
+        selectedIds.clear();
+        renderRoutes();
+      });
+    });
+
+    /* --------------------------------------------------------------------
+       FILTERS
+       -------------------------------------------------------------------- */
+    [els.searchInput, els.filterFromDept, els.filterToDept, els.filterPriority].forEach(el => {
+      el.addEventListener('input', renderRoutes);
+      el.addEventListener('change', renderRoutes);
+    });
+
+    /* --------------------------------------------------------------------
+       ROUTE DOCUMENT MODAL
+       -------------------------------------------------------------------- */
+    els.btnRouteDoc.addEventListener('click', () => {
+      if (!Role.can('routing:route')) {
+        Toast.error('Permission Denied', 'Only the Secretary can route documents.');
+        return;
+      }
+      $('routeDocSelect').value = '';
+      $('routeFrom').value = '';
+      $('routeTo').value = '';
+      $('routePriority').value = 'normal';
+      $('routeNotes').value = '';
+      Modal.open('routeModal');
+    });
+
+    $('btnSubmitRoute').addEventListener('click', () => {
+      if (!Role.can('routing:route')) {
+        Toast.error('Permission Denied', 'Only the Secretary can route documents.');
+        Modal.close('routeModal');
+        return;
+      }
+
+      const docName = $('routeDocSelect').value;
+      const from    = $('routeFrom').value;
+      const to      = $('routeTo').value;
+      const priority = $('routePriority').value;
+      const notes   = $('routeNotes').value.trim();
+
+      if (!docName) { Toast.error('Missing Document', 'Please select a document to route.'); return; }
+      if (!from)    { Toast.error('Missing Origin', 'Please select the origin department.'); return; }
+      if (!to)      { Toast.error('Missing Destination', 'Please select the destination department.'); return; }
+      if (from === to) { Toast.error('Invalid Route', 'Origin and destination cannot be the same.'); return; }
+
+      const newId = `RT-2025-${String(routes.length + 1).padStart(3, '0')}`;
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' +
+        now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+      const ext = docName.split('.').pop().toLowerCase();
+
+      routes.unshift({
+        id: newId,
+        documentName: docName,
+        ext: ext,
+        from: from,
+        to: to,
+        priority: priority,
+        status: 'in-transit',
+        routedBy: Role.current().userName,
+        date: dateStr,
+        notes: notes,
+        timeline: [
+          { title: 'Created', by: Role.current().userName, time: dateStr, state: 'done' },
+          { title: 'Routed', from: from, to: to, by: Role.current().userName, time: dateStr, state: 'current' }
+        ]
+      });
+
+      Modal.close('routeModal');
+      Toast.gold('Document Routed', `"${docName}" is now in transit to ${to}.`);
+      currentTab = 'in-transit';
+      document.querySelectorAll('.routing-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === 'in-transit');
+      });
+      renderRoutes();
+    });
+
+    /* --------------------------------------------------------------------
+       ROLE-AWARE UI (ALIGNED WITH DIAGRAM)
+       -------------------------------------------------------------------- */
+    function applyRole() {
+      const canRoute = Role.can('routing:route');
+
+      // Route Document button — Secretary only
+      els.btnRouteDoc.style.display = canRoute ? 'inline-flex' : 'none';
+      if (els.btnEmptyRoute) {
+        els.btnEmptyRoute.style.display = canRoute ? 'inline-flex' : 'none';
+      }
+
+      // Director notice
+      if (els.notice) {
+        els.notice.style.display = (Role.id() === 'director') ? 'flex' : 'none';
+      }
+
+      // Empty state copy
+      if (els.emptyCopy) {
+        els.emptyCopy.textContent = canRoute
+          ? 'Try adjusting your search or filters. Or route a new document to get started.'
+          : 'Try adjusting your search or filters.';
+      }
+
+      renderRoutes();
+    }
+
+    /* --------------------------------------------------------------------
+       PUBLIC API
+       -------------------------------------------------------------------- */
+    window.Routing = {
+      clearSelection,
+      bulkUpdateStatus,
+      bulkExport
+    };
+
+    /* --------------------------------------------------------------------
+       REACT TO ROLE CHANGE
+       -------------------------------------------------------------------- */
+    Bus.on('role:changed', () => {
+      selectedIds.clear();
+      applyRole();
+      Toast.info('Role Switched', `Now viewing as ${Role.current().label}.`);
+    });
+
+    /* --------------------------------------------------------------------
+       INIT
+       -------------------------------------------------------------------- */
+    applyRole();
+    loadRoutes();
+  })();
+  </script>
+</body>
+</html>

@@ -9,8 +9,6 @@
 <style>
   /* =====================================================================
      DASHBOARD-SPECIFIC STYLES
-     Only styles unique to this page live here.
-     Everything else comes from shared.css.
      ===================================================================== */
 
   /* ---------- Welcome banner ---------- */
@@ -31,7 +29,6 @@
     border-bottom-color: var(--gold);
   }
 
-  /* Decorative gold orb */
   .welcome-banner::before {
     content: '';
     position: absolute;
@@ -169,7 +166,6 @@
 
   .activity-item:hover { background: var(--bg-hover); }
 
-  /* Vertical timeline line */
   .activity-item::before {
     content: '';
     position: absolute;
@@ -239,14 +235,6 @@
     gap: 10px;
     align-items: center;
     flex-wrap: wrap;
-  }
-
-  .activity-body .activity-meta .dot-sep {
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: var(--text-muted);
-    display: inline-block;
   }
 
   /* ---------- Quick actions panel ---------- */
@@ -553,7 +541,7 @@
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <div class="brand-logo">
-        <!-- 👇 REPLACE WITH YOUR LOGO: <img src="uphsd-logo.png" alt="Logo"> -->
+        <!-- 👇 REPLACE WITH YOUR LOGO -->
         <img src="uphsd-logo.png" alt="Logo">
           <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
         </svg>
@@ -574,10 +562,18 @@
         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
         Documents
       </a>
+      <a class="nav-item" href="routing.html" data-page="routing.html">
+        <svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
+        Routing &amp; Tracking
+      </a>
       <a class="nav-item" href="approvals.html" data-page="approvals.html">
         <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
         Approvals
-        <span class="nav-badge" id="approvalBadgeSide">0</span>
+        <span class="nav-badge" id="approvalBadgeSide">5</span>
+      </a>
+      <a class="nav-item" href="notifications.html" data-page="notifications.html">
+        <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+        Notifications
       </a>
     </div>
 
@@ -622,7 +618,6 @@
       </div>
 
       <div class="topbar-actions">
-        <!-- 🧪 DEV ONLY -->
         <div class="role-switcher" title="Dev preview">
           <label>View as</label>
           <select id="roleSwitcher">
@@ -661,18 +656,19 @@
         <div class="welcome-content">
           <div class="welcome-avatar" id="welcomeAvatar">MC</div>
           <div class="welcome-text">
-            <div class="greeting">Good day 👋</div>
+            <div class="greeting" id="greetingText">Good day 👋</div>
             <h1>Welcome back, <span id="welcomeName">Maria Cruz</span></h1>
             <p id="welcomeSubtitle">You have <strong>5 pending items</strong> that need your attention today.</p>
           </div>
           <div class="welcome-actions">
-            <a class="btn" href="documents.html">
+            <!-- 🔄 CHANGED: These buttons are shown/hidden by role -->
+            <a class="btn" id="welcomeUploadBtn" href="documents.html" style="display:none;">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
               Upload Document
             </a>
-            <a class="btn" href="approvals.html">
+            <a class="btn" id="welcomeApprovalsBtn" href="approvals.html">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-              View Approvals
+              <span id="welcomeApprovalsLabel">View Approvals</span>
             </a>
           </div>
         </div>
@@ -739,7 +735,7 @@
             <div class="activity-feed" id="activityFeed"></div>
           </div>
 
-          <!-- MINI CHART — Documents this month -->
+          <!-- MINI CHART -->
           <div class="card">
             <div class="section-title">
               <h2>
@@ -766,7 +762,9 @@
               </h2>
             </div>
             <div class="quick-actions">
-              <a class="quick-action" href="documents.html">
+
+              <!-- Upload Document — shown only to Secretary -->
+              <a class="quick-action" href="documents.html" id="qaUploadDoc" style="display:none;">
                 <div class="qa-icon">
                   <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
                 </div>
@@ -777,7 +775,8 @@
                 <svg class="qa-arrow" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
               </a>
 
-              <a class="quick-action" href="accounts.html" id="qaNewAccount">
+              <!-- Create Account — shown to Secretary + EA -->
+              <a class="quick-action" href="accounts.html" id="qaNewAccount" style="display:none;">
                 <div class="qa-icon">
                   <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
                 </div>
@@ -788,18 +787,32 @@
                 <svg class="qa-arrow" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
               </a>
 
-              <a class="quick-action" href="approvals.html">
+              <!-- 🔄 NEW: Route Document — shown only to Secretary -->
+              <a class="quick-action" href="routing.html" id="qaRouteDoc" style="display:none;">
+                <div class="qa-icon">
+                  <svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
+                </div>
+                <div class="qa-text">
+                  <div class="qa-title">Route Document</div>
+                  <div class="qa-desc">Send a document through the workflow</div>
+                </div>
+                <svg class="qa-arrow" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+              </a>
+
+              <!-- Review Approvals — shown to everyone (message varies) -->
+              <a class="quick-action" href="approvals.html" id="qaApprovals">
                 <div class="qa-icon">
                   <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
                 </div>
                 <div class="qa-text">
-                  <div class="qa-title">Review Approvals</div>
+                  <div class="qa-title" id="qaApprovalsTitle">Review Approvals</div>
                   <div class="qa-desc" id="qaApprovalsDesc">5 items waiting</div>
                 </div>
                 <svg class="qa-arrow" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
               </a>
 
-              <a class="quick-action" href="reports.html">
+              <!-- Generate Report — shown to Secretary + EA -->
+              <a class="quick-action" href="reports.html" id="qaReports" style="display:none;">
                 <div class="qa-icon">
                   <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
                 </div>
@@ -809,6 +822,19 @@
                 </div>
                 <svg class="qa-arrow" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
               </a>
+
+              <!-- 🔄 NEW: View Reports — shown to Director (read-only) -->
+              <a class="quick-action" href="reports.html" id="qaViewReports" style="display:none;">
+                <div class="qa-icon">
+                  <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+                </div>
+                <div class="qa-text">
+                  <div class="qa-title">View Reports</div>
+                  <div class="qa-desc">Read-only analytics access</div>
+                </div>
+                <svg class="qa-arrow" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+              </a>
+
             </div>
           </div>
 
@@ -838,97 +864,90 @@
   <script src="app.js"></script>
   <script>
   /* ==========================================================================
-     DASHBOARD — Page module
+     DASHBOARD — Page module (aligned with use case diagram)
      ========================================================================== */
   (function () {
     'use strict';
 
     const { Role, Toast, Utils, Bus } = APP;
 
-    /* --------------------------------------------------------------------
-       MOCK DATA — Activity feed
+    
+        /* --------------------------------------------------------------------
+       DATA — loaded from backend
        -------------------------------------------------------------------- */
-    const activity = [
-      {
-        icon: 'create', color: 'blue',
-        title: '<strong>Maria Cruz</strong> uploaded a new document',
-        subject: 'Budget Proposal FY 2025-2026.pdf',
-        time: new Date(Date.now() - 8 * 60 * 1000),
-        user: 'Maria Cruz'
-      },
-      {
-        icon: 'authorize', color: 'green',
-        title: '<strong>Dr. Ramon Santos</strong> authorized an account creation',
-        subject: 'Carlos Mendoza · Faculty',
-        time: new Date(Date.now() - 32 * 60 * 1000),
-        user: 'Dr. Ramon Santos'
-      },
-      {
-        icon: 'edit', color: 'gold',
-        title: '<strong>Anna Reyes</strong> submitted an edit request',
-        subject: 'Jose Villanueva · Role change',
-        time: new Date(Date.now() - 2 * 60 * 60 * 1000),
-        user: 'Anna Reyes'
-      },
-      {
-        icon: 'reject', color: 'red',
-        title: '<strong>Dr. Ramon Santos</strong> rejected a deletion request',
-        subject: 'Sophia Lim · Resigned notice',
-        time: new Date(Date.now() - 4 * 60 * 60 * 1000),
-        user: 'Dr. Ramon Santos'
-      },
-      {
-        icon: 'view', color: 'maroon',
-        title: '<strong>Liza Fernandez</strong> viewed a confidential file',
-        subject: 'Registrar Report Q4 2024.xlsx',
-        time: new Date(Date.now() - 6 * 60 * 60 * 1000),
-        user: 'Liza Fernandez'
-      },
-      {
-        icon: 'create', color: 'blue',
-        title: '<strong>Maria Cruz</strong> added a new document',
-        subject: 'Faculty Evaluation Summary.pdf',
-        time: new Date(Date.now() - 20 * 60 * 60 * 1000),
-        user: 'Maria Cruz'
-      },
-      {
-        icon: 'authorize', color: 'green',
-        title: '<strong>Dr. Ramon Santos</strong> authorized 3 documents',
-        subject: 'Batch approval · Registrar',
-        time: new Date(Date.now() - 28 * 60 * 60 * 1000),
-        user: 'Dr. Ramon Santos'
-      },
-      {
-        icon: 'edit', color: 'gold',
-        title: '<strong>Anna Reyes</strong> updated a document',
-        subject: 'Meeting Minutes · Jan 10, 2025',
-        time: new Date(Date.now() - 32 * 60 * 60 * 1000),
-        user: 'Anna Reyes'
+
+    // Activity feed
+    let activity = [];
+
+    // Tasks (per role)
+    let tasks = [];
+
+    // Mini chart — monthly documents
+    let monthlyData = [];
+
+    /**
+     * Load dashboard data from the backend.
+     * Replace the empty assignments with real fetch() calls when ready:
+     *
+     *   const res = await fetch('/api/dashboard');
+     *   const data = await res.json();
+     *   activity = data.activity;
+     *   tasks = data.tasks;
+     *   monthlyData = data.monthlyData;
+     */
+    async function loadDashboardData() {
+      try {
+        // TODO: Replace with real API call
+        // const res = await fetch('/api/dashboard');
+        // const data = await res.json();
+        // activity = data.activity || [];
+        // tasks = data.tasks || [];
+        // monthlyData = data.monthlyData || [];
+
+        activity = [];
+        tasks = [];
+        monthlyData = [];
+      } catch (err) {
+        console.error('[Dashboard] Failed to load:', err);
+        if (window.APP && APP.Toast) {
+          APP.Toast.error('Load Failed', 'Could not load dashboard data.');
+        }
+        activity = [];
+        tasks = [];
+        monthlyData = [];
       }
-    ];
 
-    /* --------------------------------------------------------------------
-       MOCK DATA — Tasks
-       -------------------------------------------------------------------- */
-    const tasks = [
-      { id: 1, title: 'Review budget proposal from Accounting',      tag: 'Approval', urgent: true,  done: false, due: 'Today' },
-      { id: 2, title: 'Sign faculty evaluation summary',              tag: 'Signature', urgent: false, done: false, due: 'Tomorrow' },
-      { id: 3, title: 'Approve new account — Carlos Mendoza',         tag: 'Account',   urgent: true,  done: false, due: 'Today' },
-      { id: 4, title: 'Confirm deletion request — Sophia Lim',        tag: 'Account',   urgent: false, done: false, due: 'This week' },
-      { id: 5, title: 'Reply to HR memo about staffing',              tag: 'Reply',     urgent: false, done: true,  due: 'Done' }
-    ];
+      renderActivity();
+      renderTasks();
+      renderChart();
+      updateStatCards();
+    }
 
-    /* --------------------------------------------------------------------
-       MOCK DATA — Chart
-       -------------------------------------------------------------------- */
-    const monthlyData = [
-      { month: 'Aug', value: 32 },
-      { month: 'Sep', value: 41 },
-      { month: 'Oct', value: 38 },
-      { month: 'Nov', value: 52 },
-      { month: 'Dec', value: 44 },
-      { month: 'Jan', value: 40 }
-    ];
+    /**
+     * Load stats for the 4 KPI cards.
+     * Replace with real endpoint, e.g. GET /api/dashboard/stats
+     */
+    async function loadStatCards() {
+      try {
+        // TODO: Replace with real API call
+        // const res = await fetch('/api/dashboard/stats');
+        // const stats = await res.json();
+
+        const stats = {
+          totalDocuments: 0,
+          pendingApprovals: 0,
+          activeAccounts: 0,
+          thisWeek: 0
+        };
+
+        document.getElementById('statDocuments').textContent = stats.totalDocuments;
+        document.getElementById('statPending').textContent   = stats.pendingApprovals;
+        document.getElementById('statAccounts').textContent  = stats.activeAccounts;
+        document.getElementById('statThisWeek').textContent  = stats.thisWeek;
+      } catch (err) {
+        console.error('[Stats] Failed to load:', err);
+      }
+    }
 
     /* --------------------------------------------------------------------
        ICON PATHS for activity feed
@@ -938,17 +957,30 @@
       authorize: '<path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>',
       edit:      '<path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>',
       reject:    '<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>',
-      view:      '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/>'
+      view:      '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/>',
+      route:     '<path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/>'
     };
 
     /* --------------------------------------------------------------------
        RENDER — Activity feed
        -------------------------------------------------------------------- */
-    function renderActivity() {
+        function renderActivity() {
       const feed = document.getElementById('activityFeed');
       if (!feed) return;
 
-      // Show only latest 6 items
+      if (!activity || activity.length === 0) {
+        feed.innerHTML = `
+          <div style="text-align:center;padding:40px 20px;color:var(--text-muted);">
+            <svg viewBox="0 0 24 24" style="width:40px;height:40px;fill:var(--text-muted);opacity:0.4;margin-bottom:10px;">
+              <path d="M13 3a9 9 0 00-9 9H1l3.89 3.89.07.14L9 12H6a7 7 0 117 7 6.96 6.96 0 01-4.95-2.05l-1.42 1.42A9 9 0 1013 3zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
+            </svg>
+            <div style="font-size:0.85rem;font-weight:600;">No recent activity</div>
+            <div style="font-size:0.75rem;margin-top:4px;">Events will appear here as they happen.</div>
+          </div>
+        `;
+        return;
+      }
+
       feed.innerHTML = activity.slice(0, 6).map(a => `
         <div class="activity-item">
           <div class="activity-icon ${a.color}">
@@ -967,12 +999,25 @@
     }
 
     /* --------------------------------------------------------------------
-       RENDER — Tasks
+       RENDER — Tasks (role-aware)
        -------------------------------------------------------------------- */
-    function renderTasks() {
+       function renderTasks() {
       const list = document.getElementById('tasksList');
-      const counter = document.getElementById('taskCounter');
       if (!list) return;
+
+      if (!tasks || tasks.length === 0) {
+        list.innerHTML = `
+          <div style="text-align:center;padding:30px 20px;color:var(--text-muted);">
+            <svg viewBox="0 0 24 24" style="width:36px;height:36px;fill:var(--text-muted);opacity:0.4;margin-bottom:8px;">
+              <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+            </svg>
+            <div style="font-size:0.85rem;font-weight:600;">No tasks assigned</div>
+            <div style="font-size:0.75rem;margin-top:4px;">You're all caught up!</div>
+          </div>
+        `;
+        updateTaskCounter();
+        return;
+      }
 
       list.innerHTML = tasks.map(t => `
         <div class="task-item ${t.urgent ? 'urgent' : ''} ${t.done ? 'done' : ''}" data-id="${t.id}">
@@ -987,7 +1032,6 @@
         </div>
       `).join('');
 
-      // Wire up checkboxes
       list.querySelectorAll('.task-check').forEach(cb => {
         cb.addEventListener('change', (e) => {
           const id = parseInt(e.target.dataset.id);
@@ -1008,9 +1052,13 @@
       updateTaskCounter();
     }
 
-    function updateTaskCounter() {
+      function updateTaskCounter() {
       const counter = document.getElementById('taskCounter');
       if (!counter) return;
+      if (!tasks || tasks.length === 0) {
+        counter.textContent = '0 tasks';
+        return;
+      }
       const done = tasks.filter(t => t.done).length;
       counter.textContent = `${done} of ${tasks.length} done`;
     }
@@ -1018,14 +1066,23 @@
     /* --------------------------------------------------------------------
        RENDER — Mini bar chart
        -------------------------------------------------------------------- */
-    function renderChart() {
+        function renderChart() {
       const chart = document.getElementById('miniChart');
       if (!chart) return;
 
-      const max = Math.max(...monthlyData.map(m => m.value));
+      if (!monthlyData || monthlyData.length === 0) {
+        chart.innerHTML = `
+          <div style="text-align:center;padding:30px 20px;color:var(--text-muted);width:100%;">
+            <div style="font-size:0.8rem;">No data available yet</div>
+          </div>
+        `;
+        return;
+      }
+
+      const max = Math.max(...monthlyData.map(m => m.value), 1);
 
       chart.innerHTML = monthlyData.map(m => {
-        const height = Math.max((m.value / max) * 100, 8); // min 8% height
+        const height = Math.max((m.value / max) * 100, 4);
         return `
           <div class="bar" style="height:${height}%;" title="${m.month}: ${m.value} documents">
             <span class="bar-value">${m.value}</span>
@@ -1049,7 +1106,7 @@
       if (nameEl)   nameEl.textContent   = user.userName;
 
       if (subEl) {
-        const pending = 5; // static for now
+        const pending = 5;
         const greetings = {
           secretary: `You have <strong>${pending} pending items</strong> to process today.`,
           ea:        `You have <strong>${pending} pending items</strong> waiting for your review.`,
@@ -1058,40 +1115,102 @@
         subEl.innerHTML = greetings[user.id] || greetings.secretary;
       }
 
-      // Update greeting based on time of day
+      // Time-aware greeting
       const hour = new Date().getHours();
       const greeting =
         hour < 12 ? 'Good morning 👋' :
         hour < 18 ? 'Good afternoon 👋' :
                     'Good evening 👋';
-      const greetingEl = document.querySelector('.welcome-text .greeting');
+      const greetingEl = document.getElementById('greetingText');
       if (greetingEl) greetingEl.textContent = greeting;
     }
 
     /* --------------------------------------------------------------------
-       ROLE-AWARE — Hide create account button for Director
+       ROLE-AWARE — Show/hide quick actions + welcome buttons
        -------------------------------------------------------------------- */
     function applyRole() {
-      const qaNew = document.getElementById('qaNewAccount');
-      if (qaNew) {
-        qaNew.style.display = Role.can('add') ? 'flex' : 'none';
+      const roleId = Role.id();
+
+      // --- Welcome banner buttons ---
+      const welcomeUpload = document.getElementById('welcomeUploadBtn');
+      const welcomeApprovals = document.getElementById('welcomeApprovalsBtn');
+      const welcomeApprovalsLabel = document.getElementById('welcomeApprovalsLabel');
+
+      // Upload Document — only Secretary
+      if (welcomeUpload) {
+        welcomeUpload.style.display = Role.can('document:add') ? 'inline-flex' : 'none';
       }
 
-      // Update "review approvals" description
-      const desc = document.getElementById('qaApprovalsDesc');
-      if (desc) {
-        if (Role.can('authorize')) {
-          desc.textContent = '5 items need your authorization';
+      // Approvals button — always visible, but label varies
+      if (welcomeApprovals && welcomeApprovalsLabel) {
+        if (Role.can('approval:review')) {
+          welcomeApprovalsLabel.textContent = 'Review Approvals';
         } else {
-          desc.textContent = 'Track your submitted requests';
+          welcomeApprovalsLabel.textContent = 'View Approvals';
         }
       }
+
+      // --- Quick actions ---
+      const qaUploadDoc    = document.getElementById('qaUploadDoc');
+      const qaNewAccount   = document.getElementById('qaNewAccount');
+      const qaRouteDoc     = document.getElementById('qaRouteDoc');
+      const qaApprovals    = document.getElementById('qaApprovals');
+      const qaApprovalsTitle = document.getElementById('qaApprovalsTitle');
+      const qaApprovalsDesc  = document.getElementById('qaApprovalsDesc');
+      const qaReports      = document.getElementById('qaReports');
+      const qaViewReports  = document.getElementById('qaViewReports');
+
+      // Upload Document — Secretary only
+      if (qaUploadDoc) {
+        qaUploadDoc.style.display = Role.can('document:add') ? 'flex' : 'none';
+      }
+
+      // Create Account — Secretary + EA
+      if (qaNewAccount) {
+        qaNewAccount.style.display = Role.can('account:add') ? 'flex' : 'none';
+      }
+
+      // Route Document — Secretary only
+      if (qaRouteDoc) {
+        qaRouteDoc.style.display = Role.can('routing:route') ? 'flex' : 'none';
+      }
+
+      // Review Approvals — always visible, but message varies
+      if (qaApprovals && qaApprovalsTitle && qaApprovalsDesc) {
+        if (Role.can('approval:review')) {
+          qaApprovalsTitle.textContent = 'Review Approvals';
+          qaApprovalsDesc.textContent  = '5 items need your authorization';
+        } else {
+          qaApprovalsTitle.textContent = 'View Approvals';
+          qaApprovalsDesc.textContent  = 'Track your submitted requests';
+        }
+      }
+
+      // Generate Report — Secretary + EA only
+      if (qaReports) {
+        qaReports.style.display = Role.can('report:generate') ? 'flex' : 'none';
+      }
+
+      // View Reports — Director only
+      if (qaViewReports) {
+        qaViewReports.style.display = (roleId === 'director') ? 'flex' : 'none';
+      }
+
 
       personalizeWelcome();
     }
 
+        /**
+     * Refresh the 4 KPI stat cards with current values.
+     * In production, these values come from the backend.
+     */
+    function updateStatCards() {
+      // The loadStatCards() function already updates these directly.
+      // This is a hook for reactive updates after actions.
+    }
+
     /* --------------------------------------------------------------------
-       COUNTER ANIMATION — small nicety on stat cards
+       COUNTER ANIMATION
        -------------------------------------------------------------------- */
     function animateCounters() {
       document.querySelectorAll('.stat-value').forEach(el => {
@@ -1113,14 +1232,12 @@
       });
     }
 
-    /* --------------------------------------------------------------------
+        /* --------------------------------------------------------------------
        INIT
        -------------------------------------------------------------------- */
-    renderActivity();
-    renderTasks();
-    renderChart();
     applyRole();
-    animateCounters();
+    loadDashboardData();
+    loadStatCards();
 
     // React to role change
     Bus.on('role:changed', () => {

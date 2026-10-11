@@ -50,6 +50,7 @@
     text-align: left;
     width: 100%;
     position: relative;
+    text-decoration: none;
   }
 
   .settings-nav-item svg {
@@ -83,6 +84,23 @@
     height: 14px !important;
   }
   .settings-nav-item.active .nav-arrow { opacity: 1; }
+
+  /* External link badge */
+  .settings-nav-item .nav-ext {
+    margin-left: auto;
+    font-size: 0.65rem;
+    padding: 2px 7px;
+    background: rgba(212,175,55,0.15);
+    color: #8a6d1f;
+    border-radius: 8px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  body.dark-mode .settings-nav-item .nav-ext {
+    background: rgba(212,175,55,0.2);
+    color: var(--gold);
+  }
 
   /* ---------- Content panels ---------- */
   .settings-panel {
@@ -171,116 +189,110 @@
 
   .avatar-actions .btn { padding: 9px 16px; font-size: 0.8rem; }
 
-  /* ---------- Toggle switch ---------- */
-  .toggle-row {
+  /* ---------- Notification info block (replaces toggles) ---------- */
+  .notif-info-block {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 16px 0;
-    border-bottom: 1px solid var(--border-light);
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+    background: linear-gradient(135deg,
+      rgba(212,175,55,0.08) 0%,
+      rgba(212,175,55,0.02) 100%);
+    border: 1.5px solid var(--gold);
+    border-radius: var(--radius-lg);
+    margin-bottom: 16px;
   }
-  .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
-  .toggle-row:first-child { padding-top: 0; }
 
-  .toggle-info { flex: 1; min-width: 0; }
-  .toggle-info .toggle-title {
-    font-size: 0.9rem;
-    font-weight: 600;
+  .notif-info-block .notif-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--gold);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  body.dark-mode .notif-info-block .notif-icon {
+    color: #1a1414;
+  }
+  .notif-info-block .notif-icon svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+  }
+
+  .notif-info-block .notif-info-text { flex: 1; min-width: 0; }
+  .notif-info-block .notif-info-text h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 4px;
   }
-  .toggle-info .toggle-desc {
-    font-size: 0.78rem;
-    color: var(--text-muted);
+  .notif-info-block .notif-info-text p {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
     line-height: 1.5;
   }
 
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 46px;
-    height: 26px;
-    flex-shrink: 0;
-    cursor: pointer;
-  }
-
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-    position: absolute;
-  }
-
-  .switch .slider {
-    position: absolute;
-    inset: 0;
-    background: var(--border-medium);
-    border-radius: 26px;
-    transition: background 0.3s ease;
-    cursor: pointer;
-  }
-
-  .switch .slider::before {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    left: 3px;
-    top: 3px;
-    background: #fff;
-    border-radius: 50%;
-    transition: transform 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-  }
-
-  .switch input:checked + .slider {
-    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
-  }
-  body.dark-mode .switch input:checked + .slider {
-    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-  }
-
-  .switch input:checked + .slider::before {
-    transform: translateX(20px);
-  }
-
-  .switch input:focus-visible + .slider {
-    outline: 2px solid var(--gold);
-    outline-offset: 3px;
-  }
-
-  /* ---------- Security: password strength ---------- */
-  .pw-strength {
-    display: flex;
-    gap: 5px;
-    margin-top: 8px;
-    margin-bottom: 6px;
-  }
-
-  .pw-strength .strength-bar {
-    flex: 1;
-    height: 4px;
-    background: var(--border-light);
-    border-radius: 2px;
-    transition: background 0.3s ease;
-  }
-
-  .pw-strength.weak   .strength-bar:nth-child(1) { background: #ff4757; }
-  .pw-strength.fair   .strength-bar:nth-child(-n+2) { background: #ffa94d; }
-  .pw-strength.good   .strength-bar:nth-child(-n+3) { background: var(--gold); }
-  .pw-strength.strong .strength-bar { background: #2ed573; }
-
-  .pw-strength-label {
-    font-size: 0.72rem;
+  .notif-info-block .notif-info-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    background: var(--maroon);
+    color: var(--gold);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.82rem;
     font-weight: 700;
-    letter-spacing: 0.3px;
-    display: inline-block;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    text-decoration: none;
+    white-space: nowrap;
   }
-  .pw-strength.weak   ~ .pw-strength-label { color: #ff4757; }
-  .pw-strength.fair   ~ .pw-strength-label { color: #ffa94d; }
-  .pw-strength.good   ~ .pw-strength-label { color: #8a6d1f; }
-  .pw-strength.strong ~ .pw-strength-label { color: #2ed573; }
+  .notif-info-block .notif-info-cta:hover {
+    background: var(--maroon-deep);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(123,17,19,0.3);
+  }
+  body.dark-mode .notif-info-block .notif-info-cta {
+    background: var(--gold);
+    color: #1a1414;
+  }
+  .notif-info-block .notif-info-cta svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+  }
+
+  /* Preview list of what's managed on the notifications page */
+  .notif-preview-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .notif-preview-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--bg-input);
+    border-radius: var(--radius-md);
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+  }
+
+  .notif-preview-item svg {
+    width: 15px;
+    height: 15px;
+    fill: var(--gold);
+    flex-shrink: 0;
+  }
 
   /* ---------- Session list ---------- */
   .session-item {
@@ -391,15 +403,8 @@
     border: 1px solid var(--border-light);
   }
 
-  .theme-preview .preview-sidebar {
-    width: 30%;
-    background: #7B1113;
-  }
-  .theme-preview .preview-main {
-    flex: 1;
-    background: #fff;
-    position: relative;
-  }
+  .theme-preview .preview-sidebar { width: 30%; background: #7B1113; }
+  .theme-preview .preview-main { flex: 1; background: #fff; position: relative; }
   .theme-preview .preview-main::after {
     content: '';
     position: absolute;
@@ -436,6 +441,38 @@
     font-size: 0.72rem;
     color: var(--text-muted);
   }
+
+  /* ---------- Password strength ---------- */
+  .pw-strength {
+    display: flex;
+    gap: 5px;
+    margin-top: 8px;
+    margin-bottom: 6px;
+  }
+
+  .pw-strength .strength-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--border-light);
+    border-radius: 2px;
+    transition: background 0.3s ease;
+  }
+
+  .pw-strength.weak   .strength-bar:nth-child(1) { background: #ff4757; }
+  .pw-strength.fair   .strength-bar:nth-child(-n+2) { background: #ffa94d; }
+  .pw-strength.good   .strength-bar:nth-child(-n+3) { background: var(--gold); }
+  .pw-strength.strong .strength-bar { background: #2ed573; }
+
+  .pw-strength-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    display: inline-block;
+  }
+  .pw-strength.weak   ~ .pw-strength-label { color: #ff4757; }
+  .pw-strength.fair   ~ .pw-strength-label { color: #ffa94d; }
+  .pw-strength.good   ~ .pw-strength-label { color: #8a6d1f; }
+  .pw-strength.strong ~ .pw-strength-label { color: #2ed573; }
 
   /* ---------- Danger zone ---------- */
   .danger-zone {
@@ -555,10 +592,18 @@
         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
         Documents
       </a>
+      <a class="nav-item" href="routing.html" data-page="routing.html">
+        <svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
+        Routing &amp; Tracking
+      </a>
       <a class="nav-item" href="approvals.html" data-page="approvals.html">
         <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
         Approvals
         <span class="nav-badge" id="approvalBadgeSide">5</span>
+      </a>
+      <a class="nav-item" href="notifications.html" data-page="notifications.html">
+        <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+        Notifications
       </a>
     </div>
 
@@ -645,11 +690,14 @@
             Profile
             <svg class="nav-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
           </button>
-          <button class="settings-nav-item" data-panel="notifications">
+
+          <!-- 🔄 CHANGED: Notifications now links to standalone page -->
+          <a class="settings-nav-item" href="notifications.html">
             <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
             Notifications
-            <svg class="nav-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
-          </button>
+            <span class="nav-ext">Open</span>
+          </a>
+
           <button class="settings-nav-item" data-panel="security">
             <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
             Security
@@ -691,7 +739,7 @@
                 </div>
               </div>
 
-              <div class="form-row">
+              <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                 <div class="form-group">
                   <label for="profileFirstName">First Name <span class="req">*</span></label>
                   <input type="text" id="profileFirstName" />
@@ -708,7 +756,7 @@
                 <div class="form-hint">This email is used for login and notifications.</div>
               </div>
 
-              <div class="form-row">
+              <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                 <div class="form-group">
                   <label for="profileRole">Role</label>
                   <input type="text" id="profileRole" disabled style="opacity:0.7;cursor:not-allowed;" />
@@ -737,7 +785,7 @@
           </div>
 
           <!-- ==================================================
-               PANEL 2 — NOTIFICATIONS
+               PANEL 2 — NOTIFICATIONS (info + link)
                ================================================== -->
           <div class="settings-panel" id="panel-notifications">
 
@@ -745,104 +793,55 @@
               <div class="settings-card-header">
                 <h2>
                   <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-                  Email Notifications
+                  Notifications
                 </h2>
-                <p>Control which updates you receive in your inbox.</p>
+                <p>Notifications now live on a dedicated page with a full inbox and email delivery settings.</p>
               </div>
 
-              <div class="toggle-row">
-                <div class="toggle-info">
-                  <div class="toggle-title">New documents</div>
-                  <div class="toggle-desc">Get notified whenever a document is submitted to the office.</div>
-                </div>
-                <label class="switch">
-                  <input type="checkbox" data-notif="emailNewDoc" checked />
-                  <span class="slider"></span>
-                </label>
-              </div>
-
-              <div class="toggle-row">
-                <div class="toggle-info">
-                  <div class="toggle-title">Authorization requests</div>
-                  <div class="toggle-desc">Alerts when something is waiting for your approval.</div>
-                </div>
-                <label class="switch">
-                  <input type="checkbox" data-notif="emailApproval" checked />
-                  <span class="slider"></span>
-                </label>
-              </div>
-
-              <div class="toggle-row">
-                <div class="toggle-info">
-                  <div class="toggle-title">Account activity</div>
-                  <div class="toggle-desc">Login events, password changes, and profile updates.</div>
-                </div>
-                <label class="switch">
-                  <input type="checkbox" data-notif="emailAccount" checked />
-                  <span class="slider"></span>
-                </label>
-              </div>
-
-              <div class="toggle-row">
-                <div class="toggle-info">
-                  <div class="toggle-title">Weekly digest</div>
-                  <div class="toggle-desc">A summary email every Monday at 8:00 AM.</div>
-                </div>
-                <label class="switch">
-                  <input type="checkbox" data-notif="emailDigest" />
-                  <span class="slider"></span>
-                </label>
-              </div>
-            </div>
-
-            <div class="settings-card">
-              <div class="settings-card-header">
-                <h2>
+              <div class="notif-info-block">
+                <div class="notif-icon">
                   <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-                  In-App Alerts
-                </h2>
-                <p>Manage the notification bell and desktop pop-ups.</p>
-              </div>
-
-              <div class="toggle-row">
-                <div class="toggle-info">
-                  <div class="toggle-title">Desktop notifications</div>
-                  <div class="toggle-desc">Show browser notifications even when the tab is in the background.</div>
                 </div>
-                <label class="switch">
-                  <input type="checkbox" data-notif="desktop" />
-                  <span class="slider"></span>
-                </label>
-              </div>
-
-              <div class="toggle-row">
-                <div class="toggle-info">
-                  <div class="toggle-title">Sound alerts</div>
-                  <div class="toggle-desc">Play a subtle sound when a new request arrives.</div>
+                <div class="notif-info-text">
+                  <h3>Notification Center</h3>
+                  <p>View all your notifications, manage email preferences, and check the delivery log on the dedicated Notifications page.</p>
                 </div>
-                <label class="switch">
-                  <input type="checkbox" data-notif="sound" checked />
-                  <span class="slider"></span>
-                </label>
+                <a href="notifications.html" class="notif-info-cta">
+                  <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                  Open Notifications
+                </a>
               </div>
 
-              <div class="toggle-row">
-                <div class="toggle-info">
-                  <div class="toggle-title">Do not disturb</div>
-                  <div class="toggle-desc">Silence all notifications during the specified hours.</div>
+              <div style="font-size:0.78rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:20px 0 8px;">
+                What you can manage
+              </div>
+
+              <div class="notif-preview-list">
+                <div class="notif-preview-item">
+                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                  View all notifications
                 </div>
-                <label class="switch">
-                  <input type="checkbox" data-notif="dnd" />
-                  <span class="slider"></span>
-                </label>
+                <div class="notif-preview-item">
+                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                  Filter by type (Documents, Approvals, Routing, Accounts)
+                </div>
+                <div class="notif-preview-item">
+                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                  Mark as read / Clear
+                </div>
+                <div class="notif-preview-item">
+                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                  Email notifier master switch
+                </div>
+                <div class="notif-preview-item">
+                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                  Per-event email toggles
+                </div>
+                <div class="notif-preview-item">
+                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                  Recent email delivery log
+                </div>
               </div>
-            </div>
-
-            <div style="display:flex;gap:10px;flex-wrap:wrap;">
-              <button class="btn btn-primary" id="btnSaveNotifs">
-                <svg viewBox="0 0 24 24"><path d="M17 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V7l-4-4zm-5 16a3 3 0 110-6 3 3 0 010 6zm3-10H5V5h10v4z"/></svg>
-                Save Preferences
-              </button>
             </div>
 
           </div>
@@ -900,25 +899,25 @@
                 <p>Add an extra layer of security to your account.</p>
               </div>
 
-              <div class="toggle-row">
+              <div class="toggle-row" style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--border-light);">
                 <div class="toggle-info">
-                  <div class="toggle-title">Enable 2FA via Authenticator App</div>
-                  <div class="toggle-desc">Use Google Authenticator, Authy, or similar. Recommended for Director accounts.</div>
+                  <div class="toggle-title" style="font-size:0.85rem;font-weight:600;color:var(--text-primary);margin-bottom:3px;">Enable 2FA via Authenticator App</div>
+                  <div class="toggle-desc" style="font-size:0.74rem;color:var(--text-muted);">Use Google Authenticator, Authy, or similar.</div>
                 </div>
-                <label class="switch">
-                  <input type="checkbox" id="toggle2FA" />
-                  <span class="slider"></span>
+                <label class="switch" style="position:relative;display:inline-block;width:42px;height:24px;flex-shrink:0;cursor:pointer;">
+                  <input type="checkbox" id="toggle2FA" style="opacity:0;width:0;height:0;position:absolute;" />
+                  <span class="slider" style="position:absolute;inset:0;background:var(--border-medium);border-radius:24px;transition:background 0.3s ease;cursor:pointer;"></span>
                 </label>
               </div>
 
-              <div class="toggle-row">
+              <div class="toggle-row" style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:12px 0;">
                 <div class="toggle-info">
-                  <div class="toggle-title">Enable 2FA via Email</div>
-                  <div class="toggle-desc">Receive a 6-digit code on your registered email each login.</div>
+                  <div class="toggle-title" style="font-size:0.85rem;font-weight:600;color:var(--text-primary);margin-bottom:3px;">Enable 2FA via Email</div>
+                  <div class="toggle-desc" style="font-size:0.74rem;color:var(--text-muted);">Receive a 6-digit code on your email each login.</div>
                 </div>
-                <label class="switch">
-                  <input type="checkbox" data-notif="twoFAEmail" checked />
-                  <span class="slider"></span>
+                <label class="switch" style="position:relative;display:inline-block;width:42px;height:24px;flex-shrink:0;cursor:pointer;">
+                  <input type="checkbox" checked style="opacity:0;width:0;height:0;position:absolute;" />
+                  <span class="slider" style="position:absolute;inset:0;background:var(--border-medium);border-radius:24px;transition:background 0.3s ease;cursor:pointer;"></span>
                 </label>
               </div>
             </div>
@@ -1025,7 +1024,7 @@
                 <p>Language, date format, and time zone.</p>
               </div>
 
-              <div class="form-row">
+              <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                 <div class="form-group">
                   <label for="sysLanguage">Language</label>
                   <select id="sysLanguage">
@@ -1044,7 +1043,7 @@
                 </div>
               </div>
 
-              <div class="form-row">
+              <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                 <div class="form-group">
                   <label for="sysDateFormat">Date Format</label>
                   <select id="sysDateFormat">
@@ -1122,7 +1121,7 @@
   <script src="app.js"></script>
   <script>
   /* ==========================================================================
-     SETTINGS — Page module
+     SETTINGS — Page module (final, aligned with use case diagram)
      ========================================================================== */
   (function () {
     'use strict';
@@ -1137,7 +1136,7 @@
     /* --------------------------------------------------------------------
        TAB NAVIGATION
        -------------------------------------------------------------------- */
-    document.querySelectorAll('.settings-nav-item').forEach(btn => {
+    document.querySelectorAll('.settings-nav-item[data-panel]').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.settings-nav-item').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
@@ -1146,7 +1145,6 @@
         const panel = $('panel-' + btn.dataset.panel);
         if (panel) panel.classList.add('active');
 
-        // Scroll to top of content
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
     });
@@ -1183,9 +1181,7 @@
       $('profileLastName').value  = last;
       $('profileEmail').value     = user.email;
       $('profileRole').value      = user.label;
-      $('profileDept').value      = user.id === 'director' ? "Director's Office" :
-                                    user.id === 'secretary' ? "Director's Office" :
-                                    "Director's Office";
+      $('profileDept').value      = "Director's Office";
       $('profilePhone').value     = '+63 917 555 0123';
 
       $('profileAvatarLarge').textContent = user.initials;
@@ -1233,51 +1229,13 @@
     });
 
     /* --------------------------------------------------------------------
-       NOTIFICATIONS — Persist toggles
-       -------------------------------------------------------------------- */
-    const NOTIF_KEY = 'uphsdNotifPrefs';
-
-    function loadNotifs() {
-      const saved = Storage.get(NOTIF_KEY, {});
-      document.querySelectorAll('[data-notif]').forEach(el => {
-        if (saved[el.dataset.notif] !== undefined) {
-          el.checked = !!saved[el.dataset.notif];
-        }
-      });
-    }
-
-    function saveNotifs() {
-      const prefs = {};
-      document.querySelectorAll('[data-notif]').forEach(el => {
-        prefs[el.dataset.notif] = el.checked;
-      });
-      Storage.set(NOTIF_KEY, prefs);
-    }
-
-    document.querySelectorAll('[data-notif]').forEach(el => {
-      el.addEventListener('change', () => {
-        saveNotifs();
-        const state = el.checked ? 'enabled' : 'disabled';
-        Toast.info('Preference Saved', `"${state}" — toggled successfully.`);
-      });
-    });
-
-    $('btnSaveNotifs').addEventListener('click', () => {
-      saveNotifs();
-      showSaving();
-      setTimeout(() => {
-        Toast.success('Preferences Saved', 'Your notification settings have been updated.');
-      }, 1000);
-    });
-
-    /* --------------------------------------------------------------------
        SECURITY — Password strength
        -------------------------------------------------------------------- */
     function calcStrength(pw) {
       let score = 0;
-      if (pw.length >= 8)     score++;
-      if (/[A-Z]/.test(pw))   score++;
-      if (/[0-9]/.test(pw))   score++;
+      if (pw.length >= 8)          score++;
+      if (/[A-Z]/.test(pw))        score++;
+      if (/[0-9]/.test(pw))        score++;
       if (/[^A-Za-z0-9]/.test(pw)) score++;
       return score;
     }
@@ -1469,13 +1427,12 @@
     $('btnDeleteAccount').addEventListener('click', async () => {
       const ok = await APP.confirm({
         title: 'Delete your account permanently?',
-        message: 'This action cannot be undone. Type nothing — just confirm.',
+        message: 'This action cannot be undone.',
         confirmText: 'Delete Forever',
         danger: true
       });
       if (!ok) return;
 
-      // Second confirmation
       const reallySure = await APP.confirm({
         title: 'Are you absolutely sure?',
         message: 'This is your final warning. Your account will be removed immediately.',
@@ -1485,11 +1442,10 @@
       if (!reallySure) return;
 
       Toast.error('Account Deletion', 'In production, this would log you out and delete the account.');
-      // In real app: APP.Auth.logout();
     });
 
     /* --------------------------------------------------------------------
-       ROLE-AWARE UI
+       ROLE-AWARE
        -------------------------------------------------------------------- */
     function applyRole() {
       loadProfile();
@@ -1507,7 +1463,6 @@
        INIT
        -------------------------------------------------------------------- */
     loadProfile();
-    loadNotifs();
     highlightCurrentTheme();
 
   })();

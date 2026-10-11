@@ -5,7 +5,7 @@
    This file is loaded by every authenticated page and provides:
      1.  App namespace & configuration
      2.  Storage helpers (localStorage wrapper)
-     3.  Role & permission system
+     3.  Role & permission system (aligned with eDocumentFlow use case diagrams)
      4.  Theme (dark mode) management
      5.  Toast notifications
      6.  Mobile sidebar toggle
@@ -30,7 +30,7 @@
      ========================================================================== */
   const APP = {
     name: 'UPHSD Molino — Director\'s Office',
-    version: '1.0.0',
+    version: '1.1.0',
     storagePrefix: 'uphsd_',
     keys: {
       role: 'uphsdRole',
@@ -44,14 +44,15 @@
       login: 'login.html',
       dashboard: 'dashboard.html',
       documents: 'documents.html',
+      routing: 'routing.html',
       approvals: 'approvals.html',
       accounts: 'accounts.html',
       reports: 'reports.html',
+      notifications: 'notifications.html',
       settings: 'settings.html'
     }
   };
 
-  // Expose globally
   window.APP = APP;
 
   /* ==========================================================================
@@ -96,10 +97,43 @@
   /* ==========================================================================
      3. ROLES & PERMISSIONS
      ==========================================================================
-     Roles:
-       secretary  — Add, Edit, Delete, View
-       ea         — Add, Edit, Delete, View
-       director   — Edit, View, Authorize
+     Permissions per module (matching eDocumentFlow use case diagrams):
+
+     ┌─────────────────────┬──────────┬────────┬──────────┐
+     │ Action              │ Secretary│   EA   │ Director │
+     ├─────────────────────┼──────────┼────────┼──────────┤
+     │ ACCOUNT MANAGEMENT                                     │
+     │   account:add       │    ✅    │   ✅   │    ❌    │
+     │   account:edit      │    ✅    │   ✅   │    ✅    │
+     │   account:delete    │    ✅    │   ✅   │    ❌    │
+     │   account:view      │    ✅    │   ✅   │    ✅    │
+     │   account:authorize │    ❌    │   ❌   │    ✅    │
+     ├─────────────────────┼──────────┼────────┼──────────┤
+     │ DOCUMENT MANAGEMENT                                    │
+     │   document:add      │    ✅    │   ❌   │    ❌    │
+     │   document:edit     │    ✅    │   ✅   │    ✅    │
+     │   document:delete   │    ✅    │   ✅   │    ✅    │
+     │   document:view     │    ✅    │   ✅   │    ✅    │
+     ├─────────────────────┼──────────┼────────┼──────────┤
+     │ ROUTING & TRACKING                                     │
+     │   routing:route     │    ✅    │   ❌   │    ❌    │
+     │   routing:update    │    ✅    │   ✅   │    ❌    │
+     │   routing:track     │    ✅    │   ✅   │    ❌    │
+     │   routing:view      │    ✅    │   ✅   │    ✅    │
+     ├─────────────────────┼──────────┼────────┼──────────┤
+     │ APPROVAL                                               │
+     │   approval:submit   │    ✅    │   ✅   │    ❌    │
+     │   approval:review   │    ❌    │   ❌   │    ✅    │
+     ├─────────────────────┼──────────┼────────┼──────────┤
+     │ NOTIFICATIONS                                          │
+     │   notification:view │    ✅    │   ✅   │    ✅    │
+     │   notification:email│    ✅    │   ✅   │    ✅    │
+     ├─────────────────────┼──────────┼────────┼──────────┤
+     │ REPORTS & MONITORING                                   │
+     │   report:generate   │    ✅    │   ✅   │    ❌    │
+     │   report:view       │    ✅    │   ✅   │    ✅    │
+     │   report:print      │    ✅    │   ✅   │    ✅    │
+     └─────────────────────┴──────────┴────────┴──────────┘
      ========================================================================== */
   const ROLES = {
     secretary: {
@@ -108,7 +142,20 @@
       userName: 'Maria Cruz',
       initials: 'MC',
       email: 'maria.cruz@uphsd.edu.ph',
-      permissions: ['add', 'edit', 'delete', 'view']
+      permissions: [
+        // Account Management
+        'account:add', 'account:edit', 'account:delete', 'account:view',
+        // Document Management
+        'document:add', 'document:edit', 'document:delete', 'document:view',
+        // Routing & Tracking
+        'routing:route', 'routing:update', 'routing:track', 'routing:view',
+        // Approval
+        'approval:submit',
+        // Notifications
+        'notification:view', 'notification:email',
+        // Reports
+        'report:generate', 'report:view', 'report:print'
+      ]
     },
     ea: {
       id: 'ea',
@@ -116,7 +163,20 @@
       userName: 'Anna Reyes',
       initials: 'AR',
       email: 'anna.reyes@uphsd.edu.ph',
-      permissions: ['add', 'edit', 'delete', 'view']
+      permissions: [
+        // Account Management
+        'account:add', 'account:edit', 'account:delete', 'account:view',
+        // Document Management (NO add)
+        'document:edit', 'document:delete', 'document:view',
+        // Routing & Tracking (NO route)
+        'routing:update', 'routing:track', 'routing:view',
+        // Approval
+        'approval:submit',
+        // Notifications
+        'notification:view', 'notification:email',
+        // Reports
+        'report:generate', 'report:view', 'report:print'
+      ]
     },
     director: {
       id: 'director',
@@ -124,9 +184,58 @@
       userName: 'Dr. Ramon Santos',
       initials: 'RS',
       email: 'ramon.santos@uphsd.edu.ph',
-      permissions: ['edit', 'view', 'authorize']
+      permissions: [
+        // Account Management (NO add/delete — only authorize)
+        'account:edit', 'account:view', 'account:authorize',
+        // Document Management (NO add)
+        'document:edit', 'document:delete', 'document:view',
+        // Routing & Tracking (only view)
+        'routing:view',
+        // Approval (only review)
+        'approval:review',
+        // Notifications
+        'notification:view', 'notification:email',
+        // Reports (NO generate)
+        'report:view', 'report:print'
+      ]
     }
   };
+
+  /* --------------------------------------------------------------------
+     Page → module map
+     Used for backward compatibility with legacy Role.can('add') style.
+     -------------------------------------------------------------------- */
+  const PAGE_MODULE_MAP = {
+    'accounts.html':      'account',
+    'documents.html':     'document',
+    'routing.html':       'routing',
+    'approvals.html':     'approval',
+    'reports.html':       'report',
+    'notifications.html': 'notification',
+    'settings.html':      'notification'
+  };
+
+  /* Alias map: legacy short actions → module-prefixed permissions */
+  const LEGACY_ACTION_ALIASES = {
+    'add':       ['account:add', 'document:add'],
+    'edit':      ['account:edit', 'document:edit'],
+    'delete':    ['account:delete', 'document:delete'],
+    'view':      ['account:view', 'document:view'],
+    'authorize': ['account:authorize', 'approval:review'],
+    'review':    ['approval:review'],
+    'submit':    ['approval:submit'],
+    'route':     ['routing:route'],
+    'update':    ['routing:update'],
+    'track':     ['routing:track'],
+    'generate':  ['report:generate'],
+    'print':     ['report:print'],
+    'email':     ['notification:email']
+  };
+
+  function currentModuleFromPage() {
+    const page = window.location.pathname.split('/').pop() || 'dashboard.html';
+    return PAGE_MODULE_MAP[page] || null;
+  }
 
   const Role = {
     /** Return the currently logged-in role object */
@@ -140,19 +249,41 @@
       return this.current().id;
     },
 
-    /** Check if current role has a permission */
+    /**
+     * Check if the current role has a permission.
+     * Supports both new format ('document:add') and
+     * legacy format ('add'), resolving the module from the current page.
+     */
     can(action) {
-      return this.current().permissions.includes(action);
+      if (!action) return false;
+      const perms = this.current().permissions;
+
+      // 1. Exact match (new module-prefixed format)
+      if (perms.includes(action)) return true;
+
+      // 2. Legacy short action — try to resolve
+      if (!action.includes(':')) {
+        const mod = currentModuleFromPage();
+
+        // 2a. Try with current page's module prefix
+        if (mod && perms.includes(`${mod}:${action}`)) return true;
+
+        // 2b. Fall back to alias map
+        const aliases = LEGACY_ACTION_ALIASES[action];
+        if (aliases && aliases.some(p => perms.includes(p))) return true;
+      }
+
+      return false;
     },
 
     /** Check if current role has ANY of the given permissions */
     canAny(actions) {
-      return actions.some(a => this.can(a));
+      return (actions || []).some(a => this.can(a));
     },
 
     /** Check if current role has ALL of the given permissions */
     canAll(actions) {
-      return actions.every(a => this.can(a));
+      return (actions || []).every(a => this.can(a));
     },
 
     /** Set role (used by dev switcher) */
@@ -170,15 +301,18 @@
     /** Get role object by id */
     get(id) { return ROLES[id]; },
 
+    /** Get current module name based on the page */
+    currentModule() { return currentModuleFromPage(); },
+
     /** Internal: update user chip in topbar */
     _renderUserChip() {
       const user = this.current();
       const nameEl = document.getElementById('userName');
       const roleEl = document.getElementById('userRoleLabel');
-      const avEl = document.getElementById('userAvatar');
+      const avEl   = document.getElementById('userAvatar');
       if (nameEl) nameEl.textContent = user.userName;
       if (roleEl) roleEl.textContent = user.label;
-      if (avEl) avEl.textContent = user.initials;
+      if (avEl)   avEl.textContent   = user.initials;
     }
   };
 
@@ -197,7 +331,6 @@
     getInitial() {
       const saved = Storage.get(APP.keys.theme);
       if (saved === 'dark' || saved === 'light') return saved;
-      // Fallback: system preference
       return window.matchMedia &&
         window.matchMedia('(prefers-color-scheme: dark)').matches
         ? 'dark'
@@ -234,7 +367,6 @@
         : `<path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 7.06a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0z"/>`;
     },
 
-    /** Watch system preference changes */
     watchSystem() {
       if (!window.matchMedia) return;
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
@@ -308,19 +440,16 @@
       hamburger.addEventListener('click', () => this.open());
       if (backdrop) backdrop.addEventListener('click', () => this.close());
 
-      // Close on nav item click (mobile)
       sidebar.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', () => {
           if (window.innerWidth <= 900) this.close();
         });
       });
 
-      // Close on Escape
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') this.close();
       });
 
-      // Close on resize to desktop
       window.addEventListener('resize', () => {
         if (window.innerWidth > 900) this.close();
       });
@@ -365,7 +494,6 @@
       return path || 'dashboard.html';
     },
 
-    /** Programmatic navigation */
     go(page) {
       const map = APP.routes;
       const target = map[page] || page;
@@ -380,13 +508,11 @@
      ========================================================================== */
   const Topbar = {
     init() {
-      // Theme toggle
       const themeBtn = document.getElementById('themeToggle');
       if (themeBtn) {
         themeBtn.addEventListener('click', () => Theme.toggle());
       }
 
-      // Role switcher (dev only)
       const switcher = document.getElementById('roleSwitcher');
       if (switcher) {
         switcher.value = Role.id();
@@ -396,7 +522,6 @@
         });
       }
 
-      // User chip
       const chip = document.getElementById('userChip');
       if (chip) {
         chip.addEventListener('click', () => {
@@ -406,10 +531,8 @@
         });
       }
 
-      // Render user chip
       Role._renderUserChip();
 
-      // Set footer year
       document.querySelectorAll('[data-year]').forEach(el => {
         el.textContent = new Date().getFullYear();
       });
@@ -424,7 +547,6 @@
      9. AUTH GUARD & LOGOUT
      ========================================================================== */
   const Auth = {
-    /** Check if user is logged in. Redirect to login if not. */
     requireLogin() {
       const loggedIn = Storage.get(APP.keys.loggedIn);
       if (!loggedIn) {
@@ -434,20 +556,17 @@
       return true;
     },
 
-    /** Mark user as logged in */
     login(roleId = 'secretary') {
       Storage.set(APP.keys.loggedIn, 'true');
       Storage.set(APP.keys.role, roleId);
     },
 
-    /** Log out */
     logout() {
       Storage.remove(APP.keys.loggedIn);
       Storage.remove(APP.keys.authToken);
       window.location.href = APP.routes.login;
     },
 
-    /** Check if user is logged in (no redirect) */
     isLoggedIn() {
       return !!Storage.get(APP.keys.loggedIn);
     }
@@ -459,7 +578,6 @@
      10. UTILITY HELPERS
      ========================================================================== */
   const Utils = {
-    /** Escape HTML to prevent XSS */
     escapeHtml(str) {
       if (str == null) return '';
       return String(str)
@@ -470,14 +588,12 @@
         .replace(/'/g, '&#039;');
     },
 
-    /** Get initials from full name (max 2 letters) */
     getInitials(name) {
       if (!name) return '?';
       return name.trim().split(/\s+/)
         .map(w => w[0]).slice(0, 2).join('').toUpperCase();
     },
 
-    /** Format date as "Jan 15, 2025" */
     formatDate(date, opts = {}) {
       const d = date instanceof Date ? date : new Date(date);
       if (isNaN(d)) return '—';
@@ -486,7 +602,6 @@
       });
     },
 
-    /** Format date-time as "Jan 15, 2025 · 09:24 AM" */
     formatDateTime(date) {
       const d = date instanceof Date ? date : new Date(date);
       if (isNaN(d)) return '—';
@@ -494,7 +609,6 @@
         d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     },
 
-    /** Relative time — "2 hours ago" */
     timeAgo(date) {
       const d = date instanceof Date ? date : new Date(date);
       if (isNaN(d)) return '—';
@@ -509,7 +623,6 @@
       return this.formatDate(d);
     },
 
-    /** Debounce a function */
     debounce(fn, wait = 300) {
       let timeout;
       return function (...args) {
@@ -518,7 +631,6 @@
       };
     },
 
-    /** Throttle a function */
     throttle(fn, limit = 200) {
       let inThrottle;
       return function (...args) {
@@ -530,45 +642,37 @@
       };
     },
 
-    /** Simple ID generator */
     uid(prefix = 'id') {
       return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
     },
 
-    /** Check if email is valid */
     isValidEmail(email) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     },
 
-    /** Capitalize first letter */
     capitalize(str) {
       if (!str) return '';
       return str.charAt(0).toUpperCase() + str.slice(1);
     },
 
-    /** Format number with commas — 1234 → 1,234 */
     number(n) {
       return Number(n || 0).toLocaleString('en-US');
     },
 
-    /** Truncate text */
     truncate(str, len = 40) {
       if (!str) return '';
       return str.length > len ? str.slice(0, len - 1) + '…' : str;
     },
 
-    /** Deep clone */
     clone(obj) {
       try { return JSON.parse(JSON.stringify(obj)); }
       catch { return obj; }
     },
 
-    /** Query string helpers */
     qs(name) {
       return new URLSearchParams(window.location.search).get(name);
     },
 
-    /** Read a CSS variable */
     cssVar(name) {
       return getComputedStyle(document.documentElement)
         .getPropertyValue(name).trim();
@@ -587,12 +691,10 @@
       el.classList.add('show');
       document.body.style.overflow = 'hidden';
 
-      // Close on backdrop click
       el.addEventListener('click', (e) => {
         if (e.target === el) this.close(id);
       });
 
-      // Close on Escape
       const escHandler = (e) => {
         if (e.key === 'Escape') {
           this.close(id);
@@ -620,15 +722,6 @@
 
   /* ==========================================================================
      12. CONFIRM DIALOG (Promise-based)
-     ==========================================================================
-     Usage:
-       const ok = await APP.confirm({
-         title: 'Delete this?',
-         message: 'This cannot be undone.',
-         confirmText: 'Delete',
-         danger: true
-       });
-       if (ok) { ... }
      ========================================================================== */
   APP.confirm = function ({
     title = 'Are you sure?',
@@ -638,7 +731,6 @@
     danger = false
   } = {}) {
     return new Promise((resolve) => {
-      // Build modal
       const id = 'appConfirmModal_' + Date.now();
       const backdrop = document.createElement('div');
       backdrop.className = 'modal-backdrop';
@@ -690,10 +782,6 @@
 
   /* ==========================================================================
      13. EVENT BUS (pub/sub)
-     ==========================================================================
-     Usage:
-       APP.Bus.on('role:changed', (id) => { ... });
-       APP.Bus.emit('role:changed', 'director');
      ========================================================================== */
   const Bus = {
     _events: {},
@@ -716,14 +804,42 @@
   APP.Bus = Bus;
 
   /* ==========================================================================
-     14. AUTO-INIT
+     14. SIDEBAR — Permission-aware hiding
+     ==========================================================================
+     Some nav items should be hidden based on role.
+     e.g., Accounts might be hidden from users with no account:* permissions.
+     ========================================================================== */
+  function applySidebarPermissions() {
+    document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+      const page = item.getAttribute('data-page');
+
+      const requiredMap = {
+        'accounts.html':      ['account:view'],
+        'documents.html':     ['document:view'],
+        'routing.html':       ['routing:view'],
+        'approvals.html':     ['approval:submit', 'approval:review'],
+        'reports.html':       ['report:view'],
+        'notifications.html': ['notification:view'],
+        'settings.html':      [] // always visible
+      };
+
+      const required = requiredMap[page];
+      if (required && required.length > 0) {
+        const allowed = required.some(p => Role.can(p));
+        item.style.display = allowed ? '' : 'none';
+      }
+    });
+  }
+
+  APP.applySidebarPermissions = applySidebarPermissions;
+
+  /* ==========================================================================
+     15. AUTO-INIT
      ========================================================================== */
   function init() {
-    // 1. Apply theme ASAP (before render)
     Theme.init();
     Theme.watchSystem();
 
-    // 2. Wire up UI on DOM ready
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', onReady);
     } else {
@@ -735,13 +851,15 @@
     Nav.init();
     Sidebar.init();
     Topbar.init();
+    applySidebarPermissions();
 
-    // Expose a friendly startup log
     console.log(
       `%c${APP.name} · v${APP.version}`,
       'color:#D4AF37; background:#7B1113; padding:4px 10px; border-radius:4px; font-weight:700;'
     );
     console.log('Logged in as:', Role.current().label);
+    console.log('Current module:', Role.currentModule() || '(dashboard)');
+    console.log('Permissions:', Role.current().permissions);
   }
 
   init();

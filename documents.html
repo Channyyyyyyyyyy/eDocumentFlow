@@ -314,20 +314,27 @@
     word-break: break-word;
   }
 
-  /* ---------- Sort dropdown label ---------- */
-  .sort-group {
+  /* ---------- Read-only notice ---------- */
+  .view-only-notice {
+    background: rgba(212,175,55,0.12);
+    border: 1.5px solid var(--gold);
+    border-left: 5px solid var(--gold);
+    border-radius: var(--radius-lg);
+    padding: 14px 18px;
+    margin-bottom: 18px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
   }
-  .sort-group label {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
+  .view-only-notice svg {
+    width: 22px;
+    height: 22px;
+    fill: var(--gold);
+    flex-shrink: 0;
   }
+  .view-only-notice strong { color: var(--text-primary); }
 </style>
 </head>
 <body>
@@ -359,10 +366,20 @@
         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
         Documents
       </a>
+      <!-- 🔄 NEW: Routing & Tracking -->
+      <a class="nav-item" href="routing.html" data-page="routing.html">
+        <svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
+        Routing & Tracking
+      </a>
       <a class="nav-item" href="approvals.html" data-page="approvals.html">
         <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
         Approvals
         <span class="nav-badge" id="approvalBadgeSide">5</span>
+      </a>
+      <!-- 🔄 NEW: Notifications -->
+      <a class="nav-item" href="notifications.html" data-page="notifications.html">
+        <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+        Notifications
       </a>
     </div>
 
@@ -440,6 +457,22 @@
 
     <!-- ========== CONTENT ========== -->
     <div class="content">
+
+      <!-- 🔄 NEW: Read-only notice (shown only to Director) -->
+      <div class="view-only-notice" id="viewOnlyNotice" style="display:none;">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        <span>
+          You are viewing documents in <strong>Director mode</strong>. You can <strong>edit</strong>, <strong>delete</strong>, and <strong>view</strong> documents — but only the Secretary can add new ones. To approve pending documents, use the <a href="approvals.html" style="color:var(--maroon);font-weight:700;text-decoration:underline;">Approvals</a> page.
+        </span>
+      </div>
+
+      <!-- 🔄 NEW: Read-only notice for Executive Assistant -->
+      <div class="view-only-notice" id="eaNotice" style="display:none;">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        <span>
+          You can <strong>edit</strong>, <strong>delete</strong>, and <strong>view</strong> documents — but only the <strong>Secretary</strong> can add new ones.
+        </span>
+      </div>
 
       <!-- STATS -->
       <div class="stats-grid">
@@ -548,7 +581,8 @@
           <option value="low">Low</option>
         </select>
 
-        <button class="btn btn-primary" id="btnUpload" style="margin-left:auto;">
+        <!-- 🔄 CHANGED: Upload button — hidden by default, shown only to Secretary -->
+        <button class="btn btn-primary" id="btnUpload" style="margin-left:auto;display:none;">
           <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
           Upload Document
         </button>
@@ -588,8 +622,8 @@
             <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
           </div>
           <h3>No documents found</h3>
-          <p>Try adjusting your search or filters. Or upload a new document to get started.</p>
-          <button class="btn btn-primary" onclick="document.getElementById('btnUpload').click()">
+          <p id="emptyCopy">Try adjusting your search or filters.</p>
+          <button class="btn btn-primary" id="btnEmptyUpload" style="display:none;" onclick="document.getElementById('btnUpload').click()">
             <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
             Upload Document
           </button>
@@ -703,7 +737,7 @@
         <button class="btn btn-ghost" onclick="APP.Modal.close('uploadModal')">Cancel</button>
         <button class="btn btn-primary" id="btnSubmitUpload">
           <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
-          Upload & Submit
+          Upload &amp; Submit
         </button>
       </div>
     </div>
@@ -770,10 +804,6 @@
           <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
           Download
         </button>
-        <button class="btn btn-primary" id="btnSubmitForApproval">
-          <svg viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-          Submit for Approval
-        </button>
       </div>
     </div>
   </div>
@@ -784,32 +814,47 @@
   <script src="app.js"></script>
   <script>
   /* ==========================================================================
-     DOCUMENTS — Page module
+     DOCUMENTS — Page module (aligned with use case diagram)
+
+     Permissions (per diagram):
+       Secretary  → document:add ✓, document:edit ✓, document:delete ✓, document:view ✓
+       EA         → document:add ✗, document:edit ✓, document:delete ✓, document:view ✓
+       Director   → document:add ✗, document:edit ✓, document:delete ✓, document:view ✓
      ========================================================================== */
   (function () {
     'use strict';
 
     const { Role, Toast, Utils, Modal, Bus } = APP;
 
-    /* --------------------------------------------------------------------
-       MOCK DATA — Documents
-       status: draft | pending | approved | rejected | archived
+       /* --------------------------------------------------------------------
+       DATA — loaded from backend
        -------------------------------------------------------------------- */
-    const documents = [
-      { id: 'DOC-2025-001', name: 'Budget Proposal FY 2025-2026.pdf',        ext: 'pdf', type: 'Proposal',  dept: 'Accounting',        priority: 'high',   status: 'pending',  submittedBy: 'Maria Cruz',      date: '2025-01-15 09:24 AM', size: '2.4 MB', notes: 'Urgent — needed for board review on Jan 20.' },
-      { id: 'DOC-2025-002', name: 'Faculty Evaluation Summary.docx',          ext: 'doc', type: 'Report',    dept: 'Academics',         priority: 'normal', status: 'approved', submittedBy: 'Anna Reyes',      date: '2025-01-14 04:45 PM', size: '1.1 MB', notes: 'Summary of Q4 2024 evaluation.' },
-      { id: 'DOC-2025-003', name: 'Registrar Report Q4 2024.xlsx',            ext: 'xls', type: 'Report',    dept: 'Registrar',         priority: 'normal', status: 'approved', submittedBy: 'Liza Fernandez',  date: '2025-01-13 11:18 AM', size: '3.8 MB', notes: '' },
-      { id: 'DOC-2025-004', name: 'Meeting Minutes Jan 10.pdf',               ext: 'pdf', type: 'Minutes',   dept: "Director's Office", priority: 'low',    status: 'approved', submittedBy: 'Maria Cruz',      date: '2025-01-10 02:30 PM', size: '0.6 MB', notes: 'Signed by all attendees.' },
-      { id: 'DOC-2025-005', name: 'HR Staffing Memo.docx',                    ext: 'doc', type: 'Memo',      dept: 'Human Resources',   priority: 'high',   status: 'pending',  submittedBy: 'Rina Gomez',      date: '2025-01-09 03:15 PM', size: '0.4 MB', notes: 'Needs director sign-off before Jan 25.' },
-      { id: 'DOC-2025-006', name: 'Accreditation Policy Draft.pdf',           ext: 'pdf', type: 'Policy',    dept: 'Academics',         priority: 'normal', status: 'draft',    submittedBy: 'Gabriel Tan',     date: '2025-01-08 10:00 AM', size: '1.7 MB', notes: 'First draft — will revise after review.' },
-      { id: 'DOC-2025-007', name: 'Student Affairs Report.pdf',               ext: 'pdf', type: 'Report',    dept: 'Student Affairs',   priority: 'normal', status: 'pending',  submittedBy: 'Sophia Lim',      date: '2025-01-07 09:30 AM', size: '1.2 MB', notes: '' },
-      { id: 'DOC-2025-008', name: 'Enrollment Statistics Q4.xlsx',            ext: 'xls', type: 'Report',    dept: 'Registrar',         priority: 'normal', status: 'approved', submittedBy: 'Patricia Aquino', date: '2025-01-06 11:45 AM', size: '4.1 MB', notes: '' },
-      { id: 'DOC-2025-009', name: 'Office Supply Request Form.docx',          ext: 'doc', type: 'Form',      dept: "Director's Office", priority: 'low',    status: 'rejected', submittedBy: 'Maria Cruz',      date: '2025-01-05 02:20 PM', size: '0.3 MB', notes: 'Rejected — duplicate request.' },
-      { id: 'DOC-2025-010', name: 'Board Resolution Jan 2025.pdf',            ext: 'pdf', type: 'Letter',    dept: 'Accounting',        priority: 'high',   status: 'pending',  submittedBy: 'Anna Reyes',      date: '2025-01-04 04:00 PM', size: '1.9 MB', notes: 'For board meeting on Jan 18.' },
-      { id: 'DOC-2024-089', name: 'Annual Report 2024.pdf',                   ext: 'pdf', type: 'Report',    dept: "Director's Office", priority: 'normal', status: 'archived', submittedBy: 'Dr. Ramon Santos', date: '2024-12-20 03:00 PM', size: '8.2 MB', notes: 'Archived after 2024 year-end.' },
-      { id: 'DOC-2024-088', name: 'Graduation Program 2024.pdf',              ext: 'pdf', type: 'Letter',    dept: 'Academics',         priority: 'low',    status: 'archived', submittedBy: 'Gabriel Tan',     date: '2024-12-15 01:10 PM', size: '2.5 MB', notes: '' }
-    ];
+    let documents = [];
 
+    /**
+     * Load documents from the backend.
+     * Replace the mock with a real fetch() when your API is ready:
+     *
+     *   const res = await fetch('/api/documents');
+     *   documents = await res.json();
+     */
+    async function loadDocuments() {
+      try {
+        // TODO: Replace with real API call
+        // const res = await fetch('/api/documents');
+        // documents = await res.json();
+
+        documents = [];
+      } catch (err) {
+        console.error('[Documents] Failed to load:', err);
+        if (window.APP && APP.Toast) {
+          APP.Toast.error('Load Failed', 'Could not load documents from the server.');
+        }
+        documents = [];
+      }
+      renderDocs();
+      updateStats();
+    }
     /* --------------------------------------------------------------------
        STATE
        -------------------------------------------------------------------- */
@@ -825,6 +870,8 @@
     const els = {
       tbody:        $('documentsBody'),
       emptyState:   $('emptyState'),
+      emptyCopy:    $('emptyCopy'),
+      btnEmptyUpload: $('btnEmptyUpload'),
       table:        $('documentsTable'),
       pagination:   $('pagination'),
       resultCount:  $('resultCount'),
@@ -838,7 +885,9 @@
       selectAll:    $('selectAll'),
       bulkBar:      $('bulkBar'),
       bulkCount:    $('bulkCount'),
-      bulkActions:  $('bulkActions')
+      bulkActions:  $('bulkActions'),
+      noticeDirector: $('viewOnlyNotice'),
+      noticeEA:     $('eaNotice')
     };
 
     /* --------------------------------------------------------------------
@@ -884,7 +933,6 @@
       $('statApprovedDocs').textContent = documents.filter(d => d.status === 'approved').length;
       $('statArchivedDocs').textContent = documents.filter(d => d.status === 'archived').length;
 
-      // Tab counts
       const counts = {
         all:      documents.length,
         draft:    documents.filter(d => d.status === 'draft').length,
@@ -898,26 +946,31 @@
         if (el) el.textContent = v;
       });
 
-      // Sidebar badge (pending)
       const sideBadge = document.getElementById('approvalBadgeSide');
       if (sideBadge) sideBadge.textContent = counts.pending;
     }
 
     /* --------------------------------------------------------------------
-       RENDER — Action buttons per row
+       RENDER — Action buttons per row (ALIGNED WITH DIAGRAM)
+       --------------------------------------------------------------------
+       Secretary:  Add ✓  Edit ✓  Delete ✓  View ✓
+       EA:         Add ✗  Edit ✓  Delete ✓  View ✓
+       Director:   Add ✗  Edit ✓  Delete ✓  View ✓
        -------------------------------------------------------------------- */
     function renderActions(doc) {
       const btns = [];
 
       // VIEW — everyone
-      btns.push(`
-        <button class="action-btn view" data-action="view" data-id="${doc.id}" title="View details">
-          <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
-        </button>
-      `);
+      if (Role.can('document:view')) {
+        btns.push(`
+          <button class="action-btn view" data-action="view" data-id="${doc.id}" title="View details">
+            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
+          </button>
+        `);
+      }
 
-      // EDIT — if draft and user can edit
-      if (doc.status === 'draft' && Role.can('edit')) {
+      // EDIT — everyone
+      if (Role.can('document:edit')) {
         btns.push(`
           <button class="action-btn edit" data-action="edit" data-id="${doc.id}" title="Edit">
             <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
@@ -925,36 +978,16 @@
         `);
       }
 
-      // SUBMIT FOR APPROVAL — if draft and user can add
-      if (doc.status === 'draft' && Role.can('add')) {
+      // DELETE — everyone
+      if (Role.can('document:delete')) {
         btns.push(`
-          <button class="action-btn edit" data-action="submit" data-id="${doc.id}" title="Submit for approval">
-            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          <button class="action-btn delete" data-action="delete" data-id="${doc.id}" title="Delete">
+            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
           </button>
         `);
       }
 
-      // AUTHORIZE / REJECT — Director only, pending docs
-      if (doc.status === 'pending' && Role.can('authorize')) {
-        btns.push(`
-          <button class="action-btn authorize" data-action="authorize" data-id="${doc.id}" title="Authorize">
-            <svg viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-            Authorize
-          </button>
-          <button class="action-btn reject" data-action="reject" data-id="${doc.id}" title="Reject">
-            <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-          </button>
-        `);
-      }
-
-      // ARCHIVE — approved docs (Secretary/EA only)
-      if (doc.status === 'approved' && Role.can('delete')) {
-        btns.push(`
-          <button class="action-btn delete" data-action="archive" data-id="${doc.id}" title="Archive">
-            <svg viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68A1.5 1.5 0 0018 3H6c-.47 0-.88.21-1.16.55L3.46 5.23A2 2 0 003 6.5V19a2 2 0 002 2h14a2 2 0 002-2V6.5a2 2 0 00-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z"/></svg>
-          </button>
-        `);
-      }
+      // ⚠️ NO AUTHORIZE button — Director authorizes via Approvals page, not here
 
       return btns.join('');
     }
@@ -969,15 +1002,12 @@
       const priorityF = els.filterPriority.value;
 
       filteredDocs = documents.filter(d => {
-        // Tab
         if (currentTab !== 'all' && d.status !== currentTab) return false;
-        // Search
         const matchesSearch = !search ||
           d.name.toLowerCase().includes(search) ||
           d.id.toLowerCase().includes(search) ||
           d.submittedBy.toLowerCase().includes(search);
         if (!matchesSearch) return false;
-        // Filters
         if (typeF && d.type !== typeF) return false;
         if (deptF && d.dept !== deptF) return false;
         if (priorityF && d.priority !== priorityF) return false;
@@ -985,10 +1015,8 @@
       });
 
       els.resultCount.textContent = `Showing ${filteredDocs.length} of ${documents.length} documents`;
-
       updateStats();
 
-      // Table title based on tab
       const tabLabels = {
         all: 'All Documents', draft: 'Draft Documents', pending: 'Pending Documents',
         approved: 'Approved Documents', rejected: 'Rejected Documents', archived: 'Archived Documents'
@@ -1045,7 +1073,6 @@
         `;
       }).join('');
 
-      // Row checkboxes
       els.tbody.querySelectorAll('.row-checkbox').forEach(cb => {
         cb.addEventListener('change', (e) => {
           const id = e.target.dataset.id;
@@ -1057,13 +1084,10 @@
         });
       });
 
-      // Action buttons
       els.tbody.querySelectorAll('[data-action]').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
-          const action = btn.dataset.action;
-          const id = btn.dataset.id;
-          handleAction(action, id);
+          handleAction(btn.dataset.action, btn.dataset.id);
         });
       });
 
@@ -1073,7 +1097,7 @@
     }
 
     /* --------------------------------------------------------------------
-       ACTION HANDLER
+       ACTION HANDLER (aligned — no authorize/reject/submit here)
        -------------------------------------------------------------------- */
     function handleAction(action, id) {
       const doc = documents.find(d => d.id === id);
@@ -1086,62 +1110,26 @@
         case 'edit':
           Toast.info('Edit Document', `Editing "${doc.name}" — functionality coming soon.`);
           break;
-        case 'submit':
-          submitForApproval(doc);
+        case 'delete':
+          deleteDoc(doc);
           break;
-        case 'authorize':
-          authorizeDoc(doc);
-          break;
-        case 'reject':
-          rejectDoc(doc);
-          break;
-        case 'archive':
-          archiveDoc(doc);
-          break;
+        // NOTE: 'authorize', 'reject', 'submit', 'archive' removed
+        // Director handles approvals via Approvals page
       }
     }
 
-    function submitForApproval(doc) {
-      if (doc.status !== 'draft') return;
-      doc.status = 'pending';
-      Toast.gold('Submitted for Approval', `"${doc.name}" is now pending Director authorization.`);
-      renderDocs();
-    }
-
-    async function authorizeDoc(doc) {
+    async function deleteDoc(doc) {
       const ok = await APP.confirm({
-        title: `Authorize "${doc.name}"?`,
-        message: 'This action will mark the document as approved.',
-        confirmText: 'Authorize'
-      });
-      if (!ok) return;
-      doc.status = 'approved';
-      Toast.success('Document Authorized', `"${doc.name}" has been approved.`);
-      renderDocs();
-    }
-
-    async function rejectDoc(doc) {
-      const ok = await APP.confirm({
-        title: `Reject "${doc.name}"?`,
-        message: 'This will return the document to the submitter.',
-        confirmText: 'Reject',
+        title: `Delete "${doc.name}"?`,
+        message: 'This action cannot be undone.',
+        confirmText: 'Delete',
         danger: true
       });
       if (!ok) return;
-      doc.status = 'rejected';
-      Toast.error('Document Rejected', `"${doc.name}" has been rejected.`);
-      renderDocs();
-    }
 
-    async function archiveDoc(doc) {
-      const ok = await APP.confirm({
-        title: `Archive "${doc.name}"?`,
-        message: 'Archived documents are hidden from the main list.',
-        confirmText: 'Archive'
-      });
-      if (!ok) return;
-      doc.status = 'archived';
-      Toast.info('Document Archived', `"${doc.name}" moved to archive.`);
+      const idx = documents.findIndex(d => d.id === doc.id);
+      if (idx !== -1) documents.splice(idx, 1);
+      Toast.success('Document Deleted', `"${doc.name}" has been removed.`);
       renderDocs();
     }
 
@@ -1163,13 +1151,6 @@
       $('viewDocSize').textContent = doc.size;
       $('viewDocNotes').textContent = doc.notes || 'No notes provided.';
 
-      // Show/hide "Submit for Approval" button
-      const btnSubmit = $('btnSubmitForApproval');
-      if (btnSubmit) {
-        const canSubmit = doc.status === 'draft' && Role.can('add');
-        btnSubmit.style.display = canSubmit ? 'inline-flex' : 'none';
-      }
-
       Modal.open('viewModal');
     }
 
@@ -1179,17 +1160,8 @@
       }
     });
 
-    $('btnSubmitForApproval').addEventListener('click', () => {
-      if (currentViewDoc && currentViewDoc.status === 'draft') {
-        currentViewDoc.status = 'pending';
-        Toast.gold('Submitted for Approval', `"${currentViewDoc.name}" sent to Director.`);
-        Modal.close('viewModal');
-        renderDocs();
-      }
-    });
-
     /* --------------------------------------------------------------------
-       BULK ACTIONS
+       BULK ACTIONS (aligned — no bulk authorize for documents)
        -------------------------------------------------------------------- */
     function updateBulkBar() {
       if (selectedIds.size === 0) {
@@ -1202,17 +1174,11 @@
 
       const btns = [];
 
-      if (Role.can('authorize')) {
-        btns.push(`<button class="btn" onclick="Documents.bulkAuthorize()">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-          Authorize All
-        </button>`);
-      }
-
-      if (Role.can('delete')) {
-        btns.push(`<button class="btn" onclick="Documents.bulkArchive()">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.54 5.23l-1.39-1.68A1.5 1.5 0 0018 3H6c-.47 0-.88.21-1.16.55L3.46 5.23A2 2 0 003 6.5V19a2 2 0 002 2h14a2 2 0 002-2V6.5a2 2 0 00-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5z"/></svg>
-          Archive
+      // Only "Delete" — no authorize for documents
+      if (Role.can('document:delete')) {
+        btns.push(`<button class="btn danger" onclick="Documents.bulkDelete()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+          Delete
         </button>`);
       }
 
@@ -1229,44 +1195,20 @@
       renderDocs();
     }
 
-    async function bulkAuthorize() {
-      const pendingIds = [...selectedIds].filter(id => {
-        const d = documents.find(x => x.id === id);
-        return d && d.status === 'pending';
-      });
-      if (pendingIds.length === 0) {
-        Toast.error('Nothing to Authorize', 'None of the selected documents are pending.');
-        return;
-      }
+    async function bulkDelete() {
       const ok = await APP.confirm({
-        title: `Authorize ${pendingIds.length} document(s)?`,
-        message: 'They will all be marked as approved.',
-        confirmText: 'Authorize All'
-      });
-      if (!ok) return;
-
-      pendingIds.forEach(id => {
-        const d = documents.find(x => x.id === id);
-        if (d) d.status = 'approved';
-      });
-      Toast.success('Bulk Authorization', `${pendingIds.length} document(s) approved.`);
-      selectedIds.clear();
-      renderDocs();
-    }
-
-    async function bulkArchive() {
-      const ok = await APP.confirm({
-        title: `Archive ${selectedIds.size} document(s)?`,
-        message: 'Archived documents are hidden from the main list.',
-        confirmText: 'Archive'
+        title: `Delete ${selectedIds.size} document(s)?`,
+        message: 'This action cannot be undone.',
+        confirmText: 'Delete All',
+        danger: true
       });
       if (!ok) return;
 
       selectedIds.forEach(id => {
-        const d = documents.find(x => x.id === id);
-        if (d) d.status = 'archived';
+        const idx = documents.findIndex(d => d.id === id);
+        if (idx !== -1) documents.splice(idx, 1);
       });
-      Toast.info('Bulk Archive', `${selectedIds.size} document(s) archived.`);
+      Toast.success('Documents Deleted', `${selectedIds.size} document(s) removed.`);
       selectedIds.clear();
       renderDocs();
     }
@@ -1322,10 +1264,8 @@
 
     let selectedFile = null;
 
-    // Click on dropzone → open file picker
     dropzone.addEventListener('click', () => fileInput.click());
 
-    // Browse handler
     fileInput.addEventListener('change', (e) => {
       if (e.target.files && e.target.files[0]) {
         selectedFile = e.target.files[0];
@@ -1333,7 +1273,6 @@
       }
     });
 
-    // Drag & drop
     ['dragenter', 'dragover'].forEach(evt => {
       dropzone.addEventListener(evt, (e) => {
         e.preventDefault();
@@ -1359,7 +1298,6 @@
       $('previewSize').textContent = formatSize(file.size);
       filePreview.classList.add('show');
 
-      // Auto-fill document name if empty
       const docNameInput = $('docName');
       if (!docNameInput.value) {
         docNameInput.value = file.name.replace(/\.[^.]+$/, '');
@@ -1373,9 +1311,12 @@
       filePreview.classList.remove('show');
     });
 
-    // Open upload modal
     els.btnUpload.addEventListener('click', () => {
-      // Reset form
+      // Extra safety: only Secretary can open this
+      if (!Role.can('document:add')) {
+        Toast.error('Permission Denied', 'Only the Secretary can upload new documents.');
+        return;
+      }
       selectedFile = null;
       fileInput.value = '';
       filePreview.classList.remove('show');
@@ -1387,8 +1328,14 @@
       Modal.open('uploadModal');
     });
 
-    // Submit upload
     $('btnSubmitUpload').addEventListener('click', () => {
+      // Extra safety check
+      if (!Role.can('document:add')) {
+        Toast.error('Permission Denied', 'Only the Secretary can upload new documents.');
+        Modal.close('uploadModal');
+        return;
+      }
+
       const name = $('docName').value.trim();
       const type = $('docType').value;
       const dept = $('docDept').value;
@@ -1412,8 +1359,9 @@
         return;
       }
 
-      // Simulate adding to list
-      const newId = `DOC-2025-${String(documents.length + 1).padStart(3, '0')}`;
+      // TODO: send to backend instead of local array
+      // POST /api/documents with FormData
+      const newId = `DOC-${new Date().getFullYear()}-${String(documents.length + 1).padStart(3, '0')}`;
       const now = new Date();
       const dateStr = Utils.formatDate(now) + ' ' +
         now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -1442,10 +1390,36 @@
     });
 
     /* --------------------------------------------------------------------
-       ROLE
+       ROLE-AWARE UI (ALIGNED WITH DIAGRAM)
        -------------------------------------------------------------------- */
     function applyRole() {
-      els.btnUpload.style.display = Role.can('add') ? 'inline-flex' : 'none';
+      const canAdd = Role.can('document:add');
+      const canEdit = Role.can('document:edit');
+      const canDelete = Role.can('document:delete');
+
+      // Upload button: only Secretary
+      els.btnUpload.style.display = canAdd ? 'inline-flex' : 'none';
+      if (els.btnEmptyUpload) {
+        els.btnEmptyUpload.style.display = canAdd ? 'inline-flex' : 'none';
+      }
+
+      // Notices
+      if (els.noticeDirector) {
+        els.noticeDirector.style.display =
+          Role.id() === 'director' ? 'flex' : 'none';
+      }
+      if (els.noticeEA) {
+        els.noticeEA.style.display =
+          Role.id() === 'ea' ? 'flex' : 'none';
+      }
+
+      // Empty state copy varies by role
+      if (els.emptyCopy) {
+        els.emptyCopy.textContent = canAdd
+          ? 'Try adjusting your search or filters. Or upload a new document to get started.'
+          : 'Try adjusting your search or filters.';
+      }
+
       renderDocs();
     }
 
@@ -1454,8 +1428,7 @@
        -------------------------------------------------------------------- */
     window.Documents = {
       clearSelection,
-      bulkAuthorize,
-      bulkArchive,
+      bulkDelete,
       bulkExport
     };
 
@@ -1472,6 +1445,7 @@
        INIT
        -------------------------------------------------------------------- */
     applyRole();
+    loadDocuments();
 
   })();
   </script>

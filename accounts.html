@@ -5,6 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Account Management — UPHSD Molino | Office of the School Director</title>
 <link rel="stylesheet" href="shared.css" />
+<style>
+  /* Page-specific tweaks */
+  .view-only-notice {
+    background: rgba(212,175,55,0.12);
+    border: 1.5px solid var(--gold);
+    border-left: 5px solid var(--gold);
+    border-radius: var(--radius-lg);
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+  .view-only-notice svg {
+    width: 22px;
+    height: 22px;
+    fill: var(--gold);
+    flex-shrink: 0;
+  }
+  .view-only-notice strong { color: var(--text-primary); }
+</style>
 </head>
 <body>
 
@@ -14,9 +37,8 @@
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <div class="brand-logo">
-        <!-- 👇 REPLACE WITH YOUR LOGO: <img src="uphsd-logo.png" alt="Logo"> -->
         <img src="uphsd-logo.png" alt="Logo">
-          <path d="uphsd-logo.png"/>
+          <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
         </svg>
       </div>
       <div class="brand-text">
@@ -35,10 +57,18 @@
         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
         Documents
       </a>
+      <a class="nav-item" href="routing.html" data-page="routing.html">
+        <svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
+        Routing &amp; Tracking
+      </a>
       <a class="nav-item" href="approvals.html" data-page="approvals.html">
         <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
         Approvals
-        <span class="nav-badge" id="approvalBadgeSide">3</span>
+        <span class="nav-badge" id="approvalBadgeSide">0</span>
+      </a>
+      <a class="nav-item" href="notifications.html" data-page="notifications.html">
+        <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+        Notifications
       </a>
     </div>
 
@@ -83,9 +113,7 @@
       </div>
 
       <div class="topbar-actions">
-
-        <!-- 🧪 DEV ONLY: Role Switcher — remove for production -->
-        <div class="role-switcher" title="Dev preview — switch role to see permissions">
+        <div class="role-switcher" title="Dev preview">
           <label>View as</label>
           <select id="roleSwitcher">
             <option value="secretary">Secretary</option>
@@ -112,12 +140,19 @@
             <span class="role" id="userRoleLabel">Secretary</span>
           </div>
         </div>
-
       </div>
     </header>
 
     <!-- ========== CONTENT ========== -->
     <div class="content">
+
+      <!-- Director read-only notice -->
+      <div class="view-only-notice" id="viewOnlyNotice" style="display:none;">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        <span>
+          You are in <strong>Director mode</strong>. You can <strong>authorize</strong> pending requests and <strong>edit/view</strong> existing accounts. To add or delete accounts, please coordinate with the Secretary or Executive Assistant.
+        </span>
+      </div>
 
       <!-- STATS -->
       <div class="stats-grid">
@@ -162,7 +197,7 @@
         </div>
       </div>
 
-      <!-- APPROVAL BANNER (auto-shows for Director with pending items) -->
+      <!-- APPROVAL BANNER (Director only) -->
       <div class="approval-banner" id="approvalBanner" style="display:none;">
         <div class="banner-icon">
           <svg viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
@@ -174,7 +209,7 @@
         <button class="banner-cta" onclick="Accounts.filterPending()">Review Now →</button>
       </div>
 
-      <!-- BULK ACTION BAR -->
+      <!-- BULK BAR -->
       <div class="bulk-bar" id="bulkBar">
         <span class="bulk-count" id="bulkCount">0 selected</span>
         <div class="bulk-actions" id="bulkActions"></div>
@@ -216,7 +251,7 @@
           <option value="rejected">Rejected</option>
         </select>
 
-        <button class="btn btn-primary" id="btnNewAccount" style="margin-left:auto;">
+        <button class="btn btn-primary" id="btnNewAccount" style="margin-left:auto;display:none;">
           <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
           New Account
         </button>
@@ -255,8 +290,8 @@
             <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
           </div>
           <h3>No accounts found</h3>
-          <p>Try adjusting your search or filters. If you can't find who you're looking for, you may need to create a new account.</p>
-          <button class="btn btn-primary" onclick="document.getElementById('btnNewAccount').click()">
+          <p id="emptyCopy">Try adjusting your search or filters.</p>
+          <button class="btn btn-primary" id="btnEmptyNew" style="display:none;" onclick="document.getElementById('btnNewAccount').click()">
             <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
             Add New Account
           </button>
@@ -278,42 +313,48 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- ============================================================
-       PAGE SCRIPT — Accounts-specific logic only
+       PAGE SCRIPT
        ============================================================ -->
   <script src="app.js"></script>
   <script>
   /* ==========================================================================
-     ACCOUNT MANAGEMENT — Page module
-     Depends on: app.js (APP.Role, APP.Toast, APP.Utils, APP.Bus, APP.confirm)
+     ACCOUNT MANAGEMENT — Page module (aligned with use case diagram)
+
+     Permissions (per diagram):
+       Secretary  → account:add ✓, account:edit ✓, account:delete ✓, account:view ✓, account:authorize ✗
+       EA         → account:add ✓, account:edit ✓, account:delete ✓, account:view ✓, account:authorize ✗
+       Director   → account:add ✗, account:edit ✓, account:delete ✗, account:view ✓, account:authorize ✓
      ========================================================================== */
   (function () {
     'use strict';
 
     const { Role, Toast, Utils, Bus } = APP;
 
-    /* --------------------------------------------------------------------
-       MOCK DATA
-       In production, replace with a fetch() call to the backend.
+        /* --------------------------------------------------------------------
+       DATA — loaded from backend
        -------------------------------------------------------------------- */
-    const accounts = [
-      { id: 1, name: 'Maria Cruz',        email: 'maria.cruz@uphsd.edu.ph',       role: 'Secretary',           dept: "Director's Office", status: 'active',   lastLogin: '2025-01-15 09:24 AM', initials: 'MC' },
-      { id: 2, name: 'Anna Reyes',        email: 'anna.reyes@uphsd.edu.ph',       role: 'Executive Assistant', dept: "Director's Office", status: 'active',   lastLogin: '2025-01-15 08:12 AM', initials: 'AR' },
-      { id: 3, name: 'Dr. Ramon Santos',  email: 'ramon.santos@uphsd.edu.ph',     role: 'Director',            dept: "Director's Office", status: 'active',   lastLogin: '2025-01-15 10:03 AM', initials: 'RS' },
-      { id: 4, name: 'Carlos Mendoza',    email: 'carlos.mendoza@uphsd.edu.ph',   role: 'Faculty',             dept: 'Academics',         status: 'pending',  pendingType: 'create', lastLogin: '—', initials: 'CM', requestedBy: 'Maria Cruz' },
-      { id: 5, name: 'Liza Fernandez',    email: 'liza.fernandez@uphsd.edu.ph',   role: 'Staff',               dept: 'Registrar',         status: 'active',   lastLogin: '2025-01-14 04:45 PM', initials: 'LF' },
-      { id: 6, name: 'Jose Villanueva',   email: 'jose.villanueva@uphsd.edu.ph',  role: 'Department Head',     dept: 'Accounting',        status: 'pending',  pendingType: 'edit',   lastLogin: '2025-01-10 02:30 PM', initials: 'JV', requestedBy: 'Anna Reyes', pendingNote: 'Update role from Staff → Department Head' },
-      { id: 7, name: 'Rina Gomez',        email: 'rina.gomez@uphsd.edu.ph',       role: 'Staff',               dept: 'Human Resources',   status: 'active',   lastLogin: '2025-01-13 11:18 AM', initials: 'RG' },
-      { id: 8, name: 'Mark Bautista',     email: 'mark.bautista@uphsd.edu.ph',    role: 'Faculty',             dept: 'Academics',         status: 'inactive', lastLogin: '2024-12-20 03:00 PM', initials: 'MB' },
-      { id: 9, name: 'Sophia Lim',        email: 'sophia.lim@uphsd.edu.ph',       role: 'Staff',               dept: 'Student Affairs',   status: 'pending',  pendingType: 'delete', lastLogin: '2025-01-05 09:00 AM', initials: 'SL', requestedBy: 'Maria Cruz', pendingNote: 'Resigned — request to deactivate account' },
-      { id: 10, name: 'Gabriel Tan',      email: 'gabriel.tan@uphsd.edu.ph',      role: 'Faculty',             dept: 'Academics',         status: 'active',   lastLogin: '2025-01-15 07:45 AM', initials: 'GT' },
-      { id: 11, name: 'Patricia Aquino',  email: 'patricia.aquino@uphsd.edu.ph',  role: 'Staff',               dept: 'Registrar',         status: 'active',   lastLogin: '2025-01-14 01:22 PM', initials: 'PA' },
-      { id: 12, name: 'Daniel Rivera',    email: 'daniel.rivera@uphsd.edu.ph',    role: 'Department Head',     dept: 'Academics',         status: 'inactive', lastLogin: '2024-11-30 05:10 PM', initials: 'DR' }
-    ];
+    let accounts = [];
 
-    /* --------------------------------------------------------------------
+    async function loadAccounts() {
+      try {
+        // TODO: Replace with real API call
+        // const res = await fetch('/api/accounts');
+        // accounts = await res.json();
+
+        accounts = [];
+      } catch (err) {
+        console.error('[Accounts] Failed to load:', err);
+        Toast.error('Load Failed', 'Could not load accounts from the server.');
+        accounts = [];
+      }
+      renderAccounts();
+      updateStats();
+    }
+
+       /* --------------------------------------------------------------------
        STATE
        -------------------------------------------------------------------- */
-    let filteredAccounts = [...accounts];
+    let filteredAccounts = [];
     const selectedIds = new Set();
 
     /* --------------------------------------------------------------------
@@ -323,6 +364,8 @@
     const els = {
       tbody:        $('accountsBody'),
       emptyState:   $('emptyState'),
+      emptyCopy:    $('emptyCopy'),
+      btnEmptyNew:  $('btnEmptyNew'),
       table:        $('accountsTable'),
       pagination:   $('pagination'),
       resultCount:  $('resultCount'),
@@ -338,7 +381,8 @@
       bulkActions:  $('bulkActions'),
       approvalBanner: $('approvalBanner'),
       bannerCount:  $('bannerCount'),
-      approvalBadge: $('approvalBadgeSide')
+      approvalBadge: $('approvalBadgeSide'),
+      noticeDirector: $('viewOnlyNotice')
     };
 
     /* --------------------------------------------------------------------
@@ -361,10 +405,6 @@
       }[type] || 'Pending';
     }
 
-    function hasPermission(action) {
-      return Role.can(action);
-    }
-
     /* --------------------------------------------------------------------
        RENDER — Stats
        -------------------------------------------------------------------- */
@@ -375,7 +415,7 @@
       $('statInactive').textContent = accounts.filter(a => a.status === 'inactive').length;
 
       const pendingCount = accounts.filter(a => a.status === 'pending').length;
-      if (els.bannerCount)  els.bannerCount.textContent  = pendingCount;
+      if (els.bannerCount) els.bannerCount.textContent = pendingCount;
       if (els.approvalBadge) {
         els.approvalBadge.textContent = pendingCount;
         els.approvalBadge.classList.toggle('hidden', pendingCount === 0);
@@ -383,12 +423,17 @@
     }
 
     /* --------------------------------------------------------------------
-       RENDER — Action buttons per row (role-aware)
+       RENDER — Action buttons per row (ALIGNED WITH DIAGRAM)
+       --------------------------------------------------------------------
+       Secretary  → Add ✓ Edit ✓ Delete ✓ View ✓ Authorize ✗
+       EA         → Add ✓ Edit ✓ Delete ✓ View ✓ Authorize ✗
+       Director   → Add ✗ Edit ✓ Delete ✗ View ✓ Authorize ✓
        -------------------------------------------------------------------- */
     function renderActions(account) {
       const buttons = [];
 
-      if (hasPermission('view')) {
+      // VIEW — everyone
+      if (Role.can('account:view')) {
         buttons.push(`
           <button class="action-btn view" data-action="view" data-id="${account.id}" title="View">
             <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
@@ -396,7 +441,8 @@
         `);
       }
 
-      if (hasPermission('edit')) {
+      // EDIT — everyone
+      if (Role.can('account:edit')) {
         buttons.push(`
           <button class="action-btn edit" data-action="edit" data-id="${account.id}" title="Edit">
             <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
@@ -404,7 +450,8 @@
         `);
       }
 
-      if (hasPermission('delete')) {
+      // DELETE — Secretary + EA only
+      if (Role.can('account:delete')) {
         buttons.push(`
           <button class="action-btn delete" data-action="delete" data-id="${account.id}" title="Delete">
             <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
@@ -412,7 +459,8 @@
         `);
       }
 
-      if (hasPermission('authorize') && account.status === 'pending') {
+      // AUTHORIZE — Director only, pending rows only
+      if (Role.can('account:authorize') && account.status === 'pending') {
         buttons.push(`
           <button class="action-btn authorize" data-action="authorize" data-id="${account.id}" title="Authorize">
             <svg viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
@@ -444,7 +492,6 @@
       });
 
       els.resultCount.textContent = `Showing ${filteredAccounts.length} of ${accounts.length} accounts`;
-
       updateStats();
 
       if (filteredAccounts.length === 0) {
@@ -530,12 +577,10 @@
       switch (action) {
         case 'view':
           Toast.info('View Account', `Opening details for ${account.name}...`);
-          // TODO: Step 3 — open details drawer
           break;
 
         case 'edit':
           Toast.gold('Edit Account', `Editing ${account.name}... Changes will require Director authorization.`);
-          // TODO: Step 2 — open edit modal
           break;
 
         case 'delete':
@@ -574,8 +619,7 @@
       const ok = await APP.confirm({
         title: `Authorize the ${verb} of "${account.name}"?`,
         message: 'This action will be final.',
-        confirmText: 'Authorize',
-        danger: false
+        confirmText: 'Authorize'
       });
       if (!ok) return;
 
@@ -612,14 +656,16 @@
 
       const btns = [];
 
-      if (hasPermission('delete')) {
+      // Delete request — Secretary + EA
+      if (Role.can('account:delete')) {
         btns.push(`<button class="btn danger" onclick="Accounts.bulkDelete()">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
           Request Delete
         </button>`);
       }
 
-      if (hasPermission('authorize')) {
+      // Authorize all — Director only
+      if (Role.can('account:authorize')) {
         btns.push(`<button class="btn" onclick="Accounts.bulkAuthorize()">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
           Authorize All
@@ -712,16 +758,35 @@
     });
 
     /* --------------------------------------------------------------------
-       ROLE — Apply permissions to page
+       ROLE — Apply permissions to page (ALIGNED WITH DIAGRAM)
        -------------------------------------------------------------------- */
     function applyRole() {
-      // Show / hide New Account button
-      els.btnNew.style.display = hasPermission('add') ? 'inline-flex' : 'none';
+      const canAdd    = Role.can('account:add');
+      const canAuth   = Role.can('account:authorize');
 
-      // Show / hide approval banner (Director only + pending > 0)
+      // Show / hide New Account button (Secretary + EA only)
+      els.btnNew.style.display = canAdd ? 'inline-flex' : 'none';
+      if (els.btnEmptyNew) {
+        els.btnEmptyNew.style.display = canAdd ? 'inline-flex' : 'none';
+      }
+
+      // Approval banner: Director only + pending > 0
       const pendingCount = accounts.filter(a => a.status === 'pending').length;
-      const showBanner = hasPermission('authorize') && pendingCount > 0;
+      const showBanner = canAuth && pendingCount > 0;
       els.approvalBanner.style.display = showBanner ? 'flex' : 'none';
+
+      // Director read-only notice
+      if (els.noticeDirector) {
+        els.noticeDirector.style.display =
+          Role.id() === 'director' ? 'flex' : 'none';
+      }
+
+      // Empty state copy varies by role
+      if (els.emptyCopy) {
+        els.emptyCopy.textContent = canAdd
+          ? 'Try adjusting your search or filters. If you can\'t find who you\'re looking for, you may need to create a new account.'
+          : 'Try adjusting your search or filters.';
+      }
 
       renderAccounts();
     }
@@ -745,25 +810,15 @@
        NEW ACCOUNT
        -------------------------------------------------------------------- */
     els.btnNew.addEventListener('click', () => {
-      if (!hasPermission('add')) {
+      if (!Role.can('account:add')) {
         Toast.error('Permission Denied', 'Only Secretary and Executive Assistant can create new accounts.');
         return;
       }
-      Toast.gold('New Account', 'The "Create Account" modal will open in the next step.');
-      // TODO: Step 2 — open modal
+      Toast.gold('New Account', 'The "Create Account" modal will open in a future step.');
     });
 
     /* --------------------------------------------------------------------
-       REACT TO ROLE CHANGES (from dev switcher in app.js)
-       -------------------------------------------------------------------- */
-    Bus.on('role:changed', () => {
-      selectedIds.clear();
-      applyRole();
-      Toast.info('Role Switched', `Now viewing as ${Role.current().label}.`);
-    });
-
-    /* --------------------------------------------------------------------
-       PUBLIC API (used by inline onclick handlers)
+       PUBLIC API
        -------------------------------------------------------------------- */
     window.Accounts = {
       filterPending,
@@ -774,10 +829,19 @@
     };
 
     /* --------------------------------------------------------------------
+       REACT TO ROLE CHANGES
+       -------------------------------------------------------------------- */
+    Bus.on('role:changed', () => {
+      selectedIds.clear();
+      applyRole();
+      Toast.info('Role Switched', `Now viewing as ${Role.current().label}.`);
+    });
+
+    /* --------------------------------------------------------------------
        INIT
        -------------------------------------------------------------------- */
     applyRole();
-
+    loadAccounts();
   })();
   </script>
 </body>

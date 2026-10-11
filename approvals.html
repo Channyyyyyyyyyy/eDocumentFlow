@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -300,11 +300,13 @@
   .approval-icon.account { background: rgba(70,130,220,0.12); color: #4682dc; }
   .approval-icon.edit    { background: rgba(212,175,55,0.15); color: #8a6d1f; }
   .approval-icon.delete  { background: rgba(255,71,87,0.12); color: #d43a45; }
+  .approval-icon.route   { background: rgba(139,92,246,0.12); color: #8b5cf6; }
 
   body.dark-mode .approval-icon.doc     { background: rgba(212,175,55,0.15); color: var(--gold); }
   body.dark-mode .approval-icon.account { background: rgba(100,150,240,0.15); color: #7ea8ee; }
   body.dark-mode .approval-icon.edit    { background: rgba(212,175,55,0.2); color: var(--gold-bright); }
   body.dark-mode .approval-icon.delete  { background: rgba(255,107,122,0.15); color: #ff8b96; }
+  body.dark-mode .approval-icon.route   { background: rgba(160,120,255,0.15); color: #b298fa; }
 
   .approval-body {
     flex: 1;
@@ -448,6 +450,7 @@
     display: flex;
     gap: 12px;
     align-items: flex-start;
+    position: relative;
   }
   .timeline-step .step-dot {
     width: 22px;
@@ -500,7 +503,6 @@
     width: 2px;
     background: var(--border-light);
   }
-  .timeline-step { position: relative; }
 </style>
 </head>
 <body>
@@ -511,7 +513,6 @@
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <div class="brand-logo">
-        <!-- 👇 REPLACE WITH YOUR LOGO -->
         <img src="uphsd-logo.png" alt="Logo">
           <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
         </svg>
@@ -532,10 +533,18 @@
         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
         Documents
       </a>
+      <a class="nav-item" href="routing.html" data-page="routing.html">
+        <svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
+        Routing &amp; Tracking
+      </a>
       <a class="nav-item active" href="approvals.html" data-page="approvals.html">
         <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
         Approvals
         <span class="nav-badge" id="approvalBadgeSide">5</span>
+      </a>
+      <a class="nav-item" href="notifications.html" data-page="notifications.html">
+        <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+        Notifications
       </a>
     </div>
 
@@ -580,7 +589,6 @@
       </div>
 
       <div class="topbar-actions">
-        <!-- 🧪 DEV ONLY -->
         <div class="role-switcher" title="Dev preview">
           <label>View as</label>
           <select id="roleSwitcher">
@@ -691,6 +699,10 @@
           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3z"/></svg>
           Account Requests <span class="chip-count" data-count="account">0</span>
         </button>
+        <button class="chip" data-filter="routing">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
+          Routing <span class="chip-count" data-count="routing">0</span>
+        </button>
         <button class="chip" data-filter="high-priority">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
           High Priority <span class="chip-count" data-count="high-priority">0</span>
@@ -757,13 +769,11 @@
       </div>
 
       <div class="modal-body">
-        <!-- Summary comment box -->
         <div class="comment-box">
           <div class="comment-label">Request Summary</div>
           <div class="comment-text" id="reviewSummary">—</div>
         </div>
 
-        <!-- Info grid -->
         <div class="info-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;margin-bottom:18px;">
           <div class="info-item">
             <div class="info-label" style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:4px;">Request ID</div>
@@ -791,13 +801,11 @@
           </div>
         </div>
 
-        <!-- Timeline -->
         <div style="margin-top:10px;">
           <div class="info-label" style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:10px;">Workflow Progress</div>
           <div class="mini-timeline" id="reviewTimeline"></div>
         </div>
 
-        <!-- Notes textarea (only for Director) -->
         <div class="form-group" id="reviewNotesGroup" style="margin-top:16px;">
           <label for="reviewNotes">Reviewer Notes <span class="form-hint" style="display:inline;font-weight:400;">(optional)</span></label>
           <textarea id="reviewNotes" placeholder="Add a comment for the requester (visible in the audit trail)..."></textarea>
@@ -824,118 +832,46 @@
   <script src="app.js"></script>
   <script>
   /* ==========================================================================
-     APPROVALS — Page module
+     APPROVALS — Page module (aligned with use case diagram)
+
+     Permissions (per diagram):
+       Secretary  → approval:submit ✓, approval:review ✗
+       EA         → approval:submit ✓, approval:review ✗
+       Director   → approval:submit ✗, approval:review ✓
      ========================================================================== */
   (function () {
     'use strict';
 
     const { Role, Toast, Utils, Modal, Bus } = APP;
 
-    /* --------------------------------------------------------------------
-       MOCK DATA — Pending approvals queue
-       kind: 'document' | 'account'
+        /* --------------------------------------------------------------------
+       DATA — loaded from backend
+       kind: 'document' | 'account' | 'routing'
        accountAction: 'create' | 'edit' | 'delete'
        -------------------------------------------------------------------- */
-    const approvals = [
-      {
-        id: 'REQ-2025-001',
-        kind: 'document',
-        title: 'Budget Proposal FY 2025-2026.pdf',
-        summary: 'Annual budget proposal for the 2025-2026 academic year, submitted for board review.',
-        requester: 'Maria Cruz',
-        date: new Date(Date.now() - 45 * 60 * 1000),
-        priority: 'high',
-        dept: 'Accounting',
-        status: 'pending'
-      },
-      {
-        id: 'REQ-2025-002',
-        kind: 'account',
-        accountAction: 'create',
-        title: 'New Account — Carlos Mendoza',
-        summary: 'Request to create a Faculty account for Carlos Mendoza (Academics department).',
-        requester: 'Maria Cruz',
-        date: new Date(Date.now() - 2 * 60 * 60 * 1000),
-        priority: 'normal',
-        dept: 'Academics',
-        status: 'pending'
-      },
-      {
-        id: 'REQ-2025-003',
-        kind: 'document',
-        title: 'HR Staffing Memo.docx',
-        summary: 'Staffing memo for Q1 2025 — needs Director sign-off before Jan 25.',
-        requester: 'Rina Gomez',
-        date: new Date(Date.now() - 6 * 60 * 60 * 1000),
-        priority: 'high',
-        dept: 'Human Resources',
-        status: 'pending'
-      },
-      {
-        id: 'REQ-2025-004',
-        kind: 'account',
-        accountAction: 'edit',
-        title: 'Role Change — Jose Villanueva',
-        summary: 'Update role from Staff → Department Head (Accounting department).',
-        requester: 'Anna Reyes',
-        date: new Date(Date.now() - 22 * 60 * 60 * 1000),
-        priority: 'normal',
-        dept: 'Accounting',
-        status: 'pending'
-      },
-      {
-        id: 'REQ-2025-005',
-        kind: 'document',
-        title: 'Student Affairs Report.pdf',
-        summary: 'Q4 2024 report from the Office of Student Affairs.',
-        requester: 'Sophia Lim',
-        date: new Date(Date.now() - 28 * 60 * 60 * 1000),
-        priority: 'normal',
-        dept: 'Student Affairs',
-        status: 'pending'
-      },
-      {
-        id: 'REQ-2025-006',
-        kind: 'account',
-        accountAction: 'delete',
-        title: 'Account Deletion — Sophia Lim',
-        summary: 'Resignation notice received. Request to deactivate and archive account.',
-        requester: 'Maria Cruz',
-        date: new Date(Date.now() - 32 * 60 * 60 * 1000),
-        priority: 'low',
-        dept: 'Student Affairs',
-        status: 'pending'
-      },
-      {
-        id: 'REQ-2025-007',
-        kind: 'document',
-        title: 'Board Resolution Jan 2025.pdf',
-        summary: 'Board resolution from the January 2025 meeting — for Director approval.',
-        requester: 'Anna Reyes',
-        date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-        priority: 'high',
-        dept: 'Accounting',
-        status: 'pending'
-      },
-      {
-        id: 'REQ-2025-008',
-        kind: 'account',
-        accountAction: 'create',
-        title: 'New Account — Gabriel Tan',
-        summary: 'New Faculty account request for Gabriel Tan (Academics department).',
-        requester: 'Maria Cruz',
-        date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
-        priority: 'low',
-        dept: 'Academics',
-        status: 'pending'
+    let approvals = [];
+
+    async function loadApprovals() {
+      try {
+        // TODO: Replace with real API call
+        // const res = await fetch('/api/approvals?status=pending');
+        // approvals = await res.json();
+
+        approvals = [];
+      } catch (err) {
+        console.error('[Approvals] Failed to load:', err);
+        Toast.error('Load Failed', 'Could not load pending approvals.');
+        approvals = [];
       }
-    ];
+      renderApprovals();
+      updateStats();
+    }
 
     /* --------------------------------------------------------------------
        STATE
        -------------------------------------------------------------------- */
     let currentFilter = 'all';
-    let filteredApprovals = [...approvals];
+    let filteredApprovals = [];
     const selectedIds = new Set();
     let currentReviewItem = null;
 
@@ -969,6 +905,7 @@
        -------------------------------------------------------------------- */
     function kindIcon(kind, accountAction) {
       if (kind === 'document') return { cls: 'doc', svg: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>' };
+      if (kind === 'routing') return { cls: 'route', svg: '<path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/>' };
       const map = {
         create: { cls: 'account', svg: '<path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>' },
         edit:   { cls: 'edit', svg: '<path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>' },
@@ -979,6 +916,7 @@
 
     function kindLabel(item) {
       if (item.kind === 'document') return 'Document';
+      if (item.kind === 'routing')  return 'Routing';
       return {
         create: 'Account · Create',
         edit:   'Account · Edit',
@@ -992,6 +930,44 @@
         d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     }
 
+       /* --------------------------------------------------------------------
+       STATS — loaded from backend
+       -------------------------------------------------------------------- */
+    let approvalStats = {
+      approvedToday: 0,
+      totalApproved: 0,
+      totalRejected: 0,
+      avgReviewTime: '—'
+    };
+
+    /**
+     * Load approval statistics from the backend.
+     * Replace with real endpoint, e.g. GET /api/approvals/stats
+     */
+    async function loadApprovalStats() {
+      try {
+        // TODO: Replace with real API call
+        // const res = await fetch('/api/approvals/stats');
+        // approvalStats = await res.json();
+
+        approvalStats = {
+          approvedToday: 0,
+          totalApproved: 0,
+          totalRejected: 0,
+          avgReviewTime: '—'
+        };
+      } catch (err) {
+        console.error('[Approvals] Failed to load stats:', err);
+        approvalStats = {
+          approvedToday: 0,
+          totalApproved: 0,
+          totalRejected: 0,
+          avgReviewTime: '—'
+        };
+      }
+      updateStats();
+    }
+
     /* --------------------------------------------------------------------
        RENDER — Stats + hero
        -------------------------------------------------------------------- */
@@ -999,28 +975,35 @@
       const pending = approvals.filter(a => a.status === 'pending');
       const pendingCount = pending.length;
 
-      // Hero (Director only)
+      // ---- Hero banner (Director view) ----
       if (els.heroCount) {
         els.heroCount.textContent = pendingCount;
         els.heroCountPlural.textContent = pendingCount === 1 ? '' : 's';
       }
-      if (els.heroStatPending) els.heroStatPending.textContent = pendingCount;
+      if (els.heroStatPending) {
+        els.heroStatPending.textContent = pendingCount;
+      }
+      if (els.heroStatToday) {
+        els.heroStatToday.textContent = Utils.number(approvalStats.approvedToday || 0);
+      }
 
-      // Approved today (fake logic — count items without status, i.e. all items — for demo)
-      const approvedToday = 3; // demo value
-      if (els.heroStatToday) els.heroStatToday.textContent = approvedToday;
+      // ---- Stat cards (Secretary/EA view) ----
+      const statPending  = $('statPending');
+      const statApproved = $('statApproved');
+      const statRejected = $('statRejected');
+      const statAvgTime  = $('statAvgTime');
 
-      // Regular stats
-      $('statPending').textContent  = pendingCount;
-      $('statApproved').textContent = 12; // demo
-      $('statRejected').textContent = 2;  // demo
-      $('statAvgTime').textContent  = '4h';
+      if (statPending)  statPending.textContent  = Utils.number(pendingCount);
+      if (statApproved) statApproved.textContent = Utils.number(approvalStats.totalApproved || 0);
+      if (statRejected) statRejected.textContent = Utils.number(approvalStats.totalRejected || 0);
+      if (statAvgTime)  statAvgTime.textContent  = approvalStats.avgReviewTime || '—';
 
-      // Chip counts
+      // ---- Filter chip counts ----
       const counts = {
         'all':           approvals.length,
         'document':      approvals.filter(a => a.kind === 'document').length,
         'account':       approvals.filter(a => a.kind === 'account').length,
+        'routing':       approvals.filter(a => a.kind === 'routing').length,
         'high-priority': approvals.filter(a => a.priority === 'high').length
       };
       Object.entries(counts).forEach(([k, v]) => {
@@ -1028,7 +1011,7 @@
         if (el) el.textContent = v;
       });
 
-      // Sidebar badge
+      // ---- Sidebar badge (pending count) ----
       const sideBadge = document.getElementById('approvalBadgeSide');
       if (sideBadge) {
         sideBadge.textContent = pendingCount;
@@ -1045,24 +1028,21 @@
       const sortBy = els.sortBy.value;
 
       filteredApprovals = approvals.filter(a => {
-        // Filter chip
         if (currentFilter === 'document' && a.kind !== 'document') return false;
         if (currentFilter === 'account' && a.kind !== 'account') return false;
+        if (currentFilter === 'routing' && a.kind !== 'routing') return false;
         if (currentFilter === 'high-priority' && a.priority !== 'high') return false;
-        // Search
+
         const matchesSearch = !search ||
           a.title.toLowerCase().includes(search) ||
           a.id.toLowerCase().includes(search) ||
           a.requester.toLowerCase().includes(search) ||
           a.summary.toLowerCase().includes(search);
         if (!matchesSearch) return false;
-        // Requester filter
         if (requesterF && a.requester !== requesterF) return false;
-        // Only show pending
         return a.status === 'pending';
       });
 
-      // Sort
       if (sortBy === 'newest') {
         filteredApprovals.sort((a, b) => b.date - a.date);
       } else if (sortBy === 'oldest') {
@@ -1120,7 +1100,6 @@
         `;
       }).join('');
 
-      // Checkboxes
       els.list.querySelectorAll('.approval-checkbox').forEach(cb => {
         cb.addEventListener('change', (e) => {
           const id = e.target.dataset.id;
@@ -1131,7 +1110,6 @@
         });
       });
 
-      // Action buttons
       els.list.querySelectorAll('[data-action]').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -1143,11 +1121,11 @@
     }
 
     /* --------------------------------------------------------------------
-       RENDER — Action buttons on cards
+       RENDER — Action buttons on cards (ALIGNED WITH DIAGRAM)
        -------------------------------------------------------------------- */
     function renderCardActions(item) {
-      if (Role.can('authorize')) {
-        // Director view: Review, Authorize, Reject
+      // Director: Review + Authorize + Reject
+      if (Role.can('approval:review')) {
         return `
           <button class="btn btn-ghost" data-action="review" data-id="${item.id}">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
@@ -1163,7 +1141,7 @@
           </button>
         `;
       }
-      // Secretary/EA view: just "View Status"
+      // Secretary/EA: only "View Status"
       return `
         <button class="btn btn-ghost" data-action="review" data-id="${item.id}">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
@@ -1202,7 +1180,6 @@
       $('reviewPriority').innerHTML   = `<span class="priority ${item.priority}">${Utils.capitalize(item.priority)}</span>`;
       $('reviewDept').textContent     = item.dept;
 
-      // Timeline
       const steps = [
         { title: 'Submitted', time: formatDateShort(item.date), state: 'done' },
         { title: 'Under Review', time: 'In progress', state: 'current' },
@@ -1220,11 +1197,11 @@
         </div>
       `).join('');
 
-      // Show/hide action buttons + notes based on role
-      const canAuthorize = Role.can('authorize');
-      $('btnAuthorize').style.display = canAuthorize ? 'inline-flex' : 'none';
-      $('btnReject').style.display    = canAuthorize ? 'inline-flex' : 'none';
-      $('reviewNotesGroup').style.display = canAuthorize ? 'block' : 'none';
+      // Show/hide action buttons based on role
+      const canReview = Role.can('approval:review');
+      $('btnAuthorize').style.display = canReview ? 'inline-flex' : 'none';
+      $('btnReject').style.display    = canReview ? 'inline-flex' : 'none';
+      $('reviewNotesGroup').style.display = canReview ? 'block' : 'none';
 
       Modal.open('reviewModal');
     }
@@ -1244,8 +1221,8 @@
       item.status = 'approved';
       Modal.close('reviewModal');
       Toast.success('Authorization Granted', `"${item.title}" has been authorized.`);
-      // Update UI
       renderApprovals();
+      loadApprovalStats();
     }
 
     async function rejectItem(item) {
@@ -1261,9 +1238,9 @@
       Modal.close('reviewModal');
       Toast.error('Request Rejected', `"${item.title}" has been rejected.`);
       renderApprovals();
+      loadApprovalStats();
     }
 
-    /* Buttons in modal footer */
     $('btnAuthorize').addEventListener('click', () => {
       if (currentReviewItem) authorizeItem(currentReviewItem);
     });
@@ -1284,7 +1261,7 @@
 
       const btns = [];
 
-      if (Role.can('authorize')) {
+      if (Role.can('approval:review')) {
         btns.push(`<button class="btn" onclick="Approvals.bulkAuthorize()">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
           Authorize All
@@ -1323,6 +1300,7 @@
       Toast.success('Bulk Authorization', `${selectedIds.size} request(s) authorized.`);
       selectedIds.clear();
       renderApprovals();
+      loadApprovalStats();
     }
 
     async function bulkReject() {
@@ -1341,6 +1319,7 @@
       Toast.error('Bulk Rejection', `${selectedIds.size} request(s) rejected.`);
       selectedIds.clear();
       renderApprovals();
+      loadApprovalStats();
     }
 
     function bulkExport() {
@@ -1383,22 +1362,28 @@
     });
 
     /* --------------------------------------------------------------------
-       ROLE-AWARE UI
+       ROLE-AWARE UI (ALIGNED WITH DIAGRAM)
        -------------------------------------------------------------------- */
     function applyRole() {
-      const isDirector = Role.can('authorize');
+      const canReview = Role.can('approval:review');
+      const canSubmit = Role.can('approval:submit');
 
-      // Hero: only for Director
-      if (els.hero) els.hero.style.display = isDirector ? 'flex' : 'none';
+      // Hero: Director only
+      if (els.hero) els.hero.style.display = canReview ? 'flex' : 'none';
 
       // Page title
       if (els.pageTitle) {
-        els.pageTitle.textContent = isDirector ? 'Pending Approvals' : 'My Submitted Requests';
+        els.pageTitle.textContent = canReview ? 'Pending Approvals' : 'My Submitted Requests';
       }
       if (els.pageSub) {
-        els.pageSub.textContent = isDirector
+        els.pageSub.textContent = canReview
           ? 'Review and authorize requests from your team'
           : 'Track the status of requests you have submitted';
+      }
+
+      // Stats grid: show if can review or submit
+      if (els.statsGrid) {
+        els.statsGrid.style.display = (canReview || canSubmit) ? 'grid' : 'none';
       }
 
       renderApprovals();
@@ -1423,11 +1408,12 @@
       Toast.info('Role Switched', `Now viewing as ${Role.current().label}.`);
     });
 
-    /* --------------------------------------------------------------------
+       /* --------------------------------------------------------------------
        INIT
        -------------------------------------------------------------------- */
     applyRole();
-
+    loadApprovals();
+    loadApprovalStats();
   })();
   </script>
 </body>

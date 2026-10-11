@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Notifications — UPHSD Molino | Office of the School Director</title>
+<link rel="stylesheet" href="shared.css" />
+
+<style>
+  /* =====================================================================
+     NOTIFICATIONS — PAGE-SPECIFIC STYLES
+     ===================================================================== */
+
+  /* ---------- Two-column layout ---------- */
+  .notif-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  @media (max-width: 1000px) {
+    .notif-layout { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Toolbar ---------- */
+  .notif-toolbar {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .notif-tabs {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .notif-tabs::-webkit-scrollbar { display: none; }
+
+  .notif-tab {
+    padding: 8px 14px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+  }
+  .notif-tab:hover {
+    background: var(--bg-hover);
+    color: var(--maroon);
+  }
+  body.dark-mode .notif-tab:hover { color: var(--gold); }
+
+  .notif-tab.active {
+    background: var(--maroon);
+    color: var(--gold);
+  }
+  body.dark-mode .notif-tab.active {
+    background: var(--gold);
+    color: #1a1414;
+  }
+
+  .notif-tab .tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 18px;
+    padding: 0 6px;
+    background: rgba(0,0,0,0.08);
+    border-radius: 9px;
+    font-size: 0.68rem;
+    font-weight: 700;
+  }
+  body.dark-mode .notif-tab .tab-count {
+    background: rgba(255,255,255,0.1);
+  }
+  .notif-tab.active .tab-count {
+    background: rgba(212,175,55,0.25);
+    color: var(--gold);
+  }
+  body.dark-mode .notif-tab.active .tab-count {
+    background: rgba(26,20,20,0.15);
+    color: #1a1414;
+  }
+
+  /* ---------- Notification list ---------- */
+  .notif-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .notif-item {
+    display: flex;
+    gap: 14px;
+    padding: 16px 18px;
+    background: var(--bg-card);
+    border: 1.5px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .notif-item:hover {
+    border-color: var(--gold);
+    box-shadow: var(--shadow-md);
+    transform: translateX(2px);
+  }
+
+  .notif-item.unread {
+    background: linear-gradient(135deg,
+      rgba(212,175,55,0.06) 0%,
+      rgba(212,175,55,0.02) 100%);
+    border-left: 4px solid var(--gold);
+  }
+
+  body.dark-mode .notif-item.unread {
+    background: linear-gradient(135deg,
+      rgba(212,175,55,0.08) 0%,
+      rgba(212,175,55,0.02) 100%);
+  }
+
+  .notif-item.unread::before {
+    content: '';
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 0 4px rgba(212,175,55,0.15);
+  }
+
+  .notif-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .notif-icon svg { width: 20px; height: 20px; fill: currentColor; }
+
+  .notif-icon.document   { background: rgba(123,17,19,0.1);  color: var(--maroon); }
+  .notif-icon.approval   { background: rgba(46,213,115,0.12); color: #1e8a4d; }
+  .notif-icon.routing    { background: rgba(139,92,246,0.12); color: #8b5cf6; }
+  .notif-icon.account    { background: rgba(70,130,220,0.12); color: #4682dc; }
+  .notif-icon.system     { background: rgba(212,175,55,0.15); color: #8a6d1f; }
+
+  body.dark-mode .notif-icon.document { background: rgba(212,175,55,0.15); color: var(--gold); }
+  body.dark-mode .notif-icon.approval { background: rgba(46,213,115,0.15); color: #4ade80; }
+  body.dark-mode .notif-icon.routing  { background: rgba(160,120,255,0.15); color: #b298fa; }
+  body.dark-mode .notif-icon.account  { background: rgba(100,150,240,0.15); color: #7ea8ee; }
+  body.dark-mode .notif-icon.system   { background: rgba(212,175,55,0.2); color: var(--gold-bright); }
+
+  .notif-body { flex: 1; min-width: 0; }
+
+  .notif-body .notif-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.35;
+    margin-bottom: 4px;
+    padding-right: 20px;
+  }
+
+  .notif-body .notif-message {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+
+  .notif-body .notif-meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+
+  .notif-body .notif-meta .meta-badge {
+    padding: 2px 8px;
+    background: var(--bg-input);
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  .notif-actions {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .notif-actions button {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .notif-actions button:hover {
+    border-color: var(--maroon);
+    color: var(--maroon);
+    background: var(--bg-hover);
+  }
+  body.dark-mode .notif-actions button:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  .notif-actions button svg { width: 14px; height: 14px; fill: currentColor; }
+
+  /* ---------- Empty state ---------- */
+  .notif-empty {
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--bg-card);
+    border: 1.5px dashed var(--border-light);
+    border-radius: var(--radius-lg);
+  }
+  .notif-empty .empty-icon {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(212,175,55,0.03));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+  }
+  .notif-empty .empty-icon svg {
+    width: 44px;
+    height: 44px;
+    fill: var(--gold);
+  }
+  .notif-empty h3 {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .notif-empty p {
+    font-size: 0.86rem;
+    color: var(--text-muted);
+    max-width: 400px;
+    margin: 0 auto;
+    line-height: 1.55;
+  }
+
+  /* ---------- Right sidebar (Email Notifier) ---------- */
+  .notif-side {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: sticky;
+    top: calc(var(--topbar-h) + 20px);
+  }
+
+  .notif-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 20px 22px;
+  }
+
+  .notif-card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .notif-card-head h3 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+  }
+  .notif-card-head h3 svg {
+    width: 16px;
+    height: 16px;
+    fill: var(--gold);
+  }
+
+  /* Email notifier master switch */
+  .notif-master {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg,
+      rgba(212,175,55,0.08) 0%,
+      rgba(212,175,55,0.02) 100%);
+    border: 1.5px solid var(--gold);
+    border-radius: var(--radius-md);
+    margin-bottom: 18px;
+  }
+
+  .notif-master .master-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--gold);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  body.dark-mode .notif-master .master-icon {
+    color: #1a1414;
+  }
+  .notif-master .master-icon svg { width: 18px; height: 18px; fill: currentColor; }
+
+  .notif-master .master-text { flex: 1; min-width: 0; }
+  .notif-master .master-text .master-title {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+  .notif-master .master-text .master-desc {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+
+  /* ---------- Toggle switch (reused from settings) ---------- */
+  .toggle-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .toggle-row:first-of-type { padding-top: 0; }
+
+  .toggle-info { flex: 1; min-width: 0; }
+  .toggle-info .toggle-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+  }
+  .toggle-info .toggle-desc {
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+  }
+
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 42px;
+    height: 24px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+  }
+
+  .switch .slider {
+    position: absolute;
+    inset: 0;
+    background: var(--border-medium);
+    border-radius: 24px;
+    transition: background 0.3s ease;
+    cursor: pointer;
+  }
+
+  .switch .slider::before {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 3px;
+    top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  }
+
+  .switch input:checked + .slider {
+    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
+  }
+  body.dark-mode .switch input:checked + .slider {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  }
+
+  .switch input:checked + .slider::before {
+    transform: translateX(18px);
+  }
+
+  /* ---------- Email log table ---------- */
+  .email-log-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .email-log-table th {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-align: left;
+    padding: 8px 6px;
+    border-bottom: 1.5px solid var(--border-light);
+  }
+  .email-log-table td {
+    font-size: 0.78rem;
+    color: var(--text-primary);
+    padding: 10px 6px;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .email-log-table tr:last-child td { border-bottom: none; }
+
+  .email-status {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .email-status.sent {
+    background: rgba(46,213,115,0.12);
+    color: #1e8a4d;
+  }
+  .email-status.opened {
+    background: rgba(70,130,220,0.12);
+    color: #4682dc;
+  }
+  body.dark-mode .email-status.sent   { color: #4ade80; }
+  body.dark-mode .email-status.opened { color: #7ea8ee; }
+
+  /* ---------- Actions bar in list ---------- */
+  .notif-list-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+
+  .notif-list-actions .btn-link {
+    padding: 6px 12px;
+    background: transparent;
+    border: none;
+    color: var(--maroon);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  body.dark-mode .notif-list-actions .btn-link { color: var(--gold); }
+  .notif-list-actions .btn-link:hover {
+    background: var(--bg-hover);
+    text-decoration: underline;
+  }
+  .notif-list-actions .btn-link svg {
+    width: 13px;
+    height: 13px;
+    fill: currentColor;
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============================================================
+       SIDEBAR
+       ============================================================ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <img src="uphsd-logo.png" alt="Logo">
+          <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h3>UPHSD Molino</h3>
+        <p>Director's Office</p>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Main</div>
+      <a class="nav-item" href="dashboard.html" data-page="dashboard.html">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item" href="documents.html" data-page="documents.html">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        Documents
+      </a>
+      <a class="nav-item" href="routing.html" data-page="routing.html">
+        <svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
+        Routing &amp; Tracking
+      </a>
+      <a class="nav-item" href="approvals.html" data-page="approvals.html">
+        <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        Approvals
+        <span class="nav-badge" id="approvalBadgeSide">5</span>
+      </a>
+      <a class="nav-item active" href="notifications.html" data-page="notifications.html">
+        <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+        Notifications
+        <span class="nav-badge" id="notifBadgeSide">3</span>
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Administration</div>
+      <a class="nav-item" href="accounts.html" data-page="accounts.html">
+        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        Account Management
+      </a>
+      <a class="nav-item" href="reports.html" data-page="reports.html">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+        Reports
+      </a>
+      <a class="nav-item" href="settings.html" data-page="settings.html">
+        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.484.484 0 00-.59.22L2.74 8.87a.47.47 0 00.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 00-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1112 8.4a3.6 3.6 0 010 7.2z"/></svg>
+        Settings
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      © <span data-year></span> UPHSD Molino<br/>
+      v1.0 · Director's Office
+    </div>
+  </aside>
+
+  <div class="overlay-backdrop" id="overlayBackdrop"></div>
+
+  <!-- ============================================================
+       MAIN
+       ============================================================ -->
+  <main class="main">
+
+    <!-- ========== TOP BAR ========== -->
+    <header class="topbar">
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
+      </button>
+
+      <div class="page-title">
+        <h1>Notifications</h1>
+        <p>View your notifications and manage email delivery</p>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="role-switcher" title="Dev preview">
+          <label>View as</label>
+          <select id="roleSwitcher">
+            <option value="secretary">Secretary</option>
+            <option value="ea">Executive Assistant</option>
+            <option value="director">Director</option>
+          </select>
+        </div>
+
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg id="themeIcon" viewBox="0 0 24 24">
+            <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 7.06a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0z"/>
+          </svg>
+        </button>
+
+        <button class="icon-btn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+          <span class="dot"></span>
+        </button>
+
+        <div class="user-chip" id="userChip" title="Click to log out">
+          <div class="user-avatar" id="userAvatar">MC</div>
+          <div class="user-info">
+            <span class="name" id="userName">Maria Cruz</span>
+            <span class="role" id="userRoleLabel">Secretary</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ========== CONTENT ========== -->
+    <div class="content">
+
+      <div class="notif-layout">
+
+        <!-- LEFT: Notification list -->
+        <div>
+
+          <!-- Tabs -->
+          <div class="notif-toolbar">
+            <div class="notif-tabs" id="notifTabs">
+              <button class="notif-tab active" data-tab="all">
+                All <span class="tab-count" data-count="all">0</span>
+              </button>
+              <button class="notif-tab" data-tab="unread">
+                Unread <span class="tab-count" data-count="unread">0</span>
+              </button>
+              <button class="notif-tab" data-tab="document">
+                Documents <span class="tab-count" data-count="document">0</span>
+              </button>
+              <button class="notif-tab" data-tab="approval">
+                Approvals <span class="tab-count" data-count="approval">0</span>
+              </button>
+              <button class="notif-tab" data-tab="routing">
+                Routing <span class="tab-count" data-count="routing">0</span>
+              </button>
+              <button class="notif-tab" data-tab="account">
+                Accounts <span class="tab-count" data-count="account">0</span>
+              </button>
+              <button class="notif-tab" data-tab="system">
+                System <span class="tab-count" data-count="system">0</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick actions -->
+          <div class="notif-list-actions">
+            <button class="btn-link" id="btnMarkAllRead">
+              <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+              Mark all as read
+            </button>
+            <button class="btn-link" id="btnClearRead">
+              <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+              Clear read
+            </button>
+          </div>
+
+          <!-- List -->
+          <div class="notif-list" id="notifList"></div>
+
+          <!-- Empty -->
+          <div class="notif-empty" id="notifEmpty" style="display:none;">
+            <div class="empty-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+            </div>
+            <h3 id="emptyTitle">No notifications</h3>
+            <p id="emptyDesc">You're all caught up! New notifications will appear here.</p>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: Email Notifier settings -->
+        <aside class="notif-side">
+
+          <!-- Master switch -->
+          <div class="notif-card">
+            <div class="notif-card-head">
+              <h3>
+                <svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                Email Notifier
+              </h3>
+            </div>
+
+            <div class="notif-master">
+              <div class="master-icon">
+                <svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+              </div>
+              <div class="master-text">
+                <div class="master-title">Master Switch</div>
+                <div class="master-desc">Turn all email notifications on/off</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="masterSwitch" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div id="emailTogglesGroup">
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-title">New Documents</div>
+                  <div class="toggle-desc">When a document is uploaded to the system.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" class="email-toggle" data-notif="emailDocs" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-title">Approval Requests</div>
+                  <div class="toggle-desc">When something needs your authorization.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" class="email-toggle" data-notif="emailApprovals" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-title">Routing Updates</div>
+                  <div class="toggle-desc">When a document is routed to you or from your department.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" class="email-toggle" data-notif="emailRouting" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-title">Account Activity</div>
+                  <div class="toggle-desc">Login events, password changes, account updates.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" class="email-toggle" data-notif="emailAccount" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-title">Weekly Digest</div>
+                  <div class="toggle-desc">Summary every Monday at 8:00 AM.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" class="email-toggle" data-notif="emailDigest" />
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent email log -->
+          <div class="notif-card">
+            <div class="notif-card-head">
+              <h3>
+                <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM9 17H7v-2h2v2zm0-4H7v-2h2v2zm0-4H7V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z"/></svg>
+                Recent Emails
+              </h3>
+            </div>
+
+            <table class="email-log-table">
+              <thead>
+                <tr>
+                  <th>Subject</th>
+                  <th style="text-align:right;">Status</th>
+                </tr>
+              </thead>
+                            <tbody id="emailLogBody">
+                <!-- Populated by JS — loaded from backend -->
+                <tr>
+                  <td colspan="2" style="text-align:center;color:var(--text-muted);font-style:italic;padding:20px 6px;">
+                    No recent emails
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </aside>
+
+      </div>
+
+    </div>
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ============================================================
+       PAGE SCRIPT
+       ============================================================ -->
+  <script src="app.js"></script>
+  <script>
+  /* ==========================================================================
+     NOTIFICATIONS — Page module (aligned with use case diagram)
+
+     Permissions (per diagram):
+       Secretary  → notification:view ✓, notification:email ✓
+       EA         → notification:view ✓, notification:email ✓
+       Director   → notification:view ✓, notification:email ✓
+       (All roles have the same notification permissions)
+     ========================================================================== */
+  (function () {
+    'use strict';
+
+    const { Role, Toast, Utils, Bus } = APP;
+
+        /* --------------------------------------------------------------------
+       DATA — loaded from backend
+       -------------------------------------------------------------------- */
+    let notifications = [];
+
+    async function loadNotifications() {
+      try {
+        // TODO: Replace with real API call
+        // const res = await fetch('/api/notifications');
+        // notifications = await res.json();
+
+        notifications = [];
+      } catch (err) {
+        console.error('[Notifications] Failed to load:', err);
+        Toast.error('Load Failed', 'Could not load notifications.');
+        notifications = [];
+      }
+      renderNotifications();
+      updateCounts();
+    }
+
+    /* --------------------------------------------------------------------
+       STATE
+       -------------------------------------------------------------------- */
+    let currentTab = 'all';
+    let filteredNotifs = [];
+
+    /* --------------------------------------------------------------------
+       DOM SHORTCUTS
+       -------------------------------------------------------------------- */
+    const $ = (id) => document.getElementById(id);
+    const els = {
+      list:        $('notifList'),
+      empty:       $('notifEmpty'),
+      emptyTitle:  $('emptyTitle'),
+      emptyDesc:   $('emptyDesc'),
+      badge:       $('notifBadgeSide'),
+      masterSwitch:$('masterSwitch'),
+      togglesGroup:$('emailTogglesGroup')
+    };
+
+    /* --------------------------------------------------------------------
+       ICONS
+       -------------------------------------------------------------------- */
+    const TYPE_ICONS = {
+      document: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>',
+      approval: '<path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>',
+      routing:  '<path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/>',
+      account:  '<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>',
+      system:   '<path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>'
+    };
+
+    /* --------------------------------------------------------------------
+       RENDER — Stats + tab counts
+       -------------------------------------------------------------------- */
+    function updateCounts() {
+      const unread = notifications.filter(n => !n.read).length;
+
+      const counts = {
+        all:      notifications.length,
+        unread:   unread,
+        document: notifications.filter(n => n.type === 'document').length,
+        approval: notifications.filter(n => n.type === 'approval').length,
+        routing:  notifications.filter(n => n.type === 'routing').length,
+        account:  notifications.filter(n => n.type === 'account').length,
+        system:   notifications.filter(n => n.type === 'system').length
+      };
+
+      Object.entries(counts).forEach(([k, v]) => {
+        const el = document.querySelector(`[data-count="${k}"]`);
+        if (el) el.textContent = v;
+      });
+
+      // Sidebar badge shows unread count
+      if (els.badge) {
+        els.badge.textContent = unread;
+        els.badge.classList.toggle('hidden', unread === 0);
+      }
+    }
+
+    /* --------------------------------------------------------------------
+       RENDER — Notification list
+       -------------------------------------------------------------------- */
+    function renderNotifications() {
+      filteredNotifs = notifications.filter(n => {
+        if (currentTab === 'all') return true;
+        if (currentTab === 'unread') return !n.read;
+        return n.type === currentTab;
+      });
+
+      updateCounts();
+
+      if (filteredNotifs.length === 0) {
+        els.list.innerHTML = '';
+        els.empty.style.display = 'block';
+        updateEmptyCopy();
+        return;
+      } else {
+        els.empty.style.display = 'none';
+      }
+
+      els.list.innerHTML = filteredNotifs.map(n => {
+        const icon = TYPE_ICONS[n.type] || TYPE_ICONS.system;
+        return `
+          <div class="notif-item ${n.read ? '' : 'unread'}" data-id="${n.id}">
+            <div class="notif-icon ${n.type}">
+              <svg viewBox="0 0 24 24">${icon}</svg>
+            </div>
+            <div class="notif-body">
+              <div class="notif-title">${Utils.escapeHtml(n.title)}</div>
+              <div class="notif-message">${Utils.escapeHtml(n.message)}</div>
+              <div class="notif-meta">
+                <span>${Utils.timeAgo(n.time)}</span>
+                ${n.actor ? `<span class="meta-badge">${Utils.escapeHtml(n.actor)}</span>` : ''}
+                ${n.type ? `<span class="meta-badge" style="text-transform:capitalize;">${n.type}</span>` : ''}
+              </div>
+            </div>
+            <div class="notif-actions">
+              ${!n.read ? `
+                <button data-action="read" data-id="${n.id}" title="Mark as read">
+                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                </button>
+              ` : ''}
+              <button data-action="delete" data-id="${n.id}" title="Delete">
+                <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Row action buttons
+      els.list.querySelectorAll('[data-action]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const action = btn.dataset.action;
+          const id = btn.dataset.id;
+          handleAction(action, id);
+        });
+      });
+
+      // Clicking anywhere else on the item opens the linked page
+      els.list.querySelectorAll('.notif-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const id = item.dataset.id;
+          const notif = notifications.find(n => n.id === id);
+          if (!notif) return;
+
+          // Mark as read first
+          notif.read = true;
+          updateCounts();
+
+          // Navigate if link exists
+          if (notif.link) {
+            Toast.info('Opening', `Navigating to ${notif.link}...`);
+            setTimeout(() => window.location.href = notif.link, 400);
+          } else {
+            renderNotifications();
+          }
+        });
+      });
+    }
+
+    /* --------------------------------------------------------------------
+       ACTION HANDLER
+       -------------------------------------------------------------------- */
+    function handleAction(action, id) {
+      const notif = notifications.find(n => n.id === id);
+      if (!notif) return;
+
+      switch (action) {
+        case 'read':
+          notif.read = true;
+          Toast.success('Marked as Read', `"${notif.title}" marked as read.`);
+          renderNotifications();
+          break;
+
+        case 'delete':
+          const idx = notifications.findIndex(n => n.id === id);
+          if (idx !== -1) notifications.splice(idx, 1);
+          Toast.info('Notification Deleted', `Removed "${notif.title}".`);
+          renderNotifications();
+          break;
+      }
+    }
+
+    /* --------------------------------------------------------------------
+       EMPTY STATE COPY
+       -------------------------------------------------------------------- */
+    function updateEmptyCopy() {
+      if (currentTab === 'unread') {
+        els.emptyTitle.textContent = 'No unread notifications';
+        els.emptyDesc.textContent = 'You\'re all caught up! Every notification has been read.';
+      } else if (currentTab === 'all') {
+        els.emptyTitle.textContent = 'No notifications';
+        els.emptyDesc.textContent = 'New notifications will appear here as events happen.';
+      } else {
+        els.emptyTitle.textContent = `No ${currentTab} notifications`;
+        els.emptyDesc.textContent = `You have no notifications in this category right now.`;
+      }
+    }
+
+    /* --------------------------------------------------------------------
+       TABS
+       -------------------------------------------------------------------- */
+    document.querySelectorAll('.notif-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.notif-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentTab = tab.dataset.tab;
+        renderNotifications();
+      });
+    });
+
+    /* --------------------------------------------------------------------
+       MARK ALL AS READ
+       -------------------------------------------------------------------- */
+    $('btnMarkAllRead').addEventListener('click', () => {
+      const unreadCount = notifications.filter(n => !n.read).length;
+      if (unreadCount === 0) {
+        Toast.info('Nothing to Mark', 'All notifications are already read.');
+        return;
+      }
+      notifications.forEach(n => n.read = true);
+      Toast.success('All Marked as Read', `${unreadCount} notification(s) marked as read.`);
+      renderNotifications();
+    });
+
+    /* --------------------------------------------------------------------
+       CLEAR READ
+       -------------------------------------------------------------------- */
+    $('btnClearRead').addEventListener('click', async () => {
+      const readCount = notifications.filter(n => n.read).length;
+      if (readCount === 0) {
+        Toast.info('Nothing to Clear', 'No read notifications to remove.');
+        return;
+      }
+
+      const ok = await APP.confirm({
+        title: `Clear ${readCount} read notification(s)?`,
+        message: 'This will remove them permanently.',
+        confirmText: 'Clear',
+        danger: true
+      });
+      if (!ok) return;
+
+      for (let i = notifications.length - 1; i >= 0; i--) {
+        if (notifications[i].read) notifications.splice(i, 1);
+      }
+      Toast.success('Cleared', `${readCount} read notification(s) removed.`);
+      renderNotifications();
+    });
+
+    /* --------------------------------------------------------------------
+       EMAIL NOTIFIER — Master switch + toggles
+       -------------------------------------------------------------------- */
+    const NOTIF_PREFS_KEY = 'uphsdNotifPrefs';
+
+    function loadEmailPrefs() {
+      const saved = Storage ? null : null; // Storage is APP.Storage
+      const prefs = APP.Storage.get(NOTIF_PREFS_KEY, {});
+
+      // Master switch
+      if (prefs.master !== undefined) {
+        els.masterSwitch.checked = !!prefs.master;
+      }
+
+      // Individual toggles
+      document.querySelectorAll('.email-toggle').forEach(el => {
+        if (prefs[el.dataset.notif] !== undefined) {
+          el.checked = !!prefs[el.dataset.notif];
+        }
+      });
+
+      updateTogglesDisabled();
+    }
+
+        async function loadEmailLog() {
+      const tbody = document.getElementById('emailLogBody');
+      if (!tbody) return;
+
+      try {
+        // TODO: Replace with real API call
+        // const res = await fetch('/api/notifications/email-log');
+        // const emails = await res.json();
+
+        const emails = [];
+
+        if (emails.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="2" style="text-align:center;color:var(--text-muted);font-style:italic;padding:20px 6px;">
+                No recent emails
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = emails.map(e => `
+          <tr>
+            <td>${Utils.escapeHtml(e.subject)}</td>
+            <td style="text-align:right;">
+              <span class="email-status ${e.status}">${Utils.capitalize(e.status)}</span>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        console.error('[Email Log] Failed to load:', err);
+      }
+    }
+
+    function saveEmailPrefs() {
+      const prefs = {
+        master: els.masterSwitch.checked
+      };
+      document.querySelectorAll('.email-toggle').forEach(el => {
+        prefs[el.dataset.notif] = el.checked;
+      });
+      APP.Storage.set(NOTIF_PREFS_KEY, prefs);
+    }
+
+    function updateTogglesDisabled() {
+      const master = els.masterSwitch.checked;
+      els.togglesGroup.style.opacity = master ? '1' : '0.5';
+      els.togglesGroup.style.pointerEvents = master ? '' : 'none';
+    }
+
+    els.masterSwitch.addEventListener('change', () => {
+      updateTogglesDisabled();
+      saveEmailPrefs();
+      const state = els.masterSwitch.checked ? 'enabled' : 'disabled';
+      Toast.info('Email Notifications', `Email notifications are now ${state}.`);
+    });
+
+    document.querySelectorAll('.email-toggle').forEach(el => {
+      el.addEventListener('change', () => {
+        saveEmailPrefs();
+        const state = el.checked ? 'enabled' : 'disabled';
+        Toast.success('Preference Saved', `Email updates ${state}.`);
+      });
+    });
+
+    /* --------------------------------------------------------------------
+       INIT
+       -------------------------------------------------------------------- */
+    loadNotifications();
+    loadEmailPrefs();
+    loadEmailLog();
+
+    // React to role change
+    Bus.on('role:changed', () => {
+      // Notifications are shared across all roles, but we can refresh the list
+      // to give feedback that the role switch happened.
+      renderNotifications();
+      Toast.info('Role Switched', `Now viewing as ${Role.current().label}.`);
+    });
+
+  })();
+  </script>
+</body>
+</html>
