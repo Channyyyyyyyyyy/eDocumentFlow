@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UPHSD Molino — Office of the School Director | Admin Login</title>
+<style>
+  /* =========================================================
+     UPHSD MOLINO CAMPUS COLOR PALETTE
+     ---------------------------------------------------------
+     Maroon (Primary)   : #7B1113  /  #5A0C0E (deep)
+     Gold   (Accent)    : #D4AF37  /  #F4C430 (bright)
+     White              : #FFFFFF  /  #F9F5F0 (off-white)
+     ========================================================= */
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #4a0a0c 0%, #7B1113 50%, #5A0C0E 100%);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  body::before,
+  body::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.35;
+  }
+  body::before {
+    width: 450px;
+    height: 450px;
+    background: #D4AF37;
+    top: -180px;
+    left: -180px;
+  }
+  body::after {
+    width: 500px;
+    height: 500px;
+    background: #F4C430;
+    bottom: -220px;
+    right: -220px;
+  }
+
+  .login-container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 440px;
+    background: #FFFFFF;
+    border-radius: 20px;
+    padding: 45px 40px;
+    box-shadow:
+      0 25px 50px rgba(0, 0, 0, 0.45),
+      0 0 0 4px rgba(212, 175, 55, 0.25);
+    animation: fadeIn 0.7s ease;
+    border-top: 6px solid #D4AF37;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(25px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* =========================================================
+     LOGO AREA  ←  PUT YOUR SCHOOL LOGO HERE
+     ========================================================= */
+  .logo-area {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  /* --- Circular logo container --- */
+  .logo-circle {
+    width: 110px;
+    height: 110px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow:
+      0 10px 25px rgba(123, 17, 19, 0.25),
+      0 0 0 4px #D4AF37,
+      0 0 0 8px rgba(212, 175, 55, 0.2);
+    position: relative;
+  }
+
+  /* --- The actual logo image --- */
+  .logo-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 10px;
+    display: block;
+  }
+
+  /* --- Fallback icon (shows if image fails to load) --- */
+  .logo-circle .fallback-icon {
+    width: 55px;
+    height: 55px;
+    fill: #7B1113;
+    display: none;
+  }
+
+  /* When image fails, JS adds .img-failed to .logo-circle */
+  .logo-circle.img-failed img {
+    display: none;
+  }
+  .logo-circle.img-failed .fallback-icon {
+    display: block;
+  }
+
+  /* --- School name & subtitle --- */
+  .logo-area h1 {
+    color: #7B1113;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .logo-area .campus {
+    color: #D4AF37;
+    font-weight: 800;
+  }
+
+  .logo-area .subtitle {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 14px;
+    background: #7B1113;
+    color: #D4AF37;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  /* ========== FORM ========== */
+  .form-group {
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .form-group label {
+    display: block;
+    color: #5A0C0E;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .input-wrapper {
+    position: relative;
+  }
+
+  .input-wrapper input {
+    width: 100%;
+    padding: 14px 45px 14px 45px;
+    background: #F9F5F0;
+    border: 1.5px solid #e0d5c5;
+    border-radius: 10px;
+    color: #2b1a1a;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+
+  .input-wrapper input::placeholder {
+    color: #a89a8a;
+  }
+
+  .input-wrapper input:focus {
+    border-color: #7B1113;
+    background: #FFFFFF;
+    box-shadow: 0 0 0 4px rgba(123, 17, 19, 0.12);
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    fill: #a89a8a;
+    pointer-events: none;
+    transition: fill 0.3s ease;
+  }
+
+  .input-wrapper input:focus ~ .input-icon {
+    fill: #7B1113;
+  }
+
+  .toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    fill: #a89a8a;
+    transition: fill 0.3s ease;
+  }
+
+  .toggle-password:hover {
+    fill: #7B1113;
+  }
+
+  /* ========== OPTIONS ========== */
+  .options-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+    font-size: 0.83rem;
+  }
+
+  .remember {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #5A0C0E;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 500;
+  }
+
+  .remember input {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid #7B1113;
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.25s ease;
+  }
+
+  .remember input:checked {
+    background: #7B1113;
+    border-color: #7B1113;
+  }
+
+  .remember input:checked::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    width: 5px;
+    height: 9px;
+    border: solid #D4AF37;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .forgot-link {
+    color: #7B1113;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+
+  .forgot-link:hover {
+    color: #D4AF37;
+    text-decoration: underline;
+  }
+
+  /* ========== BUTTON ========== */
+  .btn-login {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #7B1113 0%, #5A0C0E 100%);
+    color: #D4AF37;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(123, 17, 19, 0.35);
+    position: relative;
+    overflow: hidden;
+    border-bottom: 3px solid #D4AF37;
+  }
+
+  .btn-login::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.25), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .btn-login:hover:not(:disabled)::before {
+    left: 100%;
+  }
+
+  .btn-login:hover:not(:disabled) {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #8d1517 0%, #6b0f12 100%);
+    box-shadow: 0 12px 25px rgba(123, 17, 19, 0.5);
+  }
+
+  .btn-login:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  .btn-login:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+  }
+
+  .btn-login .spinner {
+    display: none;
+    width: 18px;
+    height: 18px;
+    border: 2.5px solid rgba(212, 175, 55, 0.3);
+    border-top-color: #D4AF37;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto;
+  }
+
+  .btn-login.loading .btn-text { display: none; }
+  .btn-login.loading .spinner { display: block; }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ========== MESSAGES ========== */
+  .error-message,
+  .success-message {
+    display: none;
+    padding: 11px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    margin-bottom: 18px;
+    text-align: center;
+    font-weight: 500;
+    animation: shake 0.4s ease;
+  }
+
+  .error-message {
+    background: rgba(123, 17, 19, 0.08);
+    border: 1.5px solid #7B1113;
+    color: #7B1113;
+  }
+
+  .success-message {
+    background: rgba(212, 175, 55, 0.12);
+    border: 1.5px solid #D4AF37;
+    color: #8a6d1f;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  /* ========== FOOTER ========== */
+  .footer-text {
+    text-align: center;
+    color: #8a7a6a;
+    font-size: 0.75rem;
+    margin-top: 28px;
+    line-height: 1.6;
+    border-top: 1px solid #eadfc9;
+    padding-top: 18px;
+  }
+
+  .footer-text .gold {
+    color: #D4AF37;
+    font-weight: 700;
+  }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 480px) {
+    .login-container {
+      padding: 35px 25px;
+      border-radius: 16px;
+    }
+    .logo-area h1 { font-size: 0.95rem; }
+    .logo-circle { width: 92px; height: 92px; }
+    .logo-circle .fallback-icon { width: 45px; height: 45px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="login-container">
+
+    <!-- =================================================================
+         🎓 LOGO SLOT  🎓
+         =================================================================
+         Put your UPHSD Molino logo image in the SAME folder as this HTML
+         file, then update the "src" below.
+
+         Recommended filenames:
+           • uphsd-logo.png
+           • uphsd-logo.svg   (best quality — scales perfectly)
+
+         Recommended image specs:
+           • Square image (1:1 ratio)
+           • At least 300x300 px (transparent background PNG preferred)
+         ================================================================= -->
+    <div class="logo-area">
+      <div class="logo-circle" id="logoCircle">
+        <!-- 👇 REPLACE "uphsd-logo.png" WITH YOUR ACTUAL LOGO FILENAME 👇 -->
+        <img
+          id="schoolLogo"
+          src="uphsd-logo.png"
+          alt="UPHSD Molino Campus Logo"
+        />
+        <!-- Fallback icon — auto-shows if logo image is missing -->
+        <svg class="fallback-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+        </svg>
+      </div>
+      <!-- ================================================================= -->
+
+      <h1>
+        University of Perpetual Help System DALTA<br/>
+        <span class="campus">Molino Campus</span>
+      </h1>
+      <span class="subtitle">Office of the School Director</span>
+    </div>
+
+    <!-- Message boxes -->
+    <div id="errorBox" class="error-message"></div>
+    <div id="successBox" class="success-message"></div>
+
+    <form id="loginForm" novalidate>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-wrapper">
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="director.office@uphsd.edu.ph"
+            autocomplete="username"
+            required
+          />
+          <svg class="input-icon" viewBox="0 0 24 24">
+            <path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+          />
+          <svg class="input-icon" viewBox="0 0 24 24">
+            <path d="M12 1a5 5 0 00-5 5v3H6a2 2 0 00-2 2v9a2 2 0 002 2h12a2 2 0 002-2v-9a2 2 0 00-2-2h-1V6a5 5 0 00-5-5zm-3 8V6a3 3 0 116 0v3H9zm3 6a2 2 0 110 4 2 2 0 010-4z"/>
+          </svg>
+          <svg class="toggle-password" id="togglePassword" viewBox="0 0 24 24">
+            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="options-row">
+        <label class="remember">
+          <input type="checkbox" id="rememberMe" />
+          Remember me
+        </label>
+        <a href="#" class="forgot-link" id="forgotLink">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="btn-login" id="loginBtn">
+        <span class="btn-text">Sign In</span>
+        <span class="spinner"></span>
+      </button>
+    </form>
+
+    <p class="footer-text">
+      &copy; <span id="year"></span> <span class="gold">UPHSD Molino Campus</span><br/>
+      Office of the School Director — Authorized Personnel Only
+    </p>
+  </div>
+
+<script>
+  // ---- Element references ----
+  const form        = document.getElementById('loginForm');
+  const emailInput  = document.getElementById('email');
+  const passInput   = document.getElementById('password');
+  const togglePass  = document.getElementById('togglePassword');
+  const loginBtn    = document.getElementById('loginBtn');
+  const errorBox    = document.getElementById('errorBox');
+  const successBox  = document.getElementById('successBox');
+  const forgotLink  = document.getElementById('forgotLink');
+  const rememberMe  = document.getElementById('rememberMe');
+  const logoCircle  = document.getElementById('logoCircle');
+  const schoolLogo  = document.getElementById('schoolLogo');
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // ---- LOGO FALLBACK ----
+  // If the logo image can't load (wrong filename / missing file),
+  // hide it and show the graduation-cap icon instead.
+  schoolLogo.addEventListener('error', () => {
+    logoCircle.classList.add('img-failed');
+  });
+  // If the logo successfully loads, make sure fallback stays hidden
+  schoolLogo.addEventListener('load', () => {
+    logoCircle.classList.remove('img-failed');
+  });
+
+  // ---- Show / hide password ----
+  togglePass.addEventListener('click', () => {
+    const isPassword = passInput.type === 'password';
+    passInput.type = isPassword ? 'text' : 'password';
+    togglePass.style.fill = isPassword ? '#7B1113' : '#a89a8a';
+  });
+
+  // ---- Helpers ----
+  function showMessage(box, message, duration = 4000) {
+    box.textContent = message;
+    box.style.display = 'block';
+    if (duration) setTimeout(() => { box.style.display = 'none'; }, duration);
+  }
+
+  function hideMessages() {
+    errorBox.style.display = 'none';
+    successBox.style.display = 'none';
+  }
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function setLoading(isLoading) {
+    loginBtn.disabled = isLoading;
+    loginBtn.classList.toggle('loading', isLoading);
+  }
+
+  // ---- Load remembered email ----
+  window.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem('uphsdDirectorEmail');
+    if (saved) {
+      emailInput.value = saved;
+      rememberMe.checked = true;
+    }
+  });
+
+  // ---- Form submission ----
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    hideMessages();
+
+    const email    = emailInput.value.trim();
+    const password = passInput.value;
+
+    if (!email) {
+      showMessage(errorBox, 'Please enter your email address.');
+      emailInput.focus();
+      return;
+    }
+    if (!isValidEmail(email)) {
+      showMessage(errorBox, 'Please enter a valid email address.');
+      emailInput.focus();
+      return;
+    }
+    if (!password) {
+      showMessage(errorBox, 'Please enter your password.');
+      passInput.focus();
+      return;
+    }
+    if (password.length < 6) {
+      showMessage(errorBox, 'Password must be at least 6 characters.');
+      passInput.focus();
+      return;
+    }
+
+    if (rememberMe.checked) {
+      localStorage.setItem('uphsdDirectorEmail', email);
+    } else {
+      localStorage.removeItem('uphsdDirectorEmail');
+    }
+
+    const payload = {
+      email: email,
+      password: password,
+      remember: rememberMe.checked,
+      campus: 'UPHSD-MOLINO',
+      role: 'director-office-admin',
+      timestamp: new Date().toISOString()
+    };
+
+    setLoading(true);
+
+    /*
+     * ============================================================
+     *  BACKEND INTEGRATION POINT
+     * ------------------------------------------------------------
+     *  fetch('/api/admin/login', {
+     *      method: 'POST',
+     *      headers: { 'Content-Type': 'application/json' },
+     *      body: JSON.stringify(payload)
+     *  })
+     *  .then(res => res.json())
+     *  .then(data => {
+     *      setLoading(false);
+     *      if (data.success) {
+     *          showMessage(successBox, 'Login successful. Redirecting...');
+     *          setTimeout(() => { window.location.href = '/dashboard'; }, 1200);
+     *      } else {
+     *          showMessage(errorBox, data.message || 'Invalid credentials.');
+     *      }
+     *  })
+     *  .catch(() => {
+     *      setLoading(false);
+     *      showMessage(errorBox, 'Server error. Please try again.');
+     *  });
+     * ============================================================
+     */
+
+    // ----- MOCK RESPONSE (remove when backend is ready) -----
+    console.log('Login payload sent to backend:', payload);
+
+    setTimeout(() => {
+      setLoading(false);
+      showMessage(successBox, 'Login successful! Redirecting...');
+      // window.location.href = '/dashboard';
+    }, 1500);
+  });
+
+  // ---- Forgot password (placeholder) ----
+  forgotLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    hideMessages();
+    showMessage(successBox, 'A password reset link will be sent to your registered email.');
+  });
+
+  // ---- Clear error when typing ----
+  [emailInput, passInput].forEach(input => {
+    input.addEventListener('input', () => {
+      errorBox.style.display = 'none';
+    });
+  });
+</script>
+</body>
+</html>
