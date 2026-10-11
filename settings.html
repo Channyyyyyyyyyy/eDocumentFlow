@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Settings — UPHSD Molino | Office of the School Director</title>
+<link rel="stylesheet" href="shared.css" />
+
+<style>
+  /* =====================================================================
+     SETTINGS-PAGE-SPECIFIC STYLES
+     ===================================================================== */
+
+  .settings-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 22px;
+    align-items: flex-start;
+  }
+
+  @media (max-width: 900px) {
+    .settings-layout { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Left sidebar nav ---------- */
+  .settings-nav {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 10px;
+    position: sticky;
+    top: calc(var(--topbar-h) + 20px);
+  }
+
+  .settings-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    text-align: left;
+    width: 100%;
+    position: relative;
+  }
+
+  .settings-nav-item svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+    flex-shrink: 0;
+  }
+
+  .settings-nav-item:hover {
+    background: var(--bg-hover);
+    color: var(--maroon);
+  }
+  body.dark-mode .settings-nav-item:hover { color: var(--gold); }
+
+  .settings-nav-item.active {
+    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
+    color: var(--gold);
+    box-shadow: 0 4px 12px rgba(123,17,19,0.3);
+  }
+  body.dark-mode .settings-nav-item.active {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: #1a1414;
+  }
+
+  .settings-nav-item .nav-arrow {
+    margin-left: auto;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    width: 14px !important;
+    height: 14px !important;
+  }
+  .settings-nav-item.active .nav-arrow { opacity: 1; }
+
+  /* ---------- Content panels ---------- */
+  .settings-panel {
+    display: none;
+    animation: fadeIn 0.35s ease;
+  }
+  .settings-panel.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .settings-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 26px 28px;
+    margin-bottom: 18px;
+  }
+
+  .settings-card-header {
+    margin-bottom: 22px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .settings-card-header h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .settings-card-header h2 svg {
+    width: 18px;
+    height: 18px;
+    fill: var(--gold);
+  }
+
+  .settings-card-header p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ---------- Profile: avatar row ---------- */
+  .avatar-row {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .avatar-large {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 4px var(--gold), 0 0 0 8px rgba(212,175,55,0.2);
+  }
+  body.dark-mode .avatar-large {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: #1a1414;
+  }
+
+  .avatar-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .avatar-actions .btn { padding: 9px 16px; font-size: 0.8rem; }
+
+  /* ---------- Toggle switch ---------- */
+  .toggle-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .toggle-row:first-child { padding-top: 0; }
+
+  .toggle-info { flex: 1; min-width: 0; }
+  .toggle-info .toggle-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .toggle-info .toggle-desc {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 26px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+  }
+
+  .switch .slider {
+    position: absolute;
+    inset: 0;
+    background: var(--border-medium);
+    border-radius: 26px;
+    transition: background 0.3s ease;
+    cursor: pointer;
+  }
+
+  .switch .slider::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    left: 3px;
+    top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  }
+
+  .switch input:checked + .slider {
+    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
+  }
+  body.dark-mode .switch input:checked + .slider {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  }
+
+  .switch input:checked + .slider::before {
+    transform: translateX(20px);
+  }
+
+  .switch input:focus-visible + .slider {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+  }
+
+  /* ---------- Security: password strength ---------- */
+  .pw-strength {
+    display: flex;
+    gap: 5px;
+    margin-top: 8px;
+    margin-bottom: 6px;
+  }
+
+  .pw-strength .strength-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--border-light);
+    border-radius: 2px;
+    transition: background 0.3s ease;
+  }
+
+  .pw-strength.weak   .strength-bar:nth-child(1) { background: #ff4757; }
+  .pw-strength.fair   .strength-bar:nth-child(-n+2) { background: #ffa94d; }
+  .pw-strength.good   .strength-bar:nth-child(-n+3) { background: var(--gold); }
+  .pw-strength.strong .strength-bar { background: #2ed573; }
+
+  .pw-strength-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    display: inline-block;
+  }
+  .pw-strength.weak   ~ .pw-strength-label { color: #ff4757; }
+  .pw-strength.fair   ~ .pw-strength-label { color: #ffa94d; }
+  .pw-strength.good   ~ .pw-strength-label { color: #8a6d1f; }
+  .pw-strength.strong ~ .pw-strength-label { color: #2ed573; }
+
+  /* ---------- Session list ---------- */
+  .session-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--bg-input);
+    border-radius: var(--radius-md);
+    margin-bottom: 10px;
+    transition: all 0.2s ease;
+  }
+
+  .session-item.current {
+    background: rgba(46,213,115,0.08);
+    border: 1.5px solid rgba(46,213,115,0.3);
+  }
+
+  .session-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--maroon);
+  }
+  body.dark-mode .session-icon { color: var(--gold); }
+  .session-icon svg { width: 20px; height: 20px; fill: currentColor; }
+
+  .session-info { flex: 1; min-width: 0; }
+  .session-info .session-device {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .session-info .current-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: rgba(46,213,115,0.15);
+    color: #1e8a4d;
+    border-radius: 10px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  body.dark-mode .session-info .current-badge {
+    background: rgba(46,213,115,0.2);
+    color: #4ade80;
+  }
+  .session-info .session-meta {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+
+  /* ---------- Theme preview cards ---------- */
+  .theme-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 6px;
+  }
+  @media (max-width: 600px) {
+    .theme-options { grid-template-columns: 1fr; }
+  }
+
+  .theme-option {
+    padding: 16px;
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    background: var(--bg-card);
+    font-family: inherit;
+  }
+
+  .theme-option:hover {
+    border-color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .theme-option.selected {
+    border-color: var(--maroon);
+    box-shadow: 0 0 0 3px rgba(123,17,19,0.12);
+  }
+  body.dark-mode .theme-option.selected {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212,175,55,0.18);
+  }
+
+  .theme-preview {
+    width: 100%;
+    height: 70px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    overflow: hidden;
+    border: 1px solid var(--border-light);
+  }
+
+  .theme-preview .preview-sidebar {
+    width: 30%;
+    background: #7B1113;
+  }
+  .theme-preview .preview-main {
+    flex: 1;
+    background: #fff;
+    position: relative;
+  }
+  .theme-preview .preview-main::after {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    right: 14px;
+    height: 8px;
+    background: #e8ddd0;
+    border-radius: 4px;
+    box-shadow: 0 18px 0 #e8ddd0, 0 34px 0 #e8ddd0;
+  }
+
+  .theme-option.dark .theme-preview .preview-sidebar { background: #15090a; }
+  .theme-option.dark .theme-preview .preview-main { background: #1a1616; }
+  .theme-option.dark .theme-preview .preview-main::after {
+    background: #332727;
+    box-shadow: 0 18px 0 #332727, 0 34px 0 #332727;
+  }
+
+  .theme-option.system .theme-preview {
+    background: linear-gradient(90deg, #7B1113 0%, #7B1113 30%, #fff 30%, #fff 70%, #1a1616 70%, #1a1616 100%);
+  }
+  .theme-option.system .theme-preview .preview-sidebar,
+  .theme-option.system .theme-preview .preview-main { background: transparent; }
+  .theme-option.system .theme-preview .preview-main::after { display: none; }
+
+  .theme-option .theme-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+  }
+  .theme-option .theme-desc {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+
+  /* ---------- Danger zone ---------- */
+  .danger-zone {
+    border: 1.5px solid rgba(255,71,87,0.35);
+    background: rgba(255,71,87,0.04);
+    border-radius: var(--radius-lg);
+    padding: 22px 24px;
+  }
+  body.dark-mode .danger-zone {
+    background: rgba(255,107,122,0.06);
+    border-color: rgba(255,107,122,0.4);
+  }
+
+  .danger-zone h3 {
+    color: #d43a45;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  body.dark-mode .danger-zone h3 { color: #ff8b96; }
+  .danger-zone h3 svg { width: 18px; height: 18px; fill: currentColor; }
+
+  .danger-zone p {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+
+  .danger-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  /* ---------- Saving indicator ---------- */
+  .save-indicator {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--bg-card);
+    border: 1.5px solid var(--gold);
+    border-radius: 24px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    box-shadow: var(--shadow-lg);
+    z-index: 9000;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .save-indicator.show { transform: translateX(-50%) translateY(0); }
+
+  .save-indicator .save-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(212,175,55,0.3);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .save-indicator.done {
+    border-color: #2ed573;
+  }
+  .save-indicator.done .save-spinner {
+    border-color: #2ed573;
+    border-top-color: #2ed573;
+    animation: none;
+    position: relative;
+  }
+  .save-indicator.done .save-spinner::after {
+    content: '✓';
+    color: #2ed573;
+    font-weight: 700;
+    font-size: 11px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============================================================
+       SIDEBAR
+       ============================================================ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h3>UPHSD Molino</h3>
+        <p>Director's Office</p>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Main</div>
+      <a class="nav-item" href="dashboard.html" data-page="dashboard.html">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item" href="documents.html" data-page="documents.html">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        Documents
+      </a>
+      <a class="nav-item" href="approvals.html" data-page="approvals.html">
+        <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        Approvals
+        <span class="nav-badge" id="approvalBadgeSide">5</span>
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Administration</div>
+      <a class="nav-item" href="accounts.html" data-page="accounts.html">
+        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        Account Management
+      </a>
+      <a class="nav-item" href="reports.html" data-page="reports.html">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+        Reports
+      </a>
+      <a class="nav-item active" href="settings.html" data-page="settings.html">
+        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.484.484 0 00-.59.22L2.74 8.87a.47.47 0 00.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 00-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1112 8.4a3.6 3.6 0 010 7.2z"/></svg>
+        Settings
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      © <span data-year></span> UPHSD Molino<br/>
+      v1.0 · Director's Office
+    </div>
+  </aside>
+
+  <div class="overlay-backdrop" id="overlayBackdrop"></div>
+
+  <!-- ============================================================
+       MAIN
+       ============================================================ -->
+  <main class="main">
+
+    <!-- ========== TOP BAR ========== -->
+    <header class="topbar">
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
+      </button>
+
+      <div class="page-title">
+        <h1>Settings</h1>
+        <p>Manage your account preferences and system configuration</p>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="role-switcher" title="Dev preview">
+          <label>View as</label>
+          <select id="roleSwitcher">
+            <option value="secretary">Secretary</option>
+            <option value="ea">Executive Assistant</option>
+            <option value="director">Director</option>
+          </select>
+        </div>
+
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg id="themeIcon" viewBox="0 0 24 24">
+            <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 7.06a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0z"/>
+          </svg>
+        </button>
+
+        <button class="icon-btn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+          <span class="dot"></span>
+        </button>
+
+        <div class="user-chip" id="userChip" title="Click to log out">
+          <div class="user-avatar" id="userAvatar">MC</div>
+          <div class="user-info">
+            <span class="name" id="userName">Maria Cruz</span>
+            <span class="role" id="userRoleLabel">Secretary</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ========== CONTENT ========== -->
+    <div class="content">
+
+      <div class="settings-layout">
+
+        <!-- LEFT NAV -->
+        <nav class="settings-nav">
+          <button class="settings-nav-item active" data-panel="profile">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            Profile
+            <svg class="nav-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+          </button>
+          <button class="settings-nav-item" data-panel="notifications">
+            <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+            Notifications
+            <svg class="nav-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+          </button>
+          <button class="settings-nav-item" data-panel="security">
+            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+            Security
+            <svg class="nav-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+          </button>
+          <button class="settings-nav-item" data-panel="system">
+            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.484.484 0 00-.59.22L2.74 8.87a.47.47 0 00.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 00-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1112 8.4a3.6 3.6 0 010 7.2z"/></svg>
+            System
+            <svg class="nav-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+          </button>
+        </nav>
+
+        <!-- RIGHT: PANELS -->
+        <div>
+
+          <!-- ==================================================
+               PANEL 1 — PROFILE
+               ================================================== -->
+          <div class="settings-panel active" id="panel-profile">
+
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <h2>
+                  <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                  Profile Information
+                </h2>
+                <p>Update your personal details and how others see you in the system.</p>
+              </div>
+
+              <div class="avatar-row">
+                <div class="avatar-large" id="profileAvatarLarge">MC</div>
+                <div class="avatar-actions">
+                  <button class="btn btn-primary" id="btnUploadAvatar">
+                    <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
+                    Upload Photo
+                  </button>
+                  <button class="btn btn-ghost" id="btnRemoveAvatar">Remove</button>
+                  <div class="form-hint" style="margin-top:2px;">JPG, PNG · Max 2 MB · Square preferred</div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="profileFirstName">First Name <span class="req">*</span></label>
+                  <input type="text" id="profileFirstName" />
+                </div>
+                <div class="form-group">
+                  <label for="profileLastName">Last Name <span class="req">*</span></label>
+                  <input type="text" id="profileLastName" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="profileEmail">Email Address <span class="req">*</span></label>
+                <input type="email" id="profileEmail" />
+                <div class="form-hint">This email is used for login and notifications.</div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="profileRole">Role</label>
+                  <input type="text" id="profileRole" disabled style="opacity:0.7;cursor:not-allowed;" />
+                  <div class="form-hint">Role is managed by the School Director.</div>
+                </div>
+                <div class="form-group">
+                  <label for="profileDept">Department</label>
+                  <input type="text" id="profileDept" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="profilePhone">Phone Number</label>
+                <input type="tel" id="profilePhone" placeholder="+63 9XX XXX XXXX" />
+              </div>
+
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
+                <button class="btn btn-primary" id="btnSaveProfile">
+                  <svg viewBox="0 0 24 24"><path d="M17 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V7l-4-4zm-5 16a3 3 0 110-6 3 3 0 010 6zm3-10H5V5h10v4z"/></svg>
+                  Save Changes
+                </button>
+                <button class="btn btn-ghost" id="btnCancelProfile">Cancel</button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ==================================================
+               PANEL 2 — NOTIFICATIONS
+               ================================================== -->
+          <div class="settings-panel" id="panel-notifications">
+
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <h2>
+                  <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+                  Email Notifications
+                </h2>
+                <p>Control which updates you receive in your inbox.</p>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-title">New documents</div>
+                  <div class="toggle-desc">Get notified whenever a document is submitted to the office.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" data-notif="emailNewDoc" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-title">Authorization requests</div>
+                  <div class="toggle-desc">Alerts when something is waiting for your approval.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" data-notif="emailApproval" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-title">Account activity</div>
+                  <div class="toggle-desc">Login events, password changes, and profile updates.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" data-notif="emailAccount" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-title">Weekly digest</div>
+                  <div class="toggle-desc">A summary email every Monday at 8:00 AM.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" data-notif="emailDigest" />
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <h2>
+                  <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+                  In-App Alerts
+                </h2>
+                <p>Manage the notification bell and desktop pop-ups.</p>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-title">Desktop notifications</div>
+                  <div class="toggle-desc">Show browser notifications even when the tab is in the background.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" data-notif="desktop" />
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-title">Sound alerts</div>
+                  <div class="toggle-desc">Play a subtle sound when a new request arrives.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" data-notif="sound" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-title">Do not disturb</div>
+                  <div class="toggle-desc">Silence all notifications during the specified hours.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" data-notif="dnd" />
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button class="btn btn-primary" id="btnSaveNotifs">
+                <svg viewBox="0 0 24 24"><path d="M17 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V7l-4-4zm-5 16a3 3 0 110-6 3 3 0 010 6zm3-10H5V5h10v4z"/></svg>
+                Save Preferences
+              </button>
+            </div>
+
+          </div>
+
+          <!-- ==================================================
+               PANEL 3 — SECURITY
+               ================================================== -->
+          <div class="settings-panel" id="panel-security">
+
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <h2>
+                  <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V10a2 2 0 00-2-2zm-6 9a2 2 0 110-4 2 2 0 010 4zM9 8V6a3 3 0 116 0v2H9z"/></svg>
+                  Change Password
+                </h2>
+                <p>Use a strong password and update it regularly for security.</p>
+              </div>
+
+              <div class="form-group">
+                <label for="currentPassword">Current Password <span class="req">*</span></label>
+                <input type="password" id="currentPassword" autocomplete="current-password" />
+              </div>
+
+              <div class="form-group">
+                <label for="newPassword">New Password <span class="req">*</span></label>
+                <input type="password" id="newPassword" autocomplete="new-password" />
+                <div class="pw-strength" id="pwStrength">
+                  <div class="strength-bar"></div>
+                  <div class="strength-bar"></div>
+                  <div class="strength-bar"></div>
+                  <div class="strength-bar"></div>
+                </div>
+                <span class="pw-strength-label" id="pwStrengthLabel">Enter a password</span>
+                <div class="form-hint">Minimum 8 characters, with uppercase, number, and symbol.</div>
+              </div>
+
+              <div class="form-group">
+                <label for="confirmPassword">Confirm New Password <span class="req">*</span></label>
+                <input type="password" id="confirmPassword" autocomplete="new-password" />
+                <div class="form-hint" id="pwMatchHint"></div>
+              </div>
+
+              <button class="btn btn-primary" id="btnChangePassword" style="margin-top:6px;">
+                <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V10a2 2 0 00-2-2z"/></svg>
+                Update Password
+              </button>
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <h2>
+                  <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+                  Two-Factor Authentication
+                </h2>
+                <p>Add an extra layer of security to your account.</p>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-title">Enable 2FA via Authenticator App</div>
+                  <div class="toggle-desc">Use Google Authenticator, Authy, or similar. Recommended for Director accounts.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="toggle2FA" />
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <div class="toggle-title">Enable 2FA via Email</div>
+                  <div class="toggle-desc">Receive a 6-digit code on your registered email each login.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" data-notif="twoFAEmail" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <h2>
+                  <svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm-8 12a4 4 0 110-8 4 4 0 010 8z"/></svg>
+                  Active Sessions
+                </h2>
+                <p>Devices currently signed in to your account.</p>
+              </div>
+
+              <div class="session-item current">
+                <div class="session-icon">
+                  <svg viewBox="0 0 24 24"><path d="M21 2H3a2 2 0 00-2 2v12a2 2 0 002 2h7v2H8v2h8v-2h-2v-2h7a2 2 0 002-2V4a2 2 0 00-2-2zm0 14H3V4h18v12z"/></svg>
+                </div>
+                <div class="session-info">
+                  <div class="session-device">
+                    Chrome on Windows
+                    <span class="current-badge">This device</span>
+                  </div>
+                  <div class="session-meta">Molino, Philippines · Active now · IP 192.168.1.24</div>
+                </div>
+              </div>
+
+              <div class="session-item">
+                <div class="session-icon">
+                  <svg viewBox="0 0 24 24"><path d="M17 1H7a2 2 0 00-2 2v18a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2zm-5 20a1 1 0 110-2 1 1 0 010 2zm5-3H7V4h10v14z"/></svg>
+                </div>
+                <div class="session-info">
+                  <div class="session-device">Safari on iPhone</div>
+                  <div class="session-meta">Molino, Philippines · 2 hours ago · IP 192.168.1.88</div>
+                </div>
+                <button class="btn btn-ghost" style="padding:6px 12px;font-size:0.74rem;" data-revoke-session>Revoke</button>
+              </div>
+
+              <div class="session-item">
+                <div class="session-icon">
+                  <svg viewBox="0 0 24 24"><path d="M21 2H3a2 2 0 00-2 2v12a2 2 0 002 2h7v2H8v2h8v-2h-2v-2h7a2 2 0 002-2V4a2 2 0 00-2-2zm0 14H3V4h18v12z"/></svg>
+                </div>
+                <div class="session-info">
+                  <div class="session-device">Edge on Windows</div>
+                  <div class="session-meta">Bacoor, Cavite · 3 days ago · IP 192.168.1.45</div>
+                </div>
+                <button class="btn btn-ghost" style="padding:6px 12px;font-size:0.74rem;" data-revoke-session>Revoke</button>
+              </div>
+
+              <button class="btn btn-danger" id="btnRevokeAll" style="margin-top:10px;">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+                Sign Out All Other Sessions
+              </button>
+            </div>
+
+          </div>
+
+          <!-- ==================================================
+               PANEL 4 — SYSTEM
+               ================================================== -->
+          <div class="settings-panel" id="panel-system">
+
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <h2>
+                  <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18 9 9 0 000-18zm0 3a6 6 0 110 12 6 6 0 010-12z"/></svg>
+                  Appearance
+                </h2>
+                <p>Choose how the interface looks for you.</p>
+              </div>
+
+              <div class="theme-options" id="themeOptions">
+                <button class="theme-option" data-theme-choice="light">
+                  <div class="theme-preview">
+                    <div class="preview-sidebar"></div>
+                    <div class="preview-main"></div>
+                  </div>
+                  <div class="theme-name">Light</div>
+                  <div class="theme-desc">Bright and clean</div>
+                </button>
+
+                <button class="theme-option dark" data-theme-choice="dark">
+                  <div class="theme-preview">
+                    <div class="preview-sidebar"></div>
+                    <div class="preview-main"></div>
+                  </div>
+                  <div class="theme-name">Dark</div>
+                  <div class="theme-desc">Easier on the eyes</div>
+                </button>
+
+                <button class="theme-option system" data-theme-choice="system">
+                  <div class="theme-preview"></div>
+                  <div class="theme-name">System</div>
+                  <div class="theme-desc">Match my device</div>
+                </button>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <h2>
+                  <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                  Regional Preferences
+                </h2>
+                <p>Language, date format, and time zone.</p>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="sysLanguage">Language</label>
+                  <select id="sysLanguage">
+                    <option value="en-PH" selected>English (Philippines)</option>
+                    <option value="en-US">English (US)</option>
+                    <option value="fil">Filipino</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="sysTimezone">Time Zone</label>
+                  <select id="sysTimezone">
+                    <option value="Asia/Manila" selected>Asia/Manila (GMT+8)</option>
+                    <option value="Asia/Singapore">Asia/Singapore (GMT+8)</option>
+                    <option value="Asia/Tokyo">Asia/Tokyo (GMT+9)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="sysDateFormat">Date Format</label>
+                  <select id="sysDateFormat">
+                    <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                    <option value="DD/MM/YYYY" selected>DD/MM/YYYY</option>
+                    <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="sysTimeFormat">Time Format</label>
+                  <select id="sysTimeFormat">
+                    <option value="12" selected>12-hour (AM/PM)</option>
+                    <option value="24">24-hour</option>
+                  </select>
+                </div>
+              </div>
+
+              <button class="btn btn-primary" id="btnSaveSystem" style="margin-top:6px;">
+                <svg viewBox="0 0 24 24"><path d="M17 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V7l-4-4zm-5 16a3 3 0 110-6 3 3 0 010 6zm3-10H5V5h10v4z"/></svg>
+                Save Preferences
+              </button>
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <h2>
+                  <svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                  Danger Zone
+                </h2>
+                <p>These actions are permanent and cannot be undone.</p>
+              </div>
+
+              <div class="danger-zone">
+                <h3>
+                  <svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                  Delete Account
+                </h3>
+                <p>
+                  Permanently remove your account and all associated data.
+                  This action is irreversible. Your documents will remain in the system
+                  but will no longer be linked to your account.
+                </p>
+                <div class="danger-actions">
+                  <button class="btn btn-danger" id="btnDeleteAccount">
+                    <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                    Delete My Account
+                  </button>
+                  <button class="btn btn-ghost" id="btnExportData">
+                    <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                    Export My Data First
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Saving indicator -->
+  <div class="save-indicator" id="saveIndicator">
+    <div class="save-spinner"></div>
+    <span id="saveIndicatorText">Saving...</span>
+  </div>
+
+  <!-- ============================================================
+       PAGE SCRIPT
+       ============================================================ -->
+  <script src="app.js"></script>
+  <script>
+  /* ==========================================================================
+     SETTINGS — Page module
+     ========================================================================== */
+  (function () {
+    'use strict';
+
+    const { Role, Toast, Utils, Bus, Storage, Theme } = APP;
+
+    /* --------------------------------------------------------------------
+       DOM SHORTCUTS
+       -------------------------------------------------------------------- */
+    const $ = (id) => document.getElementById(id);
+
+    /* --------------------------------------------------------------------
+       TAB NAVIGATION
+       -------------------------------------------------------------------- */
+    document.querySelectorAll('.settings-nav-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.settings-nav-item').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+        const panel = $('panel-' + btn.dataset.panel);
+        if (panel) panel.classList.add('active');
+
+        // Scroll to top of content
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+
+    /* --------------------------------------------------------------------
+       SAVE INDICATOR
+       -------------------------------------------------------------------- */
+    let saveTimer = null;
+    function showSaving() {
+      const ind = $('saveIndicator');
+      const txt = $('saveIndicatorText');
+      ind.classList.remove('done');
+      txt.textContent = 'Saving...';
+      ind.classList.add('show');
+
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        ind.classList.add('done');
+        txt.textContent = 'All changes saved';
+        setTimeout(() => ind.classList.remove('show'), 1400);
+      }, 900);
+    }
+
+    /* --------------------------------------------------------------------
+       PROFILE — Load & save
+       -------------------------------------------------------------------- */
+    function loadProfile() {
+      const user = Role.current();
+      const parts = user.userName.split(' ');
+      const first = parts[0] || '';
+      const last  = parts.slice(1).join(' ') || '';
+
+      $('profileFirstName').value = first;
+      $('profileLastName').value  = last;
+      $('profileEmail').value     = user.email;
+      $('profileRole').value      = user.label;
+      $('profileDept').value      = user.id === 'director' ? "Director's Office" :
+                                    user.id === 'secretary' ? "Director's Office" :
+                                    "Director's Office";
+      $('profilePhone').value     = '+63 917 555 0123';
+
+      $('profileAvatarLarge').textContent = user.initials;
+    }
+
+    $('btnSaveProfile').addEventListener('click', () => {
+      const first = $('profileFirstName').value.trim();
+      const last  = $('profileLastName').value.trim();
+      const email = $('profileEmail').value.trim();
+
+      if (!first || !last) {
+        Toast.error('Missing Name', 'Please enter your first and last name.');
+        return;
+      }
+      if (!Utils.isValidEmail(email)) {
+        Toast.error('Invalid Email', 'Please enter a valid email address.');
+        return;
+      }
+
+      showSaving();
+      setTimeout(() => {
+        Toast.success('Profile Updated', 'Your personal details have been saved.');
+      }, 1000);
+    });
+
+    $('btnCancelProfile').addEventListener('click', () => {
+      loadProfile();
+      Toast.info('Changes Discarded', 'Your unsaved changes have been reverted.');
+    });
+
+    $('btnUploadAvatar').addEventListener('click', () => {
+      Toast.info('Upload Photo', 'A file picker will open in the next update.');
+    });
+
+    $('btnRemoveAvatar').addEventListener('click', async () => {
+      const ok = await APP.confirm({
+        title: 'Remove profile photo?',
+        message: 'Your initials will be shown instead.',
+        confirmText: 'Remove',
+        danger: true
+      });
+      if (!ok) return;
+      $('profileAvatarLarge').textContent = Role.current().initials;
+      Toast.success('Photo Removed', 'Your profile photo has been removed.');
+    });
+
+    /* --------------------------------------------------------------------
+       NOTIFICATIONS — Persist toggles
+       -------------------------------------------------------------------- */
+    const NOTIF_KEY = 'uphsdNotifPrefs';
+
+    function loadNotifs() {
+      const saved = Storage.get(NOTIF_KEY, {});
+      document.querySelectorAll('[data-notif]').forEach(el => {
+        if (saved[el.dataset.notif] !== undefined) {
+          el.checked = !!saved[el.dataset.notif];
+        }
+      });
+    }
+
+    function saveNotifs() {
+      const prefs = {};
+      document.querySelectorAll('[data-notif]').forEach(el => {
+        prefs[el.dataset.notif] = el.checked;
+      });
+      Storage.set(NOTIF_KEY, prefs);
+    }
+
+    document.querySelectorAll('[data-notif]').forEach(el => {
+      el.addEventListener('change', () => {
+        saveNotifs();
+        const state = el.checked ? 'enabled' : 'disabled';
+        Toast.info('Preference Saved', `"${state}" — toggled successfully.`);
+      });
+    });
+
+    $('btnSaveNotifs').addEventListener('click', () => {
+      saveNotifs();
+      showSaving();
+      setTimeout(() => {
+        Toast.success('Preferences Saved', 'Your notification settings have been updated.');
+      }, 1000);
+    });
+
+    /* --------------------------------------------------------------------
+       SECURITY — Password strength
+       -------------------------------------------------------------------- */
+    function calcStrength(pw) {
+      let score = 0;
+      if (pw.length >= 8)     score++;
+      if (/[A-Z]/.test(pw))   score++;
+      if (/[0-9]/.test(pw))   score++;
+      if (/[^A-Za-z0-9]/.test(pw)) score++;
+      return score;
+    }
+
+    $('newPassword').addEventListener('input', (e) => {
+      const pw = e.target.value;
+      const strength = $('pwStrength');
+      const label = $('pwStrengthLabel');
+
+      strength.classList.remove('weak', 'fair', 'good', 'strong');
+
+      if (!pw) {
+        label.textContent = 'Enter a password';
+        return;
+      }
+
+      const score = calcStrength(pw);
+      if (score <= 1)      { strength.classList.add('weak');   label.textContent = 'Weak'; }
+      else if (score === 2){ strength.classList.add('fair');   label.textContent = 'Fair'; }
+      else if (score === 3){ strength.classList.add('good');   label.textContent = 'Good'; }
+      else                 { strength.classList.add('strong'); label.textContent = 'Strong'; }
+
+      checkMatch();
+    });
+
+    function checkMatch() {
+      const newPw = $('newPassword').value;
+      const confirmPw = $('confirmPassword').value;
+      const hint = $('pwMatchHint');
+
+      if (!confirmPw) { hint.textContent = ''; hint.style.color = ''; return; }
+
+      if (newPw === confirmPw) {
+        hint.textContent = '✓ Passwords match';
+        hint.style.color = '#2ed573';
+      } else {
+        hint.textContent = '✗ Passwords do not match';
+        hint.style.color = '#ff4757';
+      }
+    }
+
+    $('confirmPassword').addEventListener('input', checkMatch);
+
+    $('btnChangePassword').addEventListener('click', () => {
+      const current = $('currentPassword').value;
+      const newPw   = $('newPassword').value;
+      const confirm = $('confirmPassword').value;
+
+      if (!current) {
+        Toast.error('Missing Current Password', 'Please enter your current password.');
+        return;
+      }
+      if (!newPw || newPw.length < 8) {
+        Toast.error('Password Too Short', 'New password must be at least 8 characters.');
+        return;
+      }
+      if (calcStrength(newPw) < 2) {
+        Toast.error('Weak Password', 'Add uppercase letters, numbers, or symbols.');
+        return;
+      }
+      if (newPw !== confirm) {
+        Toast.error('Passwords Do Not Match', 'Please confirm your new password.');
+        return;
+      }
+
+      showSaving();
+      setTimeout(() => {
+        Toast.success('Password Updated', 'Your password has been changed successfully.');
+        $('currentPassword').value = '';
+        $('newPassword').value = '';
+        $('confirmPassword').value = '';
+        $('pwStrength').classList.remove('weak', 'fair', 'good', 'strong');
+        $('pwStrengthLabel').textContent = 'Enter a password';
+        $('pwMatchHint').textContent = '';
+      }, 1000);
+    });
+
+    /* --------------------------------------------------------------------
+       SECURITY — 2FA toggle
+       -------------------------------------------------------------------- */
+    $('toggle2FA').addEventListener('change', async (e) => {
+      if (e.target.checked) {
+        const ok = await APP.confirm({
+          title: 'Enable two-factor authentication?',
+          message: 'You will need an authenticator app to complete setup.',
+          confirmText: 'Continue'
+        });
+        if (!ok) { e.target.checked = false; return; }
+        Toast.success('2FA Enabled', 'Scan the QR code in the next step to finish setup.');
+      } else {
+        Toast.info('2FA Disabled', 'Two-factor authentication has been turned off.');
+      }
+    });
+
+    /* --------------------------------------------------------------------
+       SECURITY — Revoke sessions
+       -------------------------------------------------------------------- */
+    document.querySelectorAll('[data-revoke-session]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const item = btn.closest('.session-item');
+        const device = item.querySelector('.session-device').textContent.trim();
+        const ok = await APP.confirm({
+          title: `Sign out of "${device}"?`,
+          message: 'The device will need to log in again.',
+          confirmText: 'Sign Out',
+          danger: true
+        });
+        if (!ok) return;
+        item.style.opacity = '0.4';
+        btn.textContent = 'Revoked';
+        btn.disabled = true;
+        Toast.success('Session Revoked', `Signed out of ${device}.`);
+      });
+    });
+
+    $('btnRevokeAll').addEventListener('click', async () => {
+      const ok = await APP.confirm({
+        title: 'Sign out of all other sessions?',
+        message: 'You will stay signed in on this device only.',
+        confirmText: 'Sign Out All',
+        danger: true
+      });
+      if (!ok) return;
+
+      document.querySelectorAll('.session-item:not(.current)').forEach(item => {
+        item.style.opacity = '0.4';
+        const btn = item.querySelector('[data-revoke-session]');
+        if (btn) { btn.textContent = 'Revoked'; btn.disabled = true; }
+      });
+      Toast.success('All Sessions Signed Out', 'Only this device remains signed in.');
+    });
+
+    /* --------------------------------------------------------------------
+       SYSTEM — Theme selection
+       -------------------------------------------------------------------- */
+    function highlightCurrentTheme() {
+      const saved = Storage.get(APP.keys.theme);
+      let current = 'system';
+      if (saved === 'light' || saved === 'dark') current = saved;
+
+      document.querySelectorAll('.theme-option').forEach(opt => {
+        opt.classList.toggle('selected', opt.dataset.themeChoice === current);
+      });
+    }
+
+    document.querySelectorAll('.theme-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        const choice = opt.dataset.themeChoice;
+        document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+
+        if (choice === 'system') {
+          Storage.remove(APP.keys.theme);
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          Theme.apply(prefersDark ? 'dark' : 'light');
+          Toast.info('Theme Set to System', 'Matching your device preference.');
+        } else {
+          Storage.set(APP.keys.theme, choice);
+          Theme.apply(choice);
+          Toast.info('Theme Changed', `Switched to ${choice} mode.`);
+        }
+      });
+    });
+
+    /* --------------------------------------------------------------------
+       SYSTEM — Save preferences
+       -------------------------------------------------------------------- */
+    $('btnSaveSystem').addEventListener('click', () => {
+      const prefs = {
+        language: $('sysLanguage').value,
+        timezone: $('sysTimezone').value,
+        dateFormat: $('sysDateFormat').value,
+        timeFormat: $('sysTimeFormat').value
+      };
+      Storage.set('uphsdSystemPrefs', prefs);
+      showSaving();
+      setTimeout(() => {
+        Toast.success('Preferences Saved', 'Your system preferences have been updated.');
+      }, 1000);
+    });
+
+    /* --------------------------------------------------------------------
+       DANGER ZONE
+       -------------------------------------------------------------------- */
+    $('btnExportData').addEventListener('click', () => {
+      Toast.info('Export Started', 'Preparing your account data as a JSON file...');
+    });
+
+    $('btnDeleteAccount').addEventListener('click', async () => {
+      const ok = await APP.confirm({
+        title: 'Delete your account permanently?',
+        message: 'This action cannot be undone. Type nothing — just confirm.',
+        confirmText: 'Delete Forever',
+        danger: true
+      });
+      if (!ok) return;
+
+      // Second confirmation
+      const reallySure = await APP.confirm({
+        title: 'Are you absolutely sure?',
+        message: 'This is your final warning. Your account will be removed immediately.',
+        confirmText: 'Yes, Delete',
+        danger: true
+      });
+      if (!reallySure) return;
+
+      Toast.error('Account Deletion', 'In production, this would log you out and delete the account.');
+      // In real app: APP.Auth.logout();
+    });
+
+    /* --------------------------------------------------------------------
+       ROLE-AWARE UI
+       -------------------------------------------------------------------- */
+    function applyRole() {
+      loadProfile();
+    }
+
+    /* --------------------------------------------------------------------
+       REACT TO ROLE CHANGE
+       -------------------------------------------------------------------- */
+    Bus.on('role:changed', () => {
+      applyRole();
+      Toast.info('Role Switched', `Now viewing as ${Role.current().label}.`);
+    });
+
+    /* --------------------------------------------------------------------
+       INIT
+       -------------------------------------------------------------------- */
+    loadProfile();
+    loadNotifs();
+    highlightCurrentTheme();
+
+  })();
+  </script>
+</body>
+</html>

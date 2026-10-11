@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reports — UPHSD Molino | Office of the School Director</title>
+<link rel="stylesheet" href="shared.css" />
+
+<style>
+  /* =====================================================================
+     REPORTS-PAGE-SPECIFIC STYLES
+     ===================================================================== */
+
+  /* ---------- Report filter bar ---------- */
+  .report-filters {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 18px 22px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: flex-end;
+  }
+
+  .filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 150px;
+  }
+  .filter-field label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .filter-field input[type="date"],
+  .filter-field select {
+    padding: 10px 12px;
+    background: var(--bg-input);
+    border: 1.5px solid var(--border-light);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 0.86rem;
+    outline: none;
+    font-family: inherit;
+    transition: all 0.25s ease;
+  }
+  .filter-field input[type="date"]:focus,
+  .filter-field select:focus {
+    border-color: var(--maroon);
+    box-shadow: 0 0 0 3px rgba(123,17,19,0.1);
+  }
+  body.dark-mode .filter-field input[type="date"]:focus,
+  body.dark-mode .filter-field select:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212,175,55,0.15);
+  }
+
+  .filter-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* ---------- Report grid ---------- */
+  .report-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 18px;
+    margin-bottom: 22px;
+  }
+
+  .report-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 20px 22px;
+    transition: background 0.4s ease, border-color 0.4s ease;
+  }
+
+  .report-card.span-3 { grid-column: span 3; }
+  .report-card.span-4 { grid-column: span 4; }
+  .report-card.span-6 { grid-column: span 6; }
+  .report-card.span-8 { grid-column: span 8; }
+  .report-card.span-12 { grid-column: span 12; }
+
+  @media (max-width: 1100px) {
+    .report-card.span-3,
+    .report-card.span-4 { grid-column: span 6; }
+  }
+  @media (max-width: 700px) {
+    .report-card.span-3,
+    .report-card.span-4,
+    .report-card.span-6,
+    .report-card.span-8 { grid-column: span 12; }
+  }
+
+  .report-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .report-card-head h2 {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .report-card-head h2 svg {
+    width: 16px;
+    height: 16px;
+    fill: var(--gold);
+  }
+
+  .report-card-head .head-meta {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  /* ---------- Big number stat (KPI) ---------- */
+  .kpi-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+
+  .kpi-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-top: 8px;
+  }
+
+  .kpi-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 10px;
+  }
+  .kpi-trend.up {
+    background: rgba(46,213,115,0.12);
+    color: #1e8a4d;
+  }
+  .kpi-trend.down {
+    background: rgba(255,71,87,0.12);
+    color: #d43a45;
+  }
+  .kpi-trend svg {
+    width: 11px;
+    height: 11px;
+    fill: currentColor;
+  }
+  body.dark-mode .kpi-trend.up { color: #4ade80; }
+  body.dark-mode .kpi-trend.down { color: #ff8b96; }
+
+  /* ---------- Bar chart (vertical) ---------- */
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    height: 200px;
+    padding: 20px 0 30px;
+    position: relative;
+  }
+
+  .bar-chart .bar {
+    flex: 1;
+    background: linear-gradient(180deg, var(--maroon), var(--maroon-deep));
+    border-radius: 6px 6px 0 0;
+    position: relative;
+    min-height: 6px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .bar-chart .bar:hover {
+    background: linear-gradient(180deg, var(--gold), var(--gold-dark));
+    transform: scaleY(1.03);
+    transform-origin: bottom;
+  }
+
+  .bar-chart .bar .bar-value {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+
+  .bar-chart .bar .bar-label {
+    position: absolute;
+    bottom: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* ---------- Horizontal bar chart ---------- */
+  .h-bar-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .h-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .h-bar-row .h-bar-label {
+    flex: 0 0 120px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .h-bar-row .h-bar-track {
+    flex: 1;
+    height: 22px;
+    background: var(--bg-input);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .h-bar-row .h-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--maroon), var(--maroon-deep));
+    border-radius: 6px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    min-width: 6px;
+  }
+
+  .h-bar-row .h-bar-fill.gold {
+    background: linear-gradient(90deg, var(--gold), var(--gold-dark));
+  }
+
+  .h-bar-row .h-bar-fill.green {
+    background: linear-gradient(90deg, #2ed573, #1e8a4d);
+  }
+
+  .h-bar-row .h-bar-value {
+    flex: 0 0 50px;
+    text-align: right;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  /* ---------- Donut chart ---------- */
+  .donut-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .donut {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    position: relative;
+    background: conic-gradient(
+      var(--maroon) 0deg var(--seg1),
+      var(--gold) var(--seg1) var(--seg2),
+      #4682dc var(--seg2) var(--seg3),
+      #2ed573 var(--seg3) var(--seg4),
+      #a89a8a var(--seg4) 360deg
+    );
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  }
+
+  .donut::after {
+    content: '';
+    position: absolute;
+    inset: 22px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    transition: background 0.4s ease;
+  }
+
+  .donut-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+  .donut-center .donut-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+  }
+  .donut-center .donut-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  .donut-legend {
+    flex: 1;
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.82rem;
+  }
+  .legend-item .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .legend-item .legend-name {
+    flex: 1;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+  .legend-item .legend-val {
+    font-weight: 700;
+    color: var(--text-secondary);
+  }
+
+  /* ---------- Line chart (SVG) ---------- */
+  .line-chart-wrap {
+    position: relative;
+    padding: 10px 0;
+  }
+  .line-chart-wrap svg {
+    width: 100%;
+    height: 220px;
+    overflow: visible;
+  }
+  .line-chart-wrap .chart-grid-line {
+    stroke: var(--border-light);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+  }
+  .line-chart-wrap .chart-axis-label {
+    font-size: 10px;
+    fill: var(--text-muted);
+    font-weight: 600;
+  }
+  .line-chart-wrap .chart-point {
+    fill: var(--gold);
+    stroke: var(--bg-card);
+    stroke-width: 2;
+  }
+  .line-chart-wrap .chart-line {
+    fill: none;
+    stroke: var(--maroon);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .line-chart-wrap .chart-area {
+    fill: url(#gradientArea);
+    opacity: 0.35;
+  }
+
+  /* ---------- Report table ---------- */
+  .report-table-wrap {
+    overflow-x: auto;
+    margin: 0 -22px -20px;
+    padding: 0 22px 4px;
+  }
+  .report-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+  }
+  .report-table th {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--border-light);
+    white-space: nowrap;
+  }
+  .report-table td {
+    font-size: 0.82rem;
+    color: var(--text-primary);
+    padding: 12px;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .report-table tr:hover td {
+    background: var(--bg-hover);
+  }
+  .report-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .activity-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .activity-dot.green { background: #2ed573; }
+  .activity-dot.gold  { background: var(--gold); }
+  .activity-dot.red   { background: #ff4757; }
+  .activity-dot.blue  { background: #4682dc; }
+  .activity-dot.grey  { background: #a89a8a; }
+
+  /* ---------- Summary banner at top ---------- */
+  .summary-banner {
+    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
+    border-radius: var(--radius-xl);
+    padding: 24px 30px;
+    margin-bottom: 22px;
+    color: var(--text-on-maroon);
+    box-shadow: var(--shadow-md);
+    border-bottom: 4px solid var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    position: relative;
+    overflow: hidden;
+  }
+  body.dark-mode .summary-banner {
+    background: linear-gradient(135deg, #1a0a0a 0%, #2a0d0d 100%);
+  }
+  .summary-banner::before {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(212,175,55,0.28) 0%, transparent 70%);
+    top: -140px;
+    right: -80px;
+  }
+  .summary-banner > * { position: relative; z-index: 2; }
+
+  .summary-title {
+    flex: 1;
+    min-width: 220px;
+  }
+  .summary-title .label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .summary-title h1 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: #fff;
+  }
+  body.dark-mode .summary-title h1 { color: var(--gold); }
+  .summary-title p {
+    font-size: 0.85rem;
+    color: rgba(249, 245, 240, 0.75);
+    margin-top: 6px;
+  }
+  body.dark-mode .summary-title p { color: var(--text-secondary); }
+
+  .summary-badges {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .summary-pill {
+    padding: 10px 18px;
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(212,175,55,0.4);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(6px);
+    min-width: 100px;
+    text-align: center;
+  }
+  body.dark-mode .summary-pill {
+    background: rgba(212,175,55,0.08);
+  }
+  .summary-pill .pill-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .summary-pill .pill-label {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: rgba(249, 245, 240, 0.8);
+    margin-top: 5px;
+    font-weight: 700;
+  }
+
+  /* ---------- Print styles ---------- */
+  @media print {
+    .report-filters,
+    .summary-badges { display: none; }
+    .summary-banner { background: #fff; color: #000; border-bottom: none; }
+    .summary-title h1 { color: #7B1113; }
+    .report-grid { display: block; }
+    .report-card {
+      page-break-inside: avoid;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============================================================
+       SIDEBAR
+       ============================================================ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h3>UPHSD Molino</h3>
+        <p>Director's Office</p>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Main</div>
+      <a class="nav-item" href="dashboard.html" data-page="dashboard.html">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item" href="documents.html" data-page="documents.html">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        Documents
+      </a>
+      <a class="nav-item" href="approvals.html" data-page="approvals.html">
+        <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        Approvals
+        <span class="nav-badge" id="approvalBadgeSide">5</span>
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Administration</div>
+      <a class="nav-item" href="accounts.html" data-page="accounts.html">
+        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        Account Management
+      </a>
+      <a class="nav-item active" href="reports.html" data-page="reports.html">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+        Reports
+      </a>
+      <a class="nav-item" href="settings.html" data-page="settings.html">
+        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.484.484 0 00-.59.22L2.74 8.87a.47.47 0 00.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 00-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1112 8.4a3.6 3.6 0 010 7.2z"/></svg>
+        Settings
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      © <span data-year></span> UPHSD Molino<br/>
+      v1.0 · Director's Office
+    </div>
+  </aside>
+
+  <div class="overlay-backdrop" id="overlayBackdrop"></div>
+
+  <!-- ============================================================
+       MAIN
+       ============================================================ -->
+  <main class="main">
+
+    <!-- ========== TOP BAR ========== -->
+    <header class="topbar">
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
+      </button>
+
+      <div class="page-title">
+        <h1>Reports & Analytics</h1>
+        <p>Performance metrics and document insights</p>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- 🧪 DEV ONLY -->
+        <div class="role-switcher" title="Dev preview">
+          <label>View as</label>
+          <select id="roleSwitcher">
+            <option value="secretary">Secretary</option>
+            <option value="ea">Executive Assistant</option>
+            <option value="director">Director</option>
+          </select>
+        </div>
+
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg id="themeIcon" viewBox="0 0 24 24">
+            <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 7.06a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0z"/>
+          </svg>
+        </button>
+
+        <button class="icon-btn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+          <span class="dot"></span>
+        </button>
+
+        <div class="user-chip" id="userChip" title="Click to log out">
+          <div class="user-avatar" id="userAvatar">MC</div>
+          <div class="user-info">
+            <span class="name" id="userName">Maria Cruz</span>
+            <span class="role" id="userRoleLabel">Secretary</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ========== CONTENT ========== -->
+    <div class="content">
+
+      <!-- SUMMARY BANNER -->
+      <div class="summary-banner">
+        <div class="summary-title">
+          <div class="label">Reporting Period</div>
+          <h1>Performance Overview</h1>
+          <p id="periodText">Showing data for the last 30 days</p>
+        </div>
+        <div class="summary-badges">
+          <div class="summary-pill">
+            <div class="pill-value" id="summaryDocs">247</div>
+            <div class="pill-label">Documents</div>
+          </div>
+          <div class="summary-pill">
+            <div class="pill-value" id="summaryApproved">189</div>
+            <div class="pill-label">Approved</div>
+          </div>
+          <div class="summary-pill">
+            <div class="pill-value" id="summaryPending">12</div>
+            <div class="pill-label">Pending</div>
+          </div>
+          <div class="summary-pill">
+            <div class="pill-value" id="summaryRate">92%</div>
+            <div class="pill-label">Approval Rate</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="report-filters">
+        <div class="filter-field">
+          <label for="fromDate">From Date</label>
+          <input type="date" id="fromDate" />
+        </div>
+
+        <div class="filter-field">
+          <label for="toDate">To Date</label>
+          <input type="date" id="toDate" />
+        </div>
+
+        <div class="filter-field">
+          <label for="filterDept">Department</label>
+          <select id="filterDept">
+            <option value="">All Departments</option>
+            <option value="Director's Office">Director's Office</option>
+            <option value="Registrar">Registrar</option>
+            <option value="Accounting">Accounting</option>
+            <option value="Human Resources">Human Resources</option>
+            <option value="Academics">Academics</option>
+            <option value="Student Affairs">Student Affairs</option>
+          </select>
+        </div>
+
+        <div class="filter-field">
+          <label for="filterType">Document Type</label>
+          <select id="filterType">
+            <option value="">All Types</option>
+            <option value="Memo">Memo</option>
+            <option value="Report">Report</option>
+            <option value="Letter">Letter</option>
+            <option value="Proposal">Proposal</option>
+            <option value="Minutes">Minutes</option>
+            <option value="Form">Form</option>
+            <option value="Policy">Policy</option>
+          </select>
+        </div>
+
+        <div class="filter-actions">
+          <button class="btn btn-primary" id="btnApply">
+            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+            Apply
+          </button>
+          <button class="btn btn-ghost" id="btnReset">
+            <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4a8 8 0 00-7.73 6H2l4 4 4-4H6.07A6 6 0 1112 18a5.98 5.98 0 01-4.24-1.76l-1.41 1.41A8 8 0 1019.73 6H22l-4 4-4-4h3.65z"/></svg>
+            Reset
+          </button>
+          <button class="btn btn-ghost" id="btnExport">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            Export
+          </button>
+          <button class="btn btn-ghost" id="btnPrint">
+            <svg viewBox="0 0 24 24"><path d="M19 8H5a3 3 0 00-3 3v6h4v4h12v-4h4v-6a3 3 0 00-3-3zm-3 11H8v-5h8v5zm3-7a1 1 0 110-2 1 1 0 010 2zm-1-9H6v4h12V3z"/></svg>
+            Print
+          </button>
+        </div>
+      </div>
+
+      <!-- REPORT GRID -->
+      <div class="report-grid">
+
+        <!-- KPI: Total Documents -->
+        <div class="report-card span-3">
+          <div class="kpi-value" id="kpiDocs">247</div>
+          <div class="kpi-label">Total Documents</div>
+          <div class="kpi-trend up">
+            <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
+            +12% vs last period
+          </div>
+        </div>
+
+        <!-- KPI: Approved -->
+        <div class="report-card span-3">
+          <div class="kpi-value" id="kpiApproved">189</div>
+          <div class="kpi-label">Approved</div>
+          <div class="kpi-trend up">
+            <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
+            +8% vs last period
+          </div>
+        </div>
+
+        <!-- KPI: Pending -->
+        <div class="report-card span-3">
+          <div class="kpi-value" id="kpiPending">12</div>
+          <div class="kpi-label">Pending</div>
+          <div class="kpi-trend down">
+            <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+            -15% vs last period
+          </div>
+        </div>
+
+        <!-- KPI: Avg Review Time -->
+        <div class="report-card span-3">
+          <div class="kpi-value" id="kpiAvgTime">4.2h</div>
+          <div class="kpi-label">Avg. Review Time</div>
+          <div class="kpi-trend up">
+            <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+            -22% faster
+          </div>
+        </div>
+
+        <!-- Documents per Month (bar chart) -->
+        <div class="report-card span-8">
+          <div class="report-card-head">
+            <h2>
+              <svg viewBox="0 0 24 24"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
+              Documents Processed per Month
+            </h2>
+            <span class="head-meta">Last 6 months</span>
+          </div>
+          <div class="bar-chart" id="barChart"></div>
+        </div>
+
+        <!-- Documents by Status (donut) -->
+        <div class="report-card span-4">
+          <div class="report-card-head">
+            <h2>
+              <svg viewBox="0 0 24 24"><path d="M11 2v20c-5.07-.5-9-4.79-9-10s3.93-9.5 9-10zm2.03 0v8.99H22c-.47-4.74-4.24-8.52-8.97-8.99zm0 11.01V22c4.74-.47 8.5-4.25 8.97-8.99h-8.97z"/></svg>
+              By Status
+            </h2>
+          </div>
+          <div class="donut-wrapper">
+            <div class="donut" id="statusDonut" style="--seg1:0deg;--seg2:0deg;--seg3:0deg;--seg4:0deg;">
+              <div class="donut-center">
+                <div class="donut-value" id="donutTotal">247</div>
+                <div class="donut-label">Total</div>
+              </div>
+            </div>
+            <div class="donut-legend" id="donutLegend"></div>
+          </div>
+        </div>
+
+        <!-- Top Submitters (horizontal bars) -->
+        <div class="report-card span-6">
+          <div class="report-card-head">
+            <h2>
+              <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+              Top Submitters
+            </h2>
+            <span class="head-meta">By document count</span>
+          </div>
+          <div class="h-bar-chart" id="submittersChart"></div>
+        </div>
+
+        <!-- By Department (horizontal bars) -->
+        <div class="report-card span-6">
+          <div class="report-card-head">
+            <h2>
+              <svg viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>
+              By Department
+            </h2>
+            <span class="head-meta">Document volume</span>
+          </div>
+          <div class="h-bar-chart" id="deptsChart"></div>
+        </div>
+
+        <!-- Approval Trend (line chart) -->
+        <div class="report-card span-12">
+          <div class="report-card-head">
+            <h2>
+              <svg viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>
+              Approval Trend
+            </h2>
+            <span class="head-meta">Weekly approvals & rejections</span>
+          </div>
+          <div class="line-chart-wrap" id="lineChart"></div>
+        </div>
+
+        <!-- Recent Activity Log -->
+        <div class="report-card span-12">
+          <div class="report-card-head">
+            <h2>
+              <svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 00-9 9H1l3.89 3.89.07.14L9 12H6a7 7 0 117 7 6.96 6.96 0 01-4.95-2.05l-1.42 1.42A9 9 0 1013 3zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+              Recent Activity Log
+            </h2>
+            <span class="head-meta" id="logCount">Latest 10 events</span>
+          </div>
+          <div class="report-table-wrap">
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Action</th>
+                  <th>Subject</th>
+                  <th>User</th>
+                  <th>Department</th>
+                </tr>
+              </thead>
+              <tbody id="logBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ============================================================
+       PAGE SCRIPT
+       ============================================================ -->
+  <script src="app.js"></script>
+  <script>
+  /* ==========================================================================
+     REPORTS — Page module
+     ========================================================================== */
+  (function () {
+    'use strict';
+
+    const { Role, Toast, Utils, Bus } = APP;
+
+    /* --------------------------------------------------------------------
+       MOCK DATA
+       -------------------------------------------------------------------- */
+
+    // Documents per month (bar chart)
+    const monthlyData = [
+      { month: 'Aug', value: 32 },
+      { month: 'Sep', value: 41 },
+      { month: 'Oct', value: 38 },
+      { month: 'Nov', value: 52 },
+      { month: 'Dec', value: 44 },
+      { month: 'Jan', value: 40 }
+    ];
+
+    // Documents by status (donut chart)
+    const statusData = [
+      { label: 'Approved', value: 189, color: '#7B1113' },
+      { label: 'Pending',  value: 32,  color: '#D4AF37' },
+      { label: 'Rejected', value: 14,  color: '#4682dc' },
+      { label: 'Draft',    value: 8,   color: '#2ed573' },
+      { label: 'Archived', value: 4,   color: '#a89a8a' }
+    ];
+
+    // Top submitters
+    const submittersData = [
+      { name: 'Maria Cruz',     value: 68 },
+      { name: 'Anna Reyes',     value: 54 },
+      { name: 'Gabriel Tan',    value: 42 },
+      { name: 'Liza Fernandez', value: 31 },
+      { name: 'Rina Gomez',     value: 24 }
+    ];
+
+    // By department
+    const deptsData = [
+      { name: "Director's Office", value: 72, color: 'maroon' },
+      { name: 'Academics',         value: 58, color: 'gold' },
+      { name: 'Registrar',         value: 45, color: 'green' },
+      { name: 'Accounting',        value: 34, color: 'maroon' },
+      { name: 'Human Resources',   value: 22, color: 'gold' },
+      { name: 'Student Affairs',   value: 16, color: 'green' }
+    ];
+
+    // Approval trend (weekly)
+    const trendData = {
+      labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8'],
+      approved: [12, 18, 15, 22, 28, 24, 31, 27],
+      rejected: [2, 1, 3, 2, 1, 4, 2, 3]
+    };
+
+    // Activity log
+    const logData = [
+      { time: '8 min ago',  action: 'Uploaded',   subject: 'Budget Proposal FY 2025-2026.pdf',  user: 'Maria Cruz',       dept: 'Accounting',        dot: 'blue' },
+      { time: '32 min ago', action: 'Authorized', subject: 'Faculty Evaluation Summary.docx',   user: 'Dr. Ramon Santos', dept: 'Academics',         dot: 'green' },
+      { time: '2 hrs ago',  action: 'Submitted',  subject: 'HR Staffing Memo.docx',             user: 'Rina Gomez',       dept: 'Human Resources',   dot: 'gold' },
+      { time: '4 hrs ago',  action: 'Rejected',   subject: 'Office Supply Request Form.docx',   user: 'Dr. Ramon Santos', dept: "Director's Office", dot: 'red' },
+      { time: '6 hrs ago',  action: 'Viewed',     subject: 'Registrar Report Q4 2024.xlsx',     user: 'Liza Fernandez',   dept: 'Registrar',         dot: 'grey' },
+      { time: '20 hrs ago', action: 'Uploaded',   subject: 'Board Resolution Jan 2025.pdf',     user: 'Anna Reyes',       dept: 'Accounting',        dot: 'blue' },
+      { time: '1 day ago',  action: 'Archived',   subject: 'Annual Report 2024.pdf',            user: 'Maria Cruz',       dept: "Director's Office", dot: 'grey' },
+      { time: '1 day ago',  action: 'Authorized', subject: '3 documents (batch)',               user: 'Dr. Ramon Santos', dept: 'Registrar',         dot: 'green' },
+      { time: '2 days ago', action: 'Submitted',  subject: 'Enrollment Statistics Q4.xlsx',     user: 'Patricia Aquino',  dept: 'Registrar',         dot: 'gold' },
+      { time: '2 days ago', action: 'Deleted',    subject: 'Draft memo — superseded',           user: 'Maria Cruz',       dept: "Director's Office", dot: 'red' }
+    ];
+
+    /* --------------------------------------------------------------------
+       RENDER — Bar chart
+       -------------------------------------------------------------------- */
+    function renderBarChart() {
+      const chart = document.getElementById('barChart');
+      if (!chart) return;
+
+      const max = Math.max(...monthlyData.map(m => m.value));
+
+      chart.innerHTML = monthlyData.map(m => {
+        const height = Math.max((m.value / max) * 100, 8);
+        return `
+          <div class="bar" style="height:${height}%;" title="${m.month}: ${m.value} documents">
+            <span class="bar-value">${m.value}</span>
+            <span class="bar-label">${m.month}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* --------------------------------------------------------------------
+       RENDER — Donut chart
+       -------------------------------------------------------------------- */
+    function renderDonut() {
+      const donut = document.getElementById('statusDonut');
+      const legend = document.getElementById('donutLegend');
+      if (!donut || !legend) return;
+
+      const total = statusData.reduce((sum, s) => sum + s.value, 0);
+      document.getElementById('donutTotal').textContent = Utils.number(total);
+
+      // Build conic gradient segments (in degrees)
+      let cumulative = 0;
+      const segments = statusData.map(s => {
+        const start = cumulative;
+        const deg = (s.value / total) * 360;
+        cumulative += deg;
+        return { start, end: cumulative, color: s.color };
+      });
+
+      // Apply via CSS custom props
+      const segmentsDeg = segments.map(s => `${s.color} ${s.start}deg ${s.end}deg`).join(', ');
+      donut.style.background = `conic-gradient(${segmentsDeg})`;
+
+      // Legend
+      legend.innerHTML = statusData.map(s => `
+        <div class="legend-item">
+          <span class="legend-dot" style="background:${s.color};"></span>
+          <span class="legend-name">${Utils.escapeHtml(s.label)}</span>
+          <span class="legend-val">${Utils.number(s.value)}</span>
+        </div>
+      `).join('');
+    }
+
+    /* --------------------------------------------------------------------
+       RENDER — Horizontal bar charts
+       -------------------------------------------------------------------- */
+    function renderHBars(containerId, data, options = {}) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const max = Math.max(...data.map(d => d.value));
+      const valueSuffix = options.valueSuffix || '';
+
+      container.innerHTML = data.map(d => {
+        const widthPct = (d.value / max) * 100;
+        const fillClass = d.color === 'gold' ? 'gold' : d.color === 'green' ? 'green' : '';
+        return `
+          <div class="h-bar-row">
+            <div class="h-bar-label" title="${Utils.escapeHtml(d.name)}">${Utils.escapeHtml(d.name)}</div>
+            <div class="h-bar-track">
+              <div class="h-bar-fill ${fillClass}" style="width:${widthPct}%;"></div>
+            </div>
+            <div class="h-bar-value">${d.value}${valueSuffix}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* --------------------------------------------------------------------
+       RENDER — Line chart (SVG)
+       -------------------------------------------------------------------- */
+    function renderLineChart() {
+      const wrap = document.getElementById('lineChart');
+      if (!wrap) return;
+
+      const W = 800;   // viewBox width
+      const H = 220;
+      const padTop = 20;
+      const padBottom = 30;
+      const padLeft = 40;
+      const padRight = 20;
+
+      const chartW = W - padLeft - padRight;
+      const chartH = H - padTop - padBottom;
+
+      const allValues = [...trendData.approved, ...trendData.rejected];
+      const maxVal = Math.max(...allValues);
+      const niceMax = Math.ceil(maxVal / 5) * 5;
+
+      const stepX = chartW / (trendData.labels.length - 1);
+
+      const toPoint = (val, i) => ({
+        x: padLeft + i * stepX,
+        y: padTop + chartH - (val / niceMax) * chartH
+      });
+
+      const approvedPts = trendData.approved.map(toPoint);
+      const rejectedPts = trendData.rejected.map(toPoint);
+
+      // Path strings
+      const approvedPath = approvedPts.map((p, i) =>
+        (i === 0 ? 'M' : 'L') + p.x + ' ' + p.y
+      ).join(' ');
+      const rejectedPath = rejectedPts.map((p, i) =>
+        (i === 0 ? 'M' : 'L') + p.x + ' ' + p.y
+      ).join(' ');
+
+      // Filled area under approved line
+      const areaPath = approvedPath +
+        ` L ${approvedPts[approvedPts.length - 1].x} ${padTop + chartH}` +
+        ` L ${approvedPts[0].x} ${padTop + chartH} Z`;
+
+      // Y-axis grid lines
+      const gridLines = [];
+      const yTicks = 4;
+      for (let i = 0; i <= yTicks; i++) {
+        const val = (niceMax / yTicks) * i;
+        const y = padTop + chartH - (val / niceMax) * chartH;
+        gridLines.push(`
+          <line class="chart-grid-line" x1="${padLeft}" y1="${y}" x2="${W - padRight}" y2="${y}" />
+          <text class="chart-axis-label" x="${padLeft - 8}" y="${y + 3}" text-anchor="end">${Math.round(val)}</text>
+        `);
+      }
+
+      // X-axis labels
+      const xLabels = trendData.labels.map((label, i) => {
+        const x = padLeft + i * stepX;
+        return `<text class="chart-axis-label" x="${x}" y="${H - 10}" text-anchor="middle">${label}</text>`;
+      }).join('');
+
+      // Points
+      const pointsHtml = approvedPts.map(p => `<circle class="chart-point" cx="${p.x}" cy="${p.y}" r="4" />`).join('');
+
+      wrap.innerHTML = `
+        <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="gradientArea" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#7B1113" stop-opacity="0.5" />
+              <stop offset="100%" stop-color="#7B1113" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          ${gridLines.join('')}
+          <path class="chart-area" d="${areaPath}" />
+          <path class="chart-line" d="${approvedPath}" />
+          <path class="chart-line" d="${rejectedPath}" style="stroke:#D4AF37;stroke-dasharray:6 4;stroke-width:2;" />
+          ${pointsHtml}
+          ${xLabels}
+        </svg>
+        <div style="display:flex;gap:18px;justify-content:center;margin-top:10px;font-size:0.75rem;color:var(--text-secondary);">
+          <span style="display:flex;align-items:center;gap:6px;">
+            <span style="width:18px;height:2.5px;background:#7B1113;border-radius:2px;display:inline-block;"></span>
+            Approved
+          </span>
+          <span style="display:flex;align-items:center;gap:6px;">
+            <span style="width:18px;height:2.5px;background:#D4AF37;border-radius:2px;display:inline-block;border-top:2px dashed #D4AF37;"></span>
+            Rejected
+          </span>
+        </div>
+      `;
+    }
+
+    /* --------------------------------------------------------------------
+       RENDER — Activity log table
+       -------------------------------------------------------------------- */
+    function renderLog() {
+      const tbody = document.getElementById('logBody');
+      if (!tbody) return;
+
+      tbody.innerHTML = logData.map(row => `
+        <tr>
+          <td style="color:var(--text-muted);white-space:nowrap;">${Utils.escapeHtml(row.time)}</td>
+          <td>
+            <span class="activity-dot ${row.dot}"></span>
+            <strong>${Utils.escapeHtml(row.action)}</strong>
+          </td>
+          <td style="color:var(--text-secondary);">${Utils.escapeHtml(row.subject)}</td>
+          <td>${Utils.escapeHtml(row.user)}</td>
+          <td style="color:var(--text-muted);font-size:0.78rem;">${Utils.escapeHtml(row.dept)}</td>
+        </tr>
+      `).join('');
+
+      const logCount = document.getElementById('logCount');
+      if (logCount) logCount.textContent = `Latest ${logData.length} events`;
+    }
+
+    /* --------------------------------------------------------------------
+       DATE DEFAULTS
+       -------------------------------------------------------------------- */
+    function setDefaultDates() {
+      const fromInput = document.getElementById('fromDate');
+      const toInput = document.getElementById('toDate');
+
+      const today = new Date();
+      const from = new Date();
+      from.setDate(today.getDate() - 30);
+
+      const fmt = (d) => d.toISOString().split('T')[0];
+      if (fromInput && !fromInput.value) fromInput.value = fmt(from);
+      if (toInput && !toInput.value)     toInput.value   = fmt(today);
+    }
+
+    /* --------------------------------------------------------------------
+       ACTIONS
+       -------------------------------------------------------------------- */
+    document.getElementById('btnApply').addEventListener('click', () => {
+      const from = document.getElementById('fromDate').value;
+      const to   = document.getElementById('toDate').value;
+      const dept = document.getElementById('filterDept').value;
+      const type = document.getElementById('filterType').value;
+
+      // In a real system, this would fetch new data from the backend.
+      const parts = [];
+      if (from && to) parts.push(`${from} → ${to}`);
+      if (dept) parts.push(dept);
+      if (type) parts.push(type);
+
+      const periodText = document.getElementById('periodText');
+      if (periodText) {
+        periodText.textContent = parts.length
+          ? `Filtered by: ${parts.join(' · ')}`
+          : 'Showing all data';
+      }
+
+      Toast.success('Filters Applied', 'Report has been updated with your filters.');
+      // Simulate a data refresh
+      rerenderAll();
+    });
+
+    document.getElementById('btnReset').addEventListener('click', () => {
+      document.getElementById('filterDept').value = '';
+      document.getElementById('filterType').value = '';
+      setDefaultDates();
+      document.getElementById('periodText').textContent = 'Showing data for the last 30 days';
+      Toast.info('Filters Reset', 'Showing default 30-day report.');
+      rerenderAll();
+    });
+
+    document.getElementById('btnExport').addEventListener('click', () => {
+      Toast.info('Export Started', 'Preparing report export as CSV...');
+    });
+
+    document.getElementById('btnPrint').addEventListener('click', () => {
+      Toast.info('Preparing Print', 'Opening print dialog...');
+      setTimeout(() => window.print(), 500);
+    });
+
+    /* --------------------------------------------------------------------
+       RERENDER
+       -------------------------------------------------------------------- */
+    function rerenderAll() {
+      renderBarChart();
+      renderDonut();
+      renderHBars('submittersChart', submittersData);
+      renderHBars('deptsChart', deptsData, { valueSuffix: '' });
+      renderLineChart();
+      renderLog();
+    }
+
+    /* --------------------------------------------------------------------
+       ROLE-AWARE UI
+       -------------------------------------------------------------------- */
+    function applyRole() {
+      // Everyone can view reports; no restrictions for now
+      // Could hide KPI cards or log details based on role later
+    }
+
+    /* --------------------------------------------------------------------
+       INIT
+       -------------------------------------------------------------------- */
+    setDefaultDates();
+    rerenderAll();
+    applyRole();
+
+    // React to role change
+    Bus.on('role:changed', () => {
+      applyRole();
+      Toast.info('Role Switched', `Now viewing as ${Role.current().label}.`);
+    });
+
+  })();
+  </script>
+</body>
+</html>

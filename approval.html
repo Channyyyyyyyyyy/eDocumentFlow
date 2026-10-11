@@ -1,0 +1,1434 @@
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Approvals — UPHSD Molino | Office of the School Director</title>
+<link rel="stylesheet" href="shared.css" />
+
+<style>
+  /* =====================================================================
+     APPROVALS-PAGE-SPECIFIC STYLES
+     ===================================================================== */
+
+  /* ---------- Hero banner (Director-only) ---------- */
+  .approval-hero {
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-deep) 100%);
+    border-radius: var(--radius-xl);
+    padding: 24px 30px;
+    color: var(--text-on-maroon);
+    margin-bottom: 22px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    border-bottom: 4px solid var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    flex-wrap: wrap;
+  }
+
+  body.dark-mode .approval-hero {
+    background: linear-gradient(135deg, #1a0a0a 0%, #2a0d0d 100%);
+  }
+
+  .approval-hero::before {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(212,175,55,0.28) 0%, transparent 70%);
+    top: -130px;
+    right: -80px;
+    pointer-events: none;
+  }
+
+  .hero-icon {
+    width: 62px;
+    height: 62px;
+    border-radius: 16px;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 4px rgba(212,175,55,0.25);
+    animation: pulse 2.5s infinite;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-icon svg {
+    width: 30px;
+    height: 30px;
+    fill: var(--maroon);
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(212,175,55,0.25); }
+    50% { box-shadow: 0 0 0 12px rgba(212,175,55,0.06); }
+  }
+
+  .hero-text {
+    flex: 1;
+    min-width: 220px;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-text .hero-label {
+    font-size: 0.72rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .hero-text h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: 0.3px;
+    color: #fff;
+  }
+  body.dark-mode .hero-text h1 { color: var(--gold); }
+
+  .hero-text p {
+    font-size: 0.88rem;
+    color: rgba(249, 245, 240, 0.75);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+  body.dark-mode .hero-text p { color: var(--text-secondary); }
+
+  .hero-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 20px;
+    background: rgba(255,255,255,0.08);
+    border: 1.5px solid rgba(212,175,55,0.4);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(6px);
+    position: relative;
+    z-index: 2;
+    min-width: 110px;
+  }
+  body.dark-mode .hero-stat {
+    background: rgba(212,175,55,0.08);
+  }
+
+  .hero-stat .hero-stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .hero-stat .hero-stat-label {
+    font-size: 0.68rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(249, 245, 240, 0.8);
+    font-weight: 600;
+    margin-top: 6px;
+    text-align: center;
+  }
+  body.dark-mode .hero-stat .hero-stat-label { color: var(--text-secondary); }
+
+  /* ---------- Filter chips ---------- */
+  .filter-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+
+  .chip {
+    padding: 8px 16px;
+    background: var(--bg-card);
+    border: 1.5px solid var(--border-light);
+    border-radius: 22px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .chip:hover {
+    border-color: var(--gold);
+    color: var(--maroon);
+  }
+  body.dark-mode .chip:hover { color: var(--gold); }
+
+  .chip.active {
+    background: var(--maroon);
+    border-color: var(--maroon);
+    color: var(--gold);
+  }
+  body.dark-mode .chip.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #1a1414;
+  }
+
+  .chip .chip-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 18px;
+    padding: 0 6px;
+    background: rgba(0,0,0,0.08);
+    border-radius: 9px;
+    font-size: 0.68rem;
+    font-weight: 700;
+  }
+  body.dark-mode .chip .chip-count {
+    background: rgba(255,255,255,0.1);
+  }
+  .chip.active .chip-count {
+    background: rgba(212,175,55,0.25);
+    color: var(--gold);
+  }
+  body.dark-mode .chip.active .chip-count {
+    background: rgba(26,20,20,0.15);
+    color: #1a1414;
+  }
+
+  /* ---------- Approval item card ---------- */
+  .approval-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .approval-card {
+    background: var(--bg-card);
+    border: 1.5px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 18px 22px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .approval-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--gold);
+    transition: all 0.25s ease;
+  }
+
+  .approval-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--gold);
+  }
+
+  .approval-card.priority-high::before    { background: #ff4757; }
+  .approval-card.priority-normal::before  { background: var(--gold); }
+  .approval-card.priority-low::before     { background: #4682dc; }
+
+  .approval-card.selected {
+    background: rgba(212,175,55,0.06);
+    border-color: var(--gold);
+  }
+
+  .approval-head {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .approval-checkbox {
+    margin-top: 4px;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--border-medium);
+    border-radius: 5px;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+  }
+  .approval-checkbox:checked {
+    background: var(--maroon);
+    border-color: var(--maroon);
+  }
+  body.dark-mode .approval-checkbox:checked {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+  .approval-checkbox:checked::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 5px;
+    height: 9px;
+    border: solid var(--gold);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  body.dark-mode .approval-checkbox:checked::after {
+    border-color: #1a1414;
+  }
+
+  .approval-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .approval-icon svg { width: 20px; height: 20px; fill: currentColor; }
+
+  .approval-icon.doc     { background: rgba(123,17,19,0.1); color: var(--maroon); }
+  .approval-icon.account { background: rgba(70,130,220,0.12); color: #4682dc; }
+  .approval-icon.edit    { background: rgba(212,175,55,0.15); color: #8a6d1f; }
+  .approval-icon.delete  { background: rgba(255,71,87,0.12); color: #d43a45; }
+
+  body.dark-mode .approval-icon.doc     { background: rgba(212,175,55,0.15); color: var(--gold); }
+  body.dark-mode .approval-icon.account { background: rgba(100,150,240,0.15); color: #7ea8ee; }
+  body.dark-mode .approval-icon.edit    { background: rgba(212,175,55,0.2); color: var(--gold-bright); }
+  body.dark-mode .approval-icon.delete  { background: rgba(255,107,122,0.15); color: #ff8b96; }
+
+  .approval-body {
+    flex: 1;
+    min-width: 240px;
+  }
+
+  .approval-body .approval-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+
+  .approval-body .approval-desc {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  .approval-body .approval-desc strong {
+    color: var(--text-heading);
+    font-weight: 700;
+  }
+  body.dark-mode .approval-body .approval-desc strong { color: var(--gold); }
+
+  .approval-meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+
+  .approval-meta .meta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    background: var(--bg-input);
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  .approval-meta .meta-pill svg {
+    width: 12px;
+    height: 12px;
+    fill: currentColor;
+  }
+
+  .approval-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    align-items: center;
+  }
+
+  @media (max-width: 720px) {
+    .approval-actions {
+      width: 100%;
+      justify-content: flex-start;
+      margin-top: 10px;
+      padding-left: 78px;
+    }
+  }
+
+  .approval-actions .btn {
+    padding: 9px 16px;
+    font-size: 0.78rem;
+  }
+
+  /* ---------- Empty state custom ---------- */
+  .approval-empty {
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--bg-card);
+    border: 1.5px dashed var(--border-light);
+    border-radius: var(--radius-lg);
+  }
+  .approval-empty .empty-icon {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(46,213,115,0.12), rgba(46,213,115,0.04));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+  }
+  .approval-empty .empty-icon svg {
+    width: 44px;
+    height: 44px;
+    fill: #2ed573;
+  }
+  .approval-empty h3 {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .approval-empty p {
+    font-size: 0.86rem;
+    color: var(--text-muted);
+    max-width: 400px;
+    margin: 0 auto;
+    line-height: 1.55;
+  }
+
+  /* ---------- Comment box in review modal ---------- */
+  .comment-box {
+    background: var(--bg-input);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    border-left: 3px solid var(--gold);
+  }
+  .comment-box .comment-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .comment-box .comment-text {
+    font-size: 0.86rem;
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
+
+  /* ---------- Timeline in review modal ---------- */
+  .mini-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px 0;
+  }
+  .timeline-step {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .timeline-step .step-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--bg-input);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 2px solid var(--border-light);
+    position: relative;
+    z-index: 2;
+  }
+  .timeline-step .step-dot svg {
+    width: 11px;
+    height: 11px;
+    fill: var(--text-muted);
+  }
+  .timeline-step.done .step-dot {
+    background: #2ed573;
+    border-color: #2ed573;
+  }
+  .timeline-step.done .step-dot svg { fill: #fff; }
+  .timeline-step.current .step-dot {
+    background: var(--gold);
+    border-color: var(--gold);
+    animation: pulse 2s infinite;
+  }
+  .timeline-step.current .step-dot svg { fill: var(--maroon); }
+
+  .timeline-step .step-body { padding-top: 2px; }
+  .timeline-step .step-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+  .timeline-step .step-time {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .timeline-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 22px;
+    bottom: -12px;
+    width: 2px;
+    background: var(--border-light);
+  }
+  .timeline-step { position: relative; }
+</style>
+</head>
+<body>
+
+  <!-- ============================================================
+       SIDEBAR
+       ============================================================ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <!-- 👇 REPLACE WITH YOUR LOGO -->
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h3>UPHSD Molino</h3>
+        <p>Director's Office</p>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Main</div>
+      <a class="nav-item" href="dashboard.html" data-page="dashboard.html">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item" href="documents.html" data-page="documents.html">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        Documents
+      </a>
+      <a class="nav-item active" href="approvals.html" data-page="approvals.html">
+        <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        Approvals
+        <span class="nav-badge" id="approvalBadgeSide">5</span>
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Administration</div>
+      <a class="nav-item" href="accounts.html" data-page="accounts.html">
+        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        Account Management
+      </a>
+      <a class="nav-item" href="reports.html" data-page="reports.html">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+        Reports
+      </a>
+      <a class="nav-item" href="settings.html" data-page="settings.html">
+        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.484.484 0 00-.59.22L2.74 8.87a.47.47 0 00.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 00-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1112 8.4a3.6 3.6 0 010 7.2z"/></svg>
+        Settings
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      © <span data-year></span> UPHSD Molino<br/>
+      v1.0 · Director's Office
+    </div>
+  </aside>
+
+  <div class="overlay-backdrop" id="overlayBackdrop"></div>
+
+  <!-- ============================================================
+       MAIN
+       ============================================================ -->
+  <main class="main">
+
+    <!-- ========== TOP BAR ========== -->
+    <header class="topbar">
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
+      </button>
+
+      <div class="page-title">
+        <h1 id="pageTitleHeading">Approvals</h1>
+        <p id="pageTitleSub">Review and authorize pending requests</p>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- 🧪 DEV ONLY -->
+        <div class="role-switcher" title="Dev preview">
+          <label>View as</label>
+          <select id="roleSwitcher">
+            <option value="secretary">Secretary</option>
+            <option value="ea">Executive Assistant</option>
+            <option value="director">Director</option>
+          </select>
+        </div>
+
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg id="themeIcon" viewBox="0 0 24 24">
+            <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 7.06a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0z"/>
+          </svg>
+        </button>
+
+        <button class="icon-btn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+          <span class="dot"></span>
+        </button>
+
+        <div class="user-chip" id="userChip" title="Click to log out">
+          <div class="user-avatar" id="userAvatar">MC</div>
+          <div class="user-info">
+            <span class="name" id="userName">Maria Cruz</span>
+            <span class="role" id="userRoleLabel">Secretary</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ========== CONTENT ========== -->
+    <div class="content">
+
+      <!-- DIRECTOR HERO BANNER -->
+      <div class="approval-hero" id="approvalHero" style="display:none;">
+        <div class="hero-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        </div>
+        <div class="hero-text">
+          <div class="hero-label">Authorization Center</div>
+          <h1>You have <span id="heroCount">0</span> pending approval<span id="heroCountPlural">s</span></h1>
+          <p>Review each request carefully. Once authorized, the action becomes final.</p>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value" id="heroStatPending">0</div>
+          <div class="hero-stat-label">Pending</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value" id="heroStatToday">0</div>
+          <div class="hero-stat-label">Approved Today</div>
+        </div>
+      </div>
+
+      <!-- STATS GRID (for Secretary/EA) -->
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+          <div class="stat-icon gold">
+            <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statPending">0</div>
+            <div class="stat-label">Pending</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon green">
+            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statApproved">0</div>
+            <div class="stat-label">Approved</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon grey">
+            <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statRejected">0</div>
+            <div class="stat-label">Rejected</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon blue">
+            <svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 00-9 9H1l3.89 3.89.07.14L9 12H6a7 7 0 117 7 6.96 6.96 0 01-4.95-2.05l-1.42 1.42A9 9 0 1013 3zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statAvgTime">—</div>
+            <div class="stat-label">Avg. Review</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILTER CHIPS -->
+      <div class="filter-chips" id="filterChips">
+        <button class="chip active" data-filter="all">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+          All <span class="chip-count" data-count="all">0</span>
+        </button>
+        <button class="chip" data-filter="document">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/></svg>
+          Documents <span class="chip-count" data-count="document">0</span>
+        </button>
+        <button class="chip" data-filter="account">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3z"/></svg>
+          Account Requests <span class="chip-count" data-count="account">0</span>
+        </button>
+        <button class="chip" data-filter="high-priority">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+          High Priority <span class="chip-count" data-count="high-priority">0</span>
+        </button>
+      </div>
+
+      <!-- BULK BAR -->
+      <div class="bulk-bar" id="bulkBar">
+        <span class="bulk-count" id="bulkCount">0 selected</span>
+        <div class="bulk-actions" id="bulkActions"></div>
+        <button class="btn btn-ghost" style="background:transparent;color:inherit;border-color:rgba(255,255,255,0.3);" onclick="Approvals.clearSelection()">Clear</button>
+      </div>
+
+      <!-- SEARCH BAR -->
+      <div class="toolbar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="text" id="searchInput" placeholder="Search approvals by title or requester..." />
+        </div>
+
+        <select class="filter-select" id="filterRequester">
+          <option value="">All Requesters</option>
+          <option value="Maria Cruz">Maria Cruz</option>
+          <option value="Anna Reyes">Anna Reyes</option>
+        </select>
+
+        <select class="filter-select" id="sortBy">
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+          <option value="priority">Priority</option>
+        </select>
+      </div>
+
+      <!-- APPROVAL LIST -->
+      <div class="approval-list" id="approvalList"></div>
+
+      <!-- EMPTY STATE -->
+      <div class="approval-empty" id="emptyState" style="display:none;">
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+        </div>
+        <h3 id="emptyTitle">All caught up!</h3>
+        <p id="emptyDesc">There are no pending approvals matching your current filter. Great work — check back later.</p>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ============================================================
+       MODAL — Review & Decide
+       ============================================================ -->
+  <div class="modal-backdrop" id="reviewModal">
+    <div class="modal" style="max-width:620px;">
+      <div class="modal-header">
+        <div style="flex:1;">
+          <h2 id="reviewTitle">Review Request</h2>
+          <p id="reviewSubtitle">—</p>
+        </div>
+        <button class="modal-close" onclick="APP.Modal.close('reviewModal')" aria-label="Close">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Summary comment box -->
+        <div class="comment-box">
+          <div class="comment-label">Request Summary</div>
+          <div class="comment-text" id="reviewSummary">—</div>
+        </div>
+
+        <!-- Info grid -->
+        <div class="info-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;margin-bottom:18px;">
+          <div class="info-item">
+            <div class="info-label" style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:4px;">Request ID</div>
+            <div class="info-value" id="reviewId" style="font-size:0.86rem;color:var(--text-primary);font-weight:500;">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label" style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:4px;">Type</div>
+            <div class="info-value" id="reviewType" style="font-size:0.86rem;color:var(--text-primary);font-weight:500;">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label" style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:4px;">Submitted By</div>
+            <div class="info-value" id="reviewRequester" style="font-size:0.86rem;color:var(--text-primary);font-weight:500;">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label" style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:4px;">Submitted On</div>
+            <div class="info-value" id="reviewDate" style="font-size:0.86rem;color:var(--text-primary);font-weight:500;">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label" style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:4px;">Priority</div>
+            <div class="info-value" id="reviewPriority" style="font-size:0.86rem;color:var(--text-primary);font-weight:500;">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label" style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:4px;">Department</div>
+            <div class="info-value" id="reviewDept" style="font-size:0.86rem;color:var(--text-primary);font-weight:500;">—</div>
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <div style="margin-top:10px;">
+          <div class="info-label" style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:10px;">Workflow Progress</div>
+          <div class="mini-timeline" id="reviewTimeline"></div>
+        </div>
+
+        <!-- Notes textarea (only for Director) -->
+        <div class="form-group" id="reviewNotesGroup" style="margin-top:16px;">
+          <label for="reviewNotes">Reviewer Notes <span class="form-hint" style="display:inline;font-weight:400;">(optional)</span></label>
+          <textarea id="reviewNotes" placeholder="Add a comment for the requester (visible in the audit trail)..."></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer" id="reviewFooter">
+        <button class="btn btn-ghost" onclick="APP.Modal.close('reviewModal')">Close</button>
+        <button class="btn btn-danger" id="btnReject">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          Reject
+        </button>
+        <button class="btn btn-success" id="btnAuthorize">
+          <svg viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+          Authorize
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PAGE SCRIPT
+       ============================================================ -->
+  <script src="app.js"></script>
+  <script>
+  /* ==========================================================================
+     APPROVALS — Page module
+     ========================================================================== */
+  (function () {
+    'use strict';
+
+    const { Role, Toast, Utils, Modal, Bus } = APP;
+
+    /* --------------------------------------------------------------------
+       MOCK DATA — Pending approvals queue
+       kind: 'document' | 'account'
+       accountAction: 'create' | 'edit' | 'delete'
+       -------------------------------------------------------------------- */
+    const approvals = [
+      {
+        id: 'REQ-2025-001',
+        kind: 'document',
+        title: 'Budget Proposal FY 2025-2026.pdf',
+        summary: 'Annual budget proposal for the 2025-2026 academic year, submitted for board review.',
+        requester: 'Maria Cruz',
+        date: new Date(Date.now() - 45 * 60 * 1000),
+        priority: 'high',
+        dept: 'Accounting',
+        status: 'pending'
+      },
+      {
+        id: 'REQ-2025-002',
+        kind: 'account',
+        accountAction: 'create',
+        title: 'New Account — Carlos Mendoza',
+        summary: 'Request to create a Faculty account for Carlos Mendoza (Academics department).',
+        requester: 'Maria Cruz',
+        date: new Date(Date.now() - 2 * 60 * 60 * 1000),
+        priority: 'normal',
+        dept: 'Academics',
+        status: 'pending'
+      },
+      {
+        id: 'REQ-2025-003',
+        kind: 'document',
+        title: 'HR Staffing Memo.docx',
+        summary: 'Staffing memo for Q1 2025 — needs Director sign-off before Jan 25.',
+        requester: 'Rina Gomez',
+        date: new Date(Date.now() - 6 * 60 * 60 * 1000),
+        priority: 'high',
+        dept: 'Human Resources',
+        status: 'pending'
+      },
+      {
+        id: 'REQ-2025-004',
+        kind: 'account',
+        accountAction: 'edit',
+        title: 'Role Change — Jose Villanueva',
+        summary: 'Update role from Staff → Department Head (Accounting department).',
+        requester: 'Anna Reyes',
+        date: new Date(Date.now() - 22 * 60 * 60 * 1000),
+        priority: 'normal',
+        dept: 'Accounting',
+        status: 'pending'
+      },
+      {
+        id: 'REQ-2025-005',
+        kind: 'document',
+        title: 'Student Affairs Report.pdf',
+        summary: 'Q4 2024 report from the Office of Student Affairs.',
+        requester: 'Sophia Lim',
+        date: new Date(Date.now() - 28 * 60 * 60 * 1000),
+        priority: 'normal',
+        dept: 'Student Affairs',
+        status: 'pending'
+      },
+      {
+        id: 'REQ-2025-006',
+        kind: 'account',
+        accountAction: 'delete',
+        title: 'Account Deletion — Sophia Lim',
+        summary: 'Resignation notice received. Request to deactivate and archive account.',
+        requester: 'Maria Cruz',
+        date: new Date(Date.now() - 32 * 60 * 60 * 1000),
+        priority: 'low',
+        dept: 'Student Affairs',
+        status: 'pending'
+      },
+      {
+        id: 'REQ-2025-007',
+        kind: 'document',
+        title: 'Board Resolution Jan 2025.pdf',
+        summary: 'Board resolution from the January 2025 meeting — for Director approval.',
+        requester: 'Anna Reyes',
+        date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+        priority: 'high',
+        dept: 'Accounting',
+        status: 'pending'
+      },
+      {
+        id: 'REQ-2025-008',
+        kind: 'account',
+        accountAction: 'create',
+        title: 'New Account — Gabriel Tan',
+        summary: 'New Faculty account request for Gabriel Tan (Academics department).',
+        requester: 'Maria Cruz',
+        date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+        priority: 'low',
+        dept: 'Academics',
+        status: 'pending'
+      }
+    ];
+
+    /* --------------------------------------------------------------------
+       STATE
+       -------------------------------------------------------------------- */
+    let currentFilter = 'all';
+    let filteredApprovals = [...approvals];
+    const selectedIds = new Set();
+    let currentReviewItem = null;
+
+    /* --------------------------------------------------------------------
+       DOM SHORTCUTS
+       -------------------------------------------------------------------- */
+    const $ = (id) => document.getElementById(id);
+    const els = {
+      list:           $('approvalList'),
+      emptyState:     $('emptyState'),
+      emptyTitle:     $('emptyTitle'),
+      emptyDesc:      $('emptyDesc'),
+      searchInput:    $('searchInput'),
+      filterRequester:$('filterRequester'),
+      sortBy:         $('sortBy'),
+      bulkBar:        $('bulkBar'),
+      bulkCount:      $('bulkCount'),
+      bulkActions:    $('bulkActions'),
+      hero:           $('approvalHero'),
+      heroCount:      $('heroCount'),
+      heroCountPlural:$('heroCountPlural'),
+      heroStatPending:$('heroStatPending'),
+      heroStatToday:  $('heroStatToday'),
+      statsGrid:      $('statsGrid'),
+      pageTitle:      $('pageTitleHeading'),
+      pageSub:        $('pageTitleSub')
+    };
+
+    /* --------------------------------------------------------------------
+       HELPERS
+       -------------------------------------------------------------------- */
+    function kindIcon(kind, accountAction) {
+      if (kind === 'document') return { cls: 'doc', svg: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>' };
+      const map = {
+        create: { cls: 'account', svg: '<path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>' },
+        edit:   { cls: 'edit', svg: '<path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>' },
+        delete: { cls: 'delete', svg: '<path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>' }
+      };
+      return map[accountAction] || map.create;
+    }
+
+    function kindLabel(item) {
+      if (item.kind === 'document') return 'Document';
+      return {
+        create: 'Account · Create',
+        edit:   'Account · Edit',
+        delete: 'Account · Delete'
+      }[item.accountAction] || 'Account';
+    }
+
+    function formatDateShort(d) {
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) +
+        ' · ' +
+        d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    /* --------------------------------------------------------------------
+       RENDER — Stats + hero
+       -------------------------------------------------------------------- */
+    function updateStats() {
+      const pending = approvals.filter(a => a.status === 'pending');
+      const pendingCount = pending.length;
+
+      // Hero (Director only)
+      if (els.heroCount) {
+        els.heroCount.textContent = pendingCount;
+        els.heroCountPlural.textContent = pendingCount === 1 ? '' : 's';
+      }
+      if (els.heroStatPending) els.heroStatPending.textContent = pendingCount;
+
+      // Approved today (fake logic — count items without status, i.e. all items — for demo)
+      const approvedToday = 3; // demo value
+      if (els.heroStatToday) els.heroStatToday.textContent = approvedToday;
+
+      // Regular stats
+      $('statPending').textContent  = pendingCount;
+      $('statApproved').textContent = 12; // demo
+      $('statRejected').textContent = 2;  // demo
+      $('statAvgTime').textContent  = '4h';
+
+      // Chip counts
+      const counts = {
+        'all':           approvals.length,
+        'document':      approvals.filter(a => a.kind === 'document').length,
+        'account':       approvals.filter(a => a.kind === 'account').length,
+        'high-priority': approvals.filter(a => a.priority === 'high').length
+      };
+      Object.entries(counts).forEach(([k, v]) => {
+        const el = document.querySelector(`[data-count="${k}"]`);
+        if (el) el.textContent = v;
+      });
+
+      // Sidebar badge
+      const sideBadge = document.getElementById('approvalBadgeSide');
+      if (sideBadge) {
+        sideBadge.textContent = pendingCount;
+        sideBadge.classList.toggle('hidden', pendingCount === 0);
+      }
+    }
+
+    /* --------------------------------------------------------------------
+       RENDER — Approval cards
+       -------------------------------------------------------------------- */
+    function renderApprovals() {
+      const search = els.searchInput.value.toLowerCase().trim();
+      const requesterF = els.filterRequester.value;
+      const sortBy = els.sortBy.value;
+
+      filteredApprovals = approvals.filter(a => {
+        // Filter chip
+        if (currentFilter === 'document' && a.kind !== 'document') return false;
+        if (currentFilter === 'account' && a.kind !== 'account') return false;
+        if (currentFilter === 'high-priority' && a.priority !== 'high') return false;
+        // Search
+        const matchesSearch = !search ||
+          a.title.toLowerCase().includes(search) ||
+          a.id.toLowerCase().includes(search) ||
+          a.requester.toLowerCase().includes(search) ||
+          a.summary.toLowerCase().includes(search);
+        if (!matchesSearch) return false;
+        // Requester filter
+        if (requesterF && a.requester !== requesterF) return false;
+        // Only show pending
+        return a.status === 'pending';
+      });
+
+      // Sort
+      if (sortBy === 'newest') {
+        filteredApprovals.sort((a, b) => b.date - a.date);
+      } else if (sortBy === 'oldest') {
+        filteredApprovals.sort((a, b) => a.date - b.date);
+      } else if (sortBy === 'priority') {
+        const order = { high: 0, normal: 1, low: 2 };
+        filteredApprovals.sort((a, b) => order[a.priority] - order[b.priority]);
+      }
+
+      updateStats();
+
+      if (filteredApprovals.length === 0) {
+        els.list.innerHTML = '';
+        els.emptyState.style.display = 'block';
+        updateEmptyCopy();
+        return;
+      } else {
+        els.emptyState.style.display = 'none';
+      }
+
+      els.list.innerHTML = filteredApprovals.map(item => {
+        const icon = kindIcon(item.kind, item.accountAction);
+        const isSelected = selectedIds.has(item.id);
+        return `
+          <div class="approval-card priority-${item.priority} ${isSelected ? 'selected' : ''}" data-id="${item.id}">
+            <div class="approval-head">
+              <input type="checkbox" class="approval-checkbox" data-id="${item.id}" ${isSelected ? 'checked' : ''} />
+              <div class="approval-icon ${icon.cls}">
+                <svg viewBox="0 0 24 24">${icon.svg}</svg>
+              </div>
+              <div class="approval-body">
+                <div class="approval-title">${Utils.escapeHtml(item.title)}</div>
+                <div class="approval-desc">${Utils.escapeHtml(item.summary)}</div>
+                <div class="approval-meta">
+                  <span class="meta-pill">
+                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    ${Utils.escapeHtml(item.requester)}
+                  </span>
+                  <span class="meta-pill">
+                    <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11z"/></svg>
+                    ${formatDateShort(item.date)}
+                  </span>
+                  <span class="meta-pill">
+                    <svg viewBox="0 0 24 24"><path d="M4 10h3v7H4v-7zm6.5 0h3v7h-3v-7zM17 10h3v7h-3v-7zM2 19h20v2H2v-2zm18-11V4.5L12 1 4 3.5V8h16z"/></svg>
+                    ${Utils.escapeHtml(item.dept)}
+                  </span>
+                  <span class="meta-pill" style="background:rgba(212,175,55,0.12);color:#8a6d1f;">
+                    ${kindLabel(item)}
+                  </span>
+                </div>
+              </div>
+              <div class="approval-actions">${renderCardActions(item)}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Checkboxes
+      els.list.querySelectorAll('.approval-checkbox').forEach(cb => {
+        cb.addEventListener('change', (e) => {
+          const id = e.target.dataset.id;
+          if (e.target.checked) selectedIds.add(id);
+          else selectedIds.delete(id);
+          e.target.closest('.approval-card').classList.toggle('selected', e.target.checked);
+          updateBulkBar();
+        });
+      });
+
+      // Action buttons
+      els.list.querySelectorAll('[data-action]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          handleAction(btn.dataset.action, btn.dataset.id);
+        });
+      });
+
+      updateBulkBar();
+    }
+
+    /* --------------------------------------------------------------------
+       RENDER — Action buttons on cards
+       -------------------------------------------------------------------- */
+    function renderCardActions(item) {
+      if (Role.can('authorize')) {
+        // Director view: Review, Authorize, Reject
+        return `
+          <button class="btn btn-ghost" data-action="review" data-id="${item.id}">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
+            Review
+          </button>
+          <button class="btn btn-success" data-action="authorize" data-id="${item.id}">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+            Authorize
+          </button>
+          <button class="btn btn-danger" data-action="reject" data-id="${item.id}">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            Reject
+          </button>
+        `;
+      }
+      // Secretary/EA view: just "View Status"
+      return `
+        <button class="btn btn-ghost" data-action="review" data-id="${item.id}">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
+          View Status
+        </button>
+      `;
+    }
+
+    /* --------------------------------------------------------------------
+       ACTION HANDLER
+       -------------------------------------------------------------------- */
+    function handleAction(action, id) {
+      const item = approvals.find(a => a.id === id);
+      if (!item) return;
+
+      switch (action) {
+        case 'review':    openReviewModal(item); break;
+        case 'authorize': authorizeItem(item);   break;
+        case 'reject':    rejectItem(item);      break;
+      }
+    }
+
+    /* --------------------------------------------------------------------
+       REVIEW MODAL
+       -------------------------------------------------------------------- */
+    function openReviewModal(item) {
+      currentReviewItem = item;
+
+      $('reviewTitle').textContent    = item.title;
+      $('reviewSubtitle').textContent = `${item.id} · ${kindLabel(item)}`;
+      $('reviewSummary').textContent  = item.summary;
+      $('reviewId').textContent       = item.id;
+      $('reviewType').textContent     = kindLabel(item);
+      $('reviewRequester').textContent= item.requester;
+      $('reviewDate').textContent     = formatDateShort(item.date);
+      $('reviewPriority').innerHTML   = `<span class="priority ${item.priority}">${Utils.capitalize(item.priority)}</span>`;
+      $('reviewDept').textContent     = item.dept;
+
+      // Timeline
+      const steps = [
+        { title: 'Submitted', time: formatDateShort(item.date), state: 'done' },
+        { title: 'Under Review', time: 'In progress', state: 'current' },
+        { title: 'Authorized', time: 'Pending', state: '' }
+      ];
+      $('reviewTimeline').innerHTML = steps.map(s => `
+        <div class="timeline-step ${s.state}">
+          <div class="step-dot">
+            <svg viewBox="0 0 24 24">${s.state === 'done' ? '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>' : '<path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>'}</svg>
+          </div>
+          <div class="step-body">
+            <div class="step-title">${s.title}</div>
+            <div class="step-time">${s.time}</div>
+          </div>
+        </div>
+      `).join('');
+
+      // Show/hide action buttons + notes based on role
+      const canAuthorize = Role.can('authorize');
+      $('btnAuthorize').style.display = canAuthorize ? 'inline-flex' : 'none';
+      $('btnReject').style.display    = canAuthorize ? 'inline-flex' : 'none';
+      $('reviewNotesGroup').style.display = canAuthorize ? 'block' : 'none';
+
+      Modal.open('reviewModal');
+    }
+
+    /* --------------------------------------------------------------------
+       AUTHORIZE / REJECT single
+       -------------------------------------------------------------------- */
+    async function authorizeItem(item) {
+      const notes = $('reviewNotes') ? $('reviewNotes').value.trim() : '';
+      const ok = await APP.confirm({
+        title: `Authorize "${item.title}"?`,
+        message: 'This action is final and will be recorded in the audit log.',
+        confirmText: 'Authorize'
+      });
+      if (!ok) return;
+
+      item.status = 'approved';
+      Modal.close('reviewModal');
+      Toast.success('Authorization Granted', `"${item.title}" has been authorized.`);
+      // Update UI
+      renderApprovals();
+    }
+
+    async function rejectItem(item) {
+      const ok = await APP.confirm({
+        title: `Reject "${item.title}"?`,
+        message: 'The requester will be notified with your reason.',
+        confirmText: 'Reject',
+        danger: true
+      });
+      if (!ok) return;
+
+      item.status = 'rejected';
+      Modal.close('reviewModal');
+      Toast.error('Request Rejected', `"${item.title}" has been rejected.`);
+      renderApprovals();
+    }
+
+    /* Buttons in modal footer */
+    $('btnAuthorize').addEventListener('click', () => {
+      if (currentReviewItem) authorizeItem(currentReviewItem);
+    });
+    $('btnReject').addEventListener('click', () => {
+      if (currentReviewItem) rejectItem(currentReviewItem);
+    });
+
+    /* --------------------------------------------------------------------
+       BULK ACTIONS
+       -------------------------------------------------------------------- */
+    function updateBulkBar() {
+      if (selectedIds.size === 0) {
+        els.bulkBar.classList.remove('show');
+        return;
+      }
+      els.bulkBar.classList.add('show');
+      els.bulkCount.textContent = `${selectedIds.size} selected`;
+
+      const btns = [];
+
+      if (Role.can('authorize')) {
+        btns.push(`<button class="btn" onclick="Approvals.bulkAuthorize()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+          Authorize All
+        </button>`);
+        btns.push(`<button class="btn danger" onclick="Approvals.bulkReject()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          Reject All
+        </button>`);
+      } else {
+        btns.push(`<button class="btn" onclick="Approvals.bulkExport()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          Export
+        </button>`);
+      }
+
+      els.bulkActions.innerHTML = btns.join('');
+    }
+
+    function clearSelection() {
+      selectedIds.clear();
+      renderApprovals();
+    }
+
+    async function bulkAuthorize() {
+      const ok = await APP.confirm({
+        title: `Authorize ${selectedIds.size} request(s)?`,
+        message: 'All selected items will be approved.',
+        confirmText: 'Authorize All'
+      });
+      if (!ok) return;
+
+      selectedIds.forEach(id => {
+        const a = approvals.find(x => x.id === id);
+        if (a) a.status = 'approved';
+      });
+      Toast.success('Bulk Authorization', `${selectedIds.size} request(s) authorized.`);
+      selectedIds.clear();
+      renderApprovals();
+    }
+
+    async function bulkReject() {
+      const ok = await APP.confirm({
+        title: `Reject ${selectedIds.size} request(s)?`,
+        message: 'All selected items will be rejected.',
+        confirmText: 'Reject All',
+        danger: true
+      });
+      if (!ok) return;
+
+      selectedIds.forEach(id => {
+        const a = approvals.find(x => x.id === id);
+        if (a) a.status = 'rejected';
+      });
+      Toast.error('Bulk Rejection', `${selectedIds.size} request(s) rejected.`);
+      selectedIds.clear();
+      renderApprovals();
+    }
+
+    function bulkExport() {
+      Toast.info('Export Started', `Preparing CSV export for ${selectedIds.size} request(s)...`);
+    }
+
+    /* --------------------------------------------------------------------
+       EMPTY STATE COPY
+       -------------------------------------------------------------------- */
+    function updateEmptyCopy() {
+      const role = Role.id();
+      if (role === 'director') {
+        els.emptyTitle.textContent = 'All caught up!';
+        els.emptyDesc.textContent = 'You have no pending approvals. New requests will appear here automatically.';
+      } else {
+        els.emptyTitle.textContent = 'No pending requests';
+        els.emptyDesc.textContent = 'You have no requests waiting for authorization right now. Check back later.';
+      }
+    }
+
+    /* --------------------------------------------------------------------
+       FILTER CHIPS
+       -------------------------------------------------------------------- */
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        currentFilter = chip.dataset.filter;
+        selectedIds.clear();
+        renderApprovals();
+      });
+    });
+
+    /* --------------------------------------------------------------------
+       SEARCH / FILTERS
+       -------------------------------------------------------------------- */
+    [els.searchInput, els.filterRequester, els.sortBy].forEach(el => {
+      el.addEventListener('input', renderApprovals);
+      el.addEventListener('change', renderApprovals);
+    });
+
+    /* --------------------------------------------------------------------
+       ROLE-AWARE UI
+       -------------------------------------------------------------------- */
+    function applyRole() {
+      const isDirector = Role.can('authorize');
+
+      // Hero: only for Director
+      if (els.hero) els.hero.style.display = isDirector ? 'flex' : 'none';
+
+      // Page title
+      if (els.pageTitle) {
+        els.pageTitle.textContent = isDirector ? 'Pending Approvals' : 'My Submitted Requests';
+      }
+      if (els.pageSub) {
+        els.pageSub.textContent = isDirector
+          ? 'Review and authorize requests from your team'
+          : 'Track the status of requests you have submitted';
+      }
+
+      renderApprovals();
+    }
+
+    /* --------------------------------------------------------------------
+       PUBLIC API
+       -------------------------------------------------------------------- */
+    window.Approvals = {
+      clearSelection,
+      bulkAuthorize,
+      bulkReject,
+      bulkExport
+    };
+
+    /* --------------------------------------------------------------------
+       REACT TO ROLE CHANGE
+       -------------------------------------------------------------------- */
+    Bus.on('role:changed', () => {
+      selectedIds.clear();
+      applyRole();
+      Toast.info('Role Switched', `Now viewing as ${Role.current().label}.`);
+    });
+
+    /* --------------------------------------------------------------------
+       INIT
+       -------------------------------------------------------------------- */
+    applyRole();
+
+  })();
+  </script>
+</body>
+</html>

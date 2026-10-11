@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Documents — UPHSD Molino | Office of the School Director</title>
+<link rel="stylesheet" href="shared.css" />
+
+<style>
+  /* =====================================================================
+     DOCUMENTS-PAGE-SPECIFIC STYLES
+     ===================================================================== */
+
+  /* ---------- Tabs with counts ---------- */
+  .doc-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 18px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--border-light);
+    scrollbar-width: none;
+  }
+  .doc-tabs::-webkit-scrollbar { display: none; }
+
+  .doc-tab {
+    padding: 12px 18px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.86rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    top: 1px;
+  }
+  .doc-tab:hover { color: var(--maroon); }
+  body.dark-mode .doc-tab:hover { color: var(--gold); }
+
+  .doc-tab.active {
+    color: var(--maroon);
+    border-bottom-color: var(--maroon);
+  }
+  body.dark-mode .doc-tab.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+
+  .doc-tab .tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 20px;
+    padding: 0 7px;
+    background: var(--bg-input);
+    color: var(--text-secondary);
+    font-size: 0.68rem;
+    font-weight: 700;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+  }
+
+  .doc-tab.active .tab-count {
+    background: var(--maroon);
+    color: var(--gold);
+  }
+  body.dark-mode .doc-tab.active .tab-count {
+    background: var(--gold);
+    color: #1a1414;
+  }
+
+  /* ---------- Document title cell ---------- */
+  .doc-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 260px;
+    max-width: 380px;
+  }
+
+  .doc-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.62rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .doc-icon.pdf   { background: linear-gradient(135deg, #d94452, #b62e3c); }
+  .doc-icon.doc   { background: linear-gradient(135deg, #4682dc, #3565b0); }
+  .doc-icon.xls   { background: linear-gradient(135deg, #1e8a4d, #146b3a); }
+  .doc-icon.ppt   { background: linear-gradient(135deg, #d97706, #b45309); }
+  .doc-icon.img   { background: linear-gradient(135deg, #8b5cf6, #6d3fd4); }
+  .doc-icon.zip   { background: linear-gradient(135deg, #6b7280, #4b5563); }
+  .doc-icon.other { background: linear-gradient(135deg, #7B1113, #5A0C0E); }
+
+  .doc-info { min-width: 0; flex: 1; }
+  .doc-info .doc-name {
+    font-weight: 600;
+    font-size: 0.86rem;
+    color: var(--text-primary);
+    line-height: 1.25;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .doc-info .doc-meta {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 3px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .doc-info .doc-meta .dot-sep {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    display: inline-block;
+  }
+
+  /* ---------- Type tag ---------- */
+  .type-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(70,130,220,0.1);
+    color: #4682dc;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  body.dark-mode .type-tag {
+    background: rgba(100,150,240,0.15);
+    color: #7ea8ee;
+  }
+
+  /* ---------- Priority indicator ---------- */
+  .priority {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+  .priority::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+  .priority.high   { color: #d43a45; }
+  .priority.high::before { background: #ff4757; box-shadow: 0 0 0 3px rgba(255,71,87,0.18); }
+  .priority.normal { color: var(--text-muted); }
+  .priority.normal::before { background: var(--text-muted); }
+  .priority.low    { color: #1e8a4d; }
+  .priority.low::before { background: #2ed573; }
+
+  /* ---------- Upload drop zone (in modal) ---------- */
+  .upload-dropzone {
+    border: 2px dashed var(--border-medium);
+    border-radius: var(--radius-lg);
+    padding: 36px 20px;
+    text-align: center;
+    background: var(--bg-input);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    margin-bottom: 18px;
+  }
+  .upload-dropzone:hover,
+  .upload-dropzone.dragover {
+    border-color: var(--gold);
+    background: rgba(212,175,55,0.06);
+  }
+
+  .upload-dropzone .drop-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+    box-shadow: var(--shadow-sm);
+  }
+  .upload-dropzone .drop-icon svg {
+    width: 28px;
+    height: 28px;
+    fill: var(--maroon);
+  }
+  body.dark-mode .upload-dropzone .drop-icon svg { fill: var(--gold); }
+
+  .upload-dropzone h4 {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .upload-dropzone p {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .upload-dropzone .browse-link {
+    color: var(--maroon);
+    font-weight: 700;
+    text-decoration: underline;
+  }
+  body.dark-mode .upload-dropzone .browse-link { color: var(--gold); }
+
+  /* Selected file preview */
+  .file-preview {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: rgba(46,213,115,0.08);
+    border: 1.5px solid rgba(46,213,115,0.4);
+    border-radius: var(--radius-md);
+    margin-bottom: 18px;
+  }
+  .file-preview.show { display: flex; }
+
+  .file-preview .preview-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #1e8a4d;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .file-preview .preview-icon svg { width: 18px; height: 18px; fill: currentColor; }
+
+  .file-preview .preview-info { flex: 1; min-width: 0; }
+  .file-preview .preview-info .fname {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .file-preview .preview-info .fsize {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .file-preview .remove-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+  .file-preview .remove-btn:hover {
+    background: rgba(255,71,87,0.12);
+    color: #ff4757;
+  }
+  .file-preview .remove-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+  /* ---------- Info grid in view modal ---------- */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 20px;
+    margin-bottom: 6px;
+  }
+  @media (max-width: 500px) {
+    .info-grid { grid-template-columns: 1fr; }
+  }
+
+  .info-grid .info-item { min-width: 0; }
+  .info-grid .info-item .info-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .info-grid .info-item .info-value {
+    font-size: 0.86rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    word-break: break-word;
+  }
+
+  /* ---------- Sort dropdown label ---------- */
+  .sort-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sort-group label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============================================================
+       SIDEBAR
+       ============================================================ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <!-- 👇 REPLACE WITH YOUR LOGO -->
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h3>UPHSD Molino</h3>
+        <p>Director's Office</p>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Main</div>
+      <a class="nav-item" href="dashboard.html" data-page="dashboard.html">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item active" href="documents.html" data-page="documents.html">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        Documents
+      </a>
+      <a class="nav-item" href="approvals.html" data-page="approvals.html">
+        <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        Approvals
+        <span class="nav-badge" id="approvalBadgeSide">5</span>
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Administration</div>
+      <a class="nav-item" href="accounts.html" data-page="accounts.html">
+        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        Account Management
+      </a>
+      <a class="nav-item" href="reports.html" data-page="reports.html">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+        Reports
+      </a>
+      <a class="nav-item" href="settings.html" data-page="settings.html">
+        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.484.484 0 00-.59.22L2.74 8.87a.47.47 0 00.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 00-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1112 8.4a3.6 3.6 0 010 7.2z"/></svg>
+        Settings
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      © <span data-year></span> UPHSD Molino<br/>
+      v1.0 · Director's Office
+    </div>
+  </aside>
+
+  <div class="overlay-backdrop" id="overlayBackdrop"></div>
+
+  <!-- ============================================================
+       MAIN
+       ============================================================ -->
+  <main class="main">
+
+    <!-- ========== TOP BAR ========== -->
+    <header class="topbar">
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
+      </button>
+
+      <div class="page-title">
+        <h1>Documents</h1>
+        <p>Manage, review, and track all office documents</p>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- 🧪 DEV ONLY -->
+        <div class="role-switcher" title="Dev preview">
+          <label>View as</label>
+          <select id="roleSwitcher">
+            <option value="secretary">Secretary</option>
+            <option value="ea">Executive Assistant</option>
+            <option value="director">Director</option>
+          </select>
+        </div>
+
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg id="themeIcon" viewBox="0 0 24 24">
+            <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 7.06a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0z"/>
+          </svg>
+        </button>
+
+        <button class="icon-btn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+          <span class="dot"></span>
+        </button>
+
+        <div class="user-chip" id="userChip" title="Click to log out">
+          <div class="user-avatar" id="userAvatar">MC</div>
+          <div class="user-info">
+            <span class="name" id="userName">Maria Cruz</span>
+            <span class="role" id="userRoleLabel">Secretary</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ========== CONTENT ========== -->
+    <div class="content">
+
+      <!-- STATS -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon maroon">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statTotalDocs">0</div>
+            <div class="stat-label">Total Documents</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon gold">
+            <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statPendingDocs">0</div>
+            <div class="stat-label">Pending Review</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon green">
+            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statApprovedDocs">0</div>
+            <div class="stat-label">Approved</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon grey">
+            <svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statArchivedDocs">0</div>
+            <div class="stat-label">Archived</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="doc-tabs" id="docTabs">
+        <button class="doc-tab active" data-tab="all">
+          All Documents <span class="tab-count" data-count="all">0</span>
+        </button>
+        <button class="doc-tab" data-tab="draft">
+          Drafts <span class="tab-count" data-count="draft">0</span>
+        </button>
+        <button class="doc-tab" data-tab="pending">
+          Pending <span class="tab-count" data-count="pending">0</span>
+        </button>
+        <button class="doc-tab" data-tab="approved">
+          Approved <span class="tab-count" data-count="approved">0</span>
+        </button>
+        <button class="doc-tab" data-tab="rejected">
+          Rejected <span class="tab-count" data-count="rejected">0</span>
+        </button>
+        <button class="doc-tab" data-tab="archived">
+          Archived <span class="tab-count" data-count="archived">0</span>
+        </button>
+      </div>
+
+      <!-- BULK BAR -->
+      <div class="bulk-bar" id="bulkBar">
+        <span class="bulk-count" id="bulkCount">0 selected</span>
+        <div class="bulk-actions" id="bulkActions"></div>
+        <button class="btn btn-ghost" style="background:transparent;color:inherit;border-color:rgba(255,255,255,0.3);" onclick="Documents.clearSelection()">Clear</button>
+      </div>
+
+      <!-- TOOLBAR -->
+      <div class="toolbar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="text" id="searchInput" placeholder="Search by document name, ID, or submitter..." />
+        </div>
+
+        <select class="filter-select" id="filterType">
+          <option value="">All Types</option>
+          <option value="Memo">Memo</option>
+          <option value="Report">Report</option>
+          <option value="Letter">Letter</option>
+          <option value="Proposal">Proposal</option>
+          <option value="Minutes">Minutes</option>
+          <option value="Form">Form</option>
+          <option value="Policy">Policy</option>
+        </select>
+
+        <select class="filter-select" id="filterDept">
+          <option value="">All Departments</option>
+          <option value="Director's Office">Director's Office</option>
+          <option value="Registrar">Registrar</option>
+          <option value="Accounting">Accounting</option>
+          <option value="Human Resources">Human Resources</option>
+          <option value="Academics">Academics</option>
+          <option value="Student Affairs">Student Affairs</option>
+        </select>
+
+        <select class="filter-select" id="filterPriority">
+          <option value="">All Priorities</option>
+          <option value="high">High</option>
+          <option value="normal">Normal</option>
+          <option value="low">Low</option>
+        </select>
+
+        <button class="btn btn-primary" id="btnUpload" style="margin-left:auto;">
+          <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
+          Upload Document
+        </button>
+      </div>
+
+      <!-- TABLE -->
+      <div class="table-card">
+        <div class="table-header-row">
+          <h2 id="tableTitle">All Documents</h2>
+          <span class="count" id="resultCount">Showing 0 of 0 documents</span>
+        </div>
+
+        <div class="table-scroll">
+          <table id="documentsTable">
+            <thead>
+              <tr>
+                <th style="width:40px;" class="center">
+                  <label class="checkbox-wrap">
+                    <input type="checkbox" id="selectAll" />
+                  </label>
+                </th>
+                <th>Document</th>
+                <th>Type</th>
+                <th>Department</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Submitted</th>
+                <th style="text-align:right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="documentsBody"></tbody>
+          </table>
+        </div>
+
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+          </div>
+          <h3>No documents found</h3>
+          <p>Try adjusting your search or filters. Or upload a new document to get started.</p>
+          <button class="btn btn-primary" onclick="document.getElementById('btnUpload').click()">
+            <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
+            Upload Document
+          </button>
+        </div>
+
+        <div class="pagination" id="pagination">
+          <span class="page-info" id="pageInfo">Page 1 of 1</span>
+          <div class="page-controls">
+            <button class="page-btn" disabled>‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn" disabled>›</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ============================================================
+       MODAL — Upload Document
+       ============================================================ -->
+  <div class="modal-backdrop" id="uploadModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div style="flex:1;">
+          <h2>Upload Document</h2>
+          <p>Add a new file to the workflow. It will be sent for authorization.</p>
+        </div>
+        <button class="modal-close" onclick="APP.Modal.close('uploadModal')" aria-label="Close">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <div class="upload-dropzone" id="dropzone">
+          <div class="drop-icon">
+            <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
+          </div>
+          <h4>Drop your file here</h4>
+          <p>or <span class="browse-link">browse from your computer</span><br/>
+          Maximum size: 25 MB · PDF, DOCX, XLSX, PPTX, PNG, JPG</p>
+          <input type="file" id="fileInput" hidden />
+        </div>
+
+        <div class="file-preview" id="filePreview">
+          <div class="preview-icon">
+            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+          </div>
+          <div class="preview-info">
+            <div class="fname" id="previewName">—</div>
+            <div class="fsize" id="previewSize">—</div>
+          </div>
+          <button class="remove-btn" id="removeFileBtn" title="Remove file">
+            <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          </button>
+        </div>
+
+        <div class="form-group">
+          <label for="docName">Document Name <span class="req">*</span></label>
+          <input type="text" id="docName" placeholder="e.g., Budget Proposal FY 2025-2026" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="docType">Document Type <span class="req">*</span></label>
+            <select id="docType">
+              <option value="">Select type...</option>
+              <option value="Memo">Memo</option>
+              <option value="Report">Report</option>
+              <option value="Letter">Letter</option>
+              <option value="Proposal">Proposal</option>
+              <option value="Minutes">Meeting Minutes</option>
+              <option value="Form">Form</option>
+              <option value="Policy">Policy</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="docDept">Department <span class="req">*</span></label>
+            <select id="docDept">
+              <option value="">Select department...</option>
+              <option value="Director's Office">Director's Office</option>
+              <option value="Registrar">Registrar</option>
+              <option value="Accounting">Accounting</option>
+              <option value="Human Resources">Human Resources</option>
+              <option value="Academics">Academics</option>
+              <option value="Student Affairs">Student Affairs</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="docPriority">Priority</label>
+          <select id="docPriority">
+            <option value="normal">Normal</option>
+            <option value="high">High — needs immediate attention</option>
+            <option value="low">Low — informational</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="docNotes">Notes (optional)</label>
+          <textarea id="docNotes" placeholder="Any comments for the reviewer..."></textarea>
+          <div class="form-hint">This note will be visible to the School Director during authorization.</div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="APP.Modal.close('uploadModal')">Cancel</button>
+        <button class="btn btn-primary" id="btnSubmitUpload">
+          <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
+          Upload & Submit
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL — View Document
+       ============================================================ -->
+  <div class="modal-backdrop" id="viewModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div style="flex:1;">
+          <h2 id="viewDocTitle">Document Details</h2>
+          <p id="viewDocSubtitle">—</p>
+        </div>
+        <button class="modal-close" onclick="APP.Modal.close('viewModal')" aria-label="Close">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Document ID</div>
+            <div class="info-value" id="viewDocId">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Type</div>
+            <div class="info-value" id="viewDocType">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Department</div>
+            <div class="info-value" id="viewDocDept">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Priority</div>
+            <div class="info-value" id="viewDocPriority">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Submitted By</div>
+            <div class="info-value" id="viewDocSubmitter">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Submitted On</div>
+            <div class="info-value" id="viewDocDate">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Status</div>
+            <div class="info-value" id="viewDocStatus">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">File Size</div>
+            <div class="info-value" id="viewDocSize">—</div>
+          </div>
+        </div>
+
+        <div style="margin-top:18px;">
+          <div class="info-label" style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:6px;">Notes</div>
+          <div id="viewDocNotes" style="font-size:0.86rem;color:var(--text-primary);line-height:1.5;padding:12px 14px;background:var(--bg-input);border-radius:10px;">—</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="APP.Modal.close('viewModal')">Close</button>
+        <button class="btn btn-ghost" id="btnDownload">
+          <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          Download
+        </button>
+        <button class="btn btn-primary" id="btnSubmitForApproval">
+          <svg viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+          Submit for Approval
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PAGE SCRIPT
+       ============================================================ -->
+  <script src="app.js"></script>
+  <script>
+  /* ==========================================================================
+     DOCUMENTS — Page module
+     ========================================================================== */
+  (function () {
+    'use strict';
+
+    const { Role, Toast, Utils, Modal, Bus } = APP;
+
+    /* --------------------------------------------------------------------
+       MOCK DATA — Documents
+       status: draft | pending | approved | rejected | archived
+       -------------------------------------------------------------------- */
+    const documents = [
+      { id: 'DOC-2025-001', name: 'Budget Proposal FY 2025-2026.pdf',        ext: 'pdf', type: 'Proposal',  dept: 'Accounting',        priority: 'high',   status: 'pending',  submittedBy: 'Maria Cruz',      date: '2025-01-15 09:24 AM', size: '2.4 MB', notes: 'Urgent — needed for board review on Jan 20.' },
+      { id: 'DOC-2025-002', name: 'Faculty Evaluation Summary.docx',          ext: 'doc', type: 'Report',    dept: 'Academics',         priority: 'normal', status: 'approved', submittedBy: 'Anna Reyes',      date: '2025-01-14 04:45 PM', size: '1.1 MB', notes: 'Summary of Q4 2024 evaluation.' },
+      { id: 'DOC-2025-003', name: 'Registrar Report Q4 2024.xlsx',            ext: 'xls', type: 'Report',    dept: 'Registrar',         priority: 'normal', status: 'approved', submittedBy: 'Liza Fernandez',  date: '2025-01-13 11:18 AM', size: '3.8 MB', notes: '' },
+      { id: 'DOC-2025-004', name: 'Meeting Minutes Jan 10.pdf',               ext: 'pdf', type: 'Minutes',   dept: "Director's Office", priority: 'low',    status: 'approved', submittedBy: 'Maria Cruz',      date: '2025-01-10 02:30 PM', size: '0.6 MB', notes: 'Signed by all attendees.' },
+      { id: 'DOC-2025-005', name: 'HR Staffing Memo.docx',                    ext: 'doc', type: 'Memo',      dept: 'Human Resources',   priority: 'high',   status: 'pending',  submittedBy: 'Rina Gomez',      date: '2025-01-09 03:15 PM', size: '0.4 MB', notes: 'Needs director sign-off before Jan 25.' },
+      { id: 'DOC-2025-006', name: 'Accreditation Policy Draft.pdf',           ext: 'pdf', type: 'Policy',    dept: 'Academics',         priority: 'normal', status: 'draft',    submittedBy: 'Gabriel Tan',     date: '2025-01-08 10:00 AM', size: '1.7 MB', notes: 'First draft — will revise after review.' },
+      { id: 'DOC-2025-007', name: 'Student Affairs Report.pdf',               ext: 'pdf', type: 'Report',    dept: 'Student Affairs',   priority: 'normal', status: 'pending',  submittedBy: 'Sophia Lim',      date: '2025-01-07 09:30 AM', size: '1.2 MB', notes: '' },
+      { id: 'DOC-2025-008', name: 'Enrollment Statistics Q4.xlsx',            ext: 'xls', type: 'Report',    dept: 'Registrar',         priority: 'normal', status: 'approved', submittedBy: 'Patricia Aquino', date: '2025-01-06 11:45 AM', size: '4.1 MB', notes: '' },
+      { id: 'DOC-2025-009', name: 'Office Supply Request Form.docx',          ext: 'doc', type: 'Form',      dept: "Director's Office", priority: 'low',    status: 'rejected', submittedBy: 'Maria Cruz',      date: '2025-01-05 02:20 PM', size: '0.3 MB', notes: 'Rejected — duplicate request.' },
+      { id: 'DOC-2025-010', name: 'Board Resolution Jan 2025.pdf',            ext: 'pdf', type: 'Letter',    dept: 'Accounting',        priority: 'high',   status: 'pending',  submittedBy: 'Anna Reyes',      date: '2025-01-04 04:00 PM', size: '1.9 MB', notes: 'For board meeting on Jan 18.' },
+      { id: 'DOC-2024-089', name: 'Annual Report 2024.pdf',                   ext: 'pdf', type: 'Report',    dept: "Director's Office", priority: 'normal', status: 'archived', submittedBy: 'Dr. Ramon Santos', date: '2024-12-20 03:00 PM', size: '8.2 MB', notes: 'Archived after 2024 year-end.' },
+      { id: 'DOC-2024-088', name: 'Graduation Program 2024.pdf',              ext: 'pdf', type: 'Letter',    dept: 'Academics',         priority: 'low',    status: 'archived', submittedBy: 'Gabriel Tan',     date: '2024-12-15 01:10 PM', size: '2.5 MB', notes: '' }
+    ];
+
+    /* --------------------------------------------------------------------
+       STATE
+       -------------------------------------------------------------------- */
+    let currentTab = 'all';
+    let filteredDocs = [...documents];
+    const selectedIds = new Set();
+    let currentViewDoc = null;
+
+    /* --------------------------------------------------------------------
+       DOM SHORTCUTS
+       -------------------------------------------------------------------- */
+    const $ = (id) => document.getElementById(id);
+    const els = {
+      tbody:        $('documentsBody'),
+      emptyState:   $('emptyState'),
+      table:        $('documentsTable'),
+      pagination:   $('pagination'),
+      resultCount:  $('resultCount'),
+      pageInfo:     $('pageInfo'),
+      tableTitle:   $('tableTitle'),
+      searchInput:  $('searchInput'),
+      filterType:   $('filterType'),
+      filterDept:   $('filterDept'),
+      filterPriority: $('filterPriority'),
+      btnUpload:    $('btnUpload'),
+      selectAll:    $('selectAll'),
+      bulkBar:      $('bulkBar'),
+      bulkCount:    $('bulkCount'),
+      bulkActions:  $('bulkActions')
+    };
+
+    /* --------------------------------------------------------------------
+       HELPERS
+       -------------------------------------------------------------------- */
+    function statusLabel(s) {
+      return {
+        draft:    'Draft',
+        pending:  'Pending',
+        approved: 'Approved',
+        rejected: 'Rejected',
+        archived: 'Archived'
+      }[s] || s;
+    }
+
+    function fileExtClass(ext) {
+      const map = {
+        pdf: 'pdf', doc: 'doc', docx: 'doc',
+        xls: 'xls', xlsx: 'xls',
+        ppt: 'ppt', pptx: 'ppt',
+        png: 'img', jpg: 'img', jpeg: 'img', gif: 'img', svg: 'img',
+        zip: 'zip', rar: 'zip'
+      };
+      return map[ext] || 'other';
+    }
+
+    function formatSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    function getFileExt(filename) {
+      return (filename.split('.').pop() || '').toLowerCase();
+    }
+
+    /* --------------------------------------------------------------------
+       RENDER — Stats + tab counts
+       -------------------------------------------------------------------- */
+    function updateStats() {
+      $('statTotalDocs').textContent    = documents.length;
+      $('statPendingDocs').textContent  = documents.filter(d => d.status === 'pending').length;
+      $('statApprovedDocs').textContent = documents.filter(d => d.status === 'approved').length;
+      $('statArchivedDocs').textContent = documents.filter(d => d.status === 'archived').length;
+
+      // Tab counts
+      const counts = {
+        all:      documents.length,
+        draft:    documents.filter(d => d.status === 'draft').length,
+        pending:  documents.filter(d => d.status === 'pending').length,
+        approved: documents.filter(d => d.status === 'approved').length,
+        rejected: documents.filter(d => d.status === 'rejected').length,
+        archived: documents.filter(d => d.status === 'archived').length
+      };
+      Object.entries(counts).forEach(([k, v]) => {
+        const el = document.querySelector(`[data-count="${k}"]`);
+        if (el) el.textContent = v;
+      });
+
+      // Sidebar badge (pending)
+      const sideBadge = document.getElementById('approvalBadgeSide');
+      if (sideBadge) sideBadge.textContent = counts.pending;
+    }
+
+    /* --------------------------------------------------------------------
+       RENDER — Action buttons per row
+       -------------------------------------------------------------------- */
+    function renderActions(doc) {
+      const btns = [];
+
+      // VIEW — everyone
+      btns.push(`
+        <button class="action-btn view" data-action="view" data-id="${doc.id}" title="View details">
+          <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
+        </button>
+      `);
+
+      // EDIT — if draft and user can edit
+      if (doc.status === 'draft' && Role.can('edit')) {
+        btns.push(`
+          <button class="action-btn edit" data-action="edit" data-id="${doc.id}" title="Edit">
+            <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          </button>
+        `);
+      }
+
+      // SUBMIT FOR APPROVAL — if draft and user can add
+      if (doc.status === 'draft' && Role.can('add')) {
+        btns.push(`
+          <button class="action-btn edit" data-action="submit" data-id="${doc.id}" title="Submit for approval">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        `);
+      }
+
+      // AUTHORIZE / REJECT — Director only, pending docs
+      if (doc.status === 'pending' && Role.can('authorize')) {
+        btns.push(`
+          <button class="action-btn authorize" data-action="authorize" data-id="${doc.id}" title="Authorize">
+            <svg viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+            Authorize
+          </button>
+          <button class="action-btn reject" data-action="reject" data-id="${doc.id}" title="Reject">
+            <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          </button>
+        `);
+      }
+
+      // ARCHIVE — approved docs (Secretary/EA only)
+      if (doc.status === 'approved' && Role.can('delete')) {
+        btns.push(`
+          <button class="action-btn delete" data-action="archive" data-id="${doc.id}" title="Archive">
+            <svg viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68A1.5 1.5 0 0018 3H6c-.47 0-.88.21-1.16.55L3.46 5.23A2 2 0 003 6.5V19a2 2 0 002 2h14a2 2 0 002-2V6.5a2 2 0 00-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z"/></svg>
+          </button>
+        `);
+      }
+
+      return btns.join('');
+    }
+
+    /* --------------------------------------------------------------------
+       RENDER — Table
+       -------------------------------------------------------------------- */
+    function renderDocs() {
+      const search    = els.searchInput.value.toLowerCase().trim();
+      const typeF     = els.filterType.value;
+      const deptF     = els.filterDept.value;
+      const priorityF = els.filterPriority.value;
+
+      filteredDocs = documents.filter(d => {
+        // Tab
+        if (currentTab !== 'all' && d.status !== currentTab) return false;
+        // Search
+        const matchesSearch = !search ||
+          d.name.toLowerCase().includes(search) ||
+          d.id.toLowerCase().includes(search) ||
+          d.submittedBy.toLowerCase().includes(search);
+        if (!matchesSearch) return false;
+        // Filters
+        if (typeF && d.type !== typeF) return false;
+        if (deptF && d.dept !== deptF) return false;
+        if (priorityF && d.priority !== priorityF) return false;
+        return true;
+      });
+
+      els.resultCount.textContent = `Showing ${filteredDocs.length} of ${documents.length} documents`;
+
+      updateStats();
+
+      // Table title based on tab
+      const tabLabels = {
+        all: 'All Documents', draft: 'Draft Documents', pending: 'Pending Documents',
+        approved: 'Approved Documents', rejected: 'Rejected Documents', archived: 'Archived Documents'
+      };
+      els.tableTitle.textContent = tabLabels[currentTab] || 'Documents';
+
+      if (filteredDocs.length === 0) {
+        els.tbody.innerHTML = '';
+        els.table.style.display = 'none';
+        els.pagination.style.display = 'none';
+        els.emptyState.classList.add('show');
+        return;
+      } else {
+        els.table.style.display = '';
+        els.pagination.style.display = '';
+        els.emptyState.classList.remove('show');
+      }
+
+      els.tbody.innerHTML = filteredDocs.map(d => {
+        const isSelected = selectedIds.has(d.id);
+        const extClass = fileExtClass(d.ext);
+        return `
+          <tr class="${isSelected ? 'selected' : ''}" data-id="${d.id}">
+            <td class="center">
+              <label class="checkbox-wrap">
+                <input type="checkbox" class="row-checkbox" data-id="${d.id}" ${isSelected ? 'checked' : ''}/>
+              </label>
+            </td>
+            <td>
+              <div class="doc-cell">
+                <div class="doc-icon ${extClass}">${Utils.escapeHtml(d.ext)}</div>
+                <div class="doc-info">
+                  <div class="doc-name" title="${Utils.escapeHtml(d.name)}">${Utils.escapeHtml(d.name)}</div>
+                  <div class="doc-meta">
+                    <span>${Utils.escapeHtml(d.id)}</span>
+                    <span class="dot-sep"></span>
+                    <span>${Utils.escapeHtml(d.size)}</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td><span class="type-tag">${Utils.escapeHtml(d.type)}</span></td>
+            <td>${Utils.escapeHtml(d.dept)}</td>
+            <td><span class="priority ${d.priority}">${Utils.capitalize(d.priority)}</span></td>
+            <td><span class="status-badge ${d.status}">${statusLabel(d.status)}</span></td>
+            <td>
+              <div style="font-size:0.82rem;font-weight:500;">${Utils.escapeHtml(d.submittedBy)}</div>
+              <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px;">${Utils.escapeHtml(d.date)}</div>
+            </td>
+            <td>
+              <div class="actions">${renderActions(d)}</div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // Row checkboxes
+      els.tbody.querySelectorAll('.row-checkbox').forEach(cb => {
+        cb.addEventListener('change', (e) => {
+          const id = e.target.dataset.id;
+          if (e.target.checked) selectedIds.add(id);
+          else selectedIds.delete(id);
+          updateBulkBar();
+          e.target.closest('tr').classList.toggle('selected', e.target.checked);
+          updateSelectAllState();
+        });
+      });
+
+      // Action buttons
+      els.tbody.querySelectorAll('[data-action]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const action = btn.dataset.action;
+          const id = btn.dataset.id;
+          handleAction(action, id);
+        });
+      });
+
+      updateBulkBar();
+      updateSelectAllState();
+      els.pageInfo.textContent = `Page 1 of 1 · ${filteredDocs.length} records`;
+    }
+
+    /* --------------------------------------------------------------------
+       ACTION HANDLER
+       -------------------------------------------------------------------- */
+    function handleAction(action, id) {
+      const doc = documents.find(d => d.id === id);
+      if (!doc) return;
+
+      switch (action) {
+        case 'view':
+          openViewModal(doc);
+          break;
+        case 'edit':
+          Toast.info('Edit Document', `Editing "${doc.name}" — functionality coming soon.`);
+          break;
+        case 'submit':
+          submitForApproval(doc);
+          break;
+        case 'authorize':
+          authorizeDoc(doc);
+          break;
+        case 'reject':
+          rejectDoc(doc);
+          break;
+        case 'archive':
+          archiveDoc(doc);
+          break;
+      }
+    }
+
+    function submitForApproval(doc) {
+      if (doc.status !== 'draft') return;
+      doc.status = 'pending';
+      Toast.gold('Submitted for Approval', `"${doc.name}" is now pending Director authorization.`);
+      renderDocs();
+    }
+
+    async function authorizeDoc(doc) {
+      const ok = await APP.confirm({
+        title: `Authorize "${doc.name}"?`,
+        message: 'This action will mark the document as approved.',
+        confirmText: 'Authorize'
+      });
+      if (!ok) return;
+      doc.status = 'approved';
+      Toast.success('Document Authorized', `"${doc.name}" has been approved.`);
+      renderDocs();
+    }
+
+    async function rejectDoc(doc) {
+      const ok = await APP.confirm({
+        title: `Reject "${doc.name}"?`,
+        message: 'This will return the document to the submitter.',
+        confirmText: 'Reject',
+        danger: true
+      });
+      if (!ok) return;
+      doc.status = 'rejected';
+      Toast.error('Document Rejected', `"${doc.name}" has been rejected.`);
+      renderDocs();
+    }
+
+    async function archiveDoc(doc) {
+      const ok = await APP.confirm({
+        title: `Archive "${doc.name}"?`,
+        message: 'Archived documents are hidden from the main list.',
+        confirmText: 'Archive'
+      });
+      if (!ok) return;
+      doc.status = 'archived';
+      Toast.info('Document Archived', `"${doc.name}" moved to archive.`);
+      renderDocs();
+    }
+
+    /* --------------------------------------------------------------------
+       VIEW MODAL
+       -------------------------------------------------------------------- */
+    function openViewModal(doc) {
+      currentViewDoc = doc;
+
+      $('viewDocTitle').textContent = doc.name;
+      $('viewDocSubtitle').textContent = doc.id;
+      $('viewDocId').textContent = doc.id;
+      $('viewDocType').textContent = doc.type;
+      $('viewDocDept').textContent = doc.dept;
+      $('viewDocPriority').innerHTML = `<span class="priority ${doc.priority}">${Utils.capitalize(doc.priority)}</span>`;
+      $('viewDocSubmitter').textContent = doc.submittedBy;
+      $('viewDocDate').textContent = doc.date;
+      $('viewDocStatus').innerHTML = `<span class="status-badge ${doc.status}">${statusLabel(doc.status)}</span>`;
+      $('viewDocSize').textContent = doc.size;
+      $('viewDocNotes').textContent = doc.notes || 'No notes provided.';
+
+      // Show/hide "Submit for Approval" button
+      const btnSubmit = $('btnSubmitForApproval');
+      if (btnSubmit) {
+        const canSubmit = doc.status === 'draft' && Role.can('add');
+        btnSubmit.style.display = canSubmit ? 'inline-flex' : 'none';
+      }
+
+      Modal.open('viewModal');
+    }
+
+    $('btnDownload').addEventListener('click', () => {
+      if (currentViewDoc) {
+        Toast.info('Download Started', `Downloading "${currentViewDoc.name}"...`);
+      }
+    });
+
+    $('btnSubmitForApproval').addEventListener('click', () => {
+      if (currentViewDoc && currentViewDoc.status === 'draft') {
+        currentViewDoc.status = 'pending';
+        Toast.gold('Submitted for Approval', `"${currentViewDoc.name}" sent to Director.`);
+        Modal.close('viewModal');
+        renderDocs();
+      }
+    });
+
+    /* --------------------------------------------------------------------
+       BULK ACTIONS
+       -------------------------------------------------------------------- */
+    function updateBulkBar() {
+      if (selectedIds.size === 0) {
+        els.bulkBar.classList.remove('show');
+        return;
+      }
+
+      els.bulkBar.classList.add('show');
+      els.bulkCount.textContent = `${selectedIds.size} selected`;
+
+      const btns = [];
+
+      if (Role.can('authorize')) {
+        btns.push(`<button class="btn" onclick="Documents.bulkAuthorize()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+          Authorize All
+        </button>`);
+      }
+
+      if (Role.can('delete')) {
+        btns.push(`<button class="btn" onclick="Documents.bulkArchive()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.54 5.23l-1.39-1.68A1.5 1.5 0 0018 3H6c-.47 0-.88.21-1.16.55L3.46 5.23A2 2 0 003 6.5V19a2 2 0 002 2h14a2 2 0 002-2V6.5a2 2 0 00-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5z"/></svg>
+          Archive
+        </button>`);
+      }
+
+      btns.push(`<button class="btn" onclick="Documents.bulkExport()">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Export
+      </button>`);
+
+      els.bulkActions.innerHTML = btns.join('');
+    }
+
+    function clearSelection() {
+      selectedIds.clear();
+      renderDocs();
+    }
+
+    async function bulkAuthorize() {
+      const pendingIds = [...selectedIds].filter(id => {
+        const d = documents.find(x => x.id === id);
+        return d && d.status === 'pending';
+      });
+      if (pendingIds.length === 0) {
+        Toast.error('Nothing to Authorize', 'None of the selected documents are pending.');
+        return;
+      }
+      const ok = await APP.confirm({
+        title: `Authorize ${pendingIds.length} document(s)?`,
+        message: 'They will all be marked as approved.',
+        confirmText: 'Authorize All'
+      });
+      if (!ok) return;
+
+      pendingIds.forEach(id => {
+        const d = documents.find(x => x.id === id);
+        if (d) d.status = 'approved';
+      });
+      Toast.success('Bulk Authorization', `${pendingIds.length} document(s) approved.`);
+      selectedIds.clear();
+      renderDocs();
+    }
+
+    async function bulkArchive() {
+      const ok = await APP.confirm({
+        title: `Archive ${selectedIds.size} document(s)?`,
+        message: 'Archived documents are hidden from the main list.',
+        confirmText: 'Archive'
+      });
+      if (!ok) return;
+
+      selectedIds.forEach(id => {
+        const d = documents.find(x => x.id === id);
+        if (d) d.status = 'archived';
+      });
+      Toast.info('Bulk Archive', `${selectedIds.size} document(s) archived.`);
+      selectedIds.clear();
+      renderDocs();
+    }
+
+    function bulkExport() {
+      Toast.info('Export Started', `Preparing CSV export for ${selectedIds.size} document(s)...`);
+    }
+
+    /* --------------------------------------------------------------------
+       SELECT ALL
+       -------------------------------------------------------------------- */
+    function updateSelectAllState() {
+      const visibleIds = filteredDocs.map(d => d.id);
+      const allSelected = visibleIds.length > 0 && visibleIds.every(id => selectedIds.has(id));
+      const someSelected = visibleIds.some(id => selectedIds.has(id));
+      els.selectAll.checked = allSelected;
+      els.selectAll.indeterminate = !allSelected && someSelected;
+    }
+
+    els.selectAll.addEventListener('change', (e) => {
+      if (e.target.checked) filteredDocs.forEach(d => selectedIds.add(d.id));
+      else filteredDocs.forEach(d => selectedIds.delete(d.id));
+      renderDocs();
+    });
+
+    /* --------------------------------------------------------------------
+       TABS
+       -------------------------------------------------------------------- */
+    document.querySelectorAll('.doc-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.doc-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentTab = tab.dataset.tab;
+        selectedIds.clear();
+        renderDocs();
+      });
+    });
+
+    /* --------------------------------------------------------------------
+       FILTERS
+       -------------------------------------------------------------------- */
+    [els.searchInput, els.filterType, els.filterDept, els.filterPriority].forEach(el => {
+      el.addEventListener('input', renderDocs);
+      el.addEventListener('change', renderDocs);
+    });
+
+    /* --------------------------------------------------------------------
+       UPLOAD MODAL
+       -------------------------------------------------------------------- */
+    const dropzone = $('dropzone');
+    const fileInput = $('fileInput');
+    const filePreview = $('filePreview');
+
+    let selectedFile = null;
+
+    // Click on dropzone → open file picker
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    // Browse handler
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        selectedFile = e.target.files[0];
+        showFilePreview(selectedFile);
+      }
+    });
+
+    // Drag & drop
+    ['dragenter', 'dragover'].forEach(evt => {
+      dropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+      });
+    });
+    ['dragleave', 'drop'].forEach(evt => {
+      dropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+      });
+    });
+    dropzone.addEventListener('drop', (e) => {
+      const files = e.dataTransfer.files;
+      if (files && files[0]) {
+        selectedFile = files[0];
+        showFilePreview(selectedFile);
+      }
+    });
+
+    function showFilePreview(file) {
+      $('previewName').textContent = file.name;
+      $('previewSize').textContent = formatSize(file.size);
+      filePreview.classList.add('show');
+
+      // Auto-fill document name if empty
+      const docNameInput = $('docName');
+      if (!docNameInput.value) {
+        docNameInput.value = file.name.replace(/\.[^.]+$/, '');
+      }
+    }
+
+    $('removeFileBtn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      selectedFile = null;
+      fileInput.value = '';
+      filePreview.classList.remove('show');
+    });
+
+    // Open upload modal
+    els.btnUpload.addEventListener('click', () => {
+      // Reset form
+      selectedFile = null;
+      fileInput.value = '';
+      filePreview.classList.remove('show');
+      $('docName').value = '';
+      $('docType').value = '';
+      $('docDept').value = '';
+      $('docPriority').value = 'normal';
+      $('docNotes').value = '';
+      Modal.open('uploadModal');
+    });
+
+    // Submit upload
+    $('btnSubmitUpload').addEventListener('click', () => {
+      const name = $('docName').value.trim();
+      const type = $('docType').value;
+      const dept = $('docDept').value;
+      const priority = $('docPriority').value;
+      const notes = $('docNotes').value.trim();
+
+      if (!selectedFile && !name) {
+        Toast.error('Missing File', 'Please choose a file to upload.');
+        return;
+      }
+      if (!name) {
+        Toast.error('Missing Name', 'Please enter a document name.');
+        return;
+      }
+      if (!type) {
+        Toast.error('Missing Type', 'Please select a document type.');
+        return;
+      }
+      if (!dept) {
+        Toast.error('Missing Department', 'Please select a department.');
+        return;
+      }
+
+      // Simulate adding to list
+      const newId = `DOC-2025-${String(documents.length + 1).padStart(3, '0')}`;
+      const now = new Date();
+      const dateStr = Utils.formatDate(now) + ' ' +
+        now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+      documents.unshift({
+        id: newId,
+        name: selectedFile ? selectedFile.name : name + '.pdf',
+        ext: selectedFile ? getFileExt(selectedFile.name) : 'pdf',
+        type: type,
+        dept: dept,
+        priority: priority,
+        status: 'pending',
+        submittedBy: Role.current().userName,
+        date: dateStr,
+        size: selectedFile ? formatSize(selectedFile.size) : '—',
+        notes: notes
+      });
+
+      Modal.close('uploadModal');
+      Toast.gold('Document Uploaded', `"${name}" is now pending authorization.`);
+      currentTab = 'pending';
+      document.querySelectorAll('.doc-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === 'pending');
+      });
+      renderDocs();
+    });
+
+    /* --------------------------------------------------------------------
+       ROLE
+       -------------------------------------------------------------------- */
+    function applyRole() {
+      els.btnUpload.style.display = Role.can('add') ? 'inline-flex' : 'none';
+      renderDocs();
+    }
+
+    /* --------------------------------------------------------------------
+       PUBLIC API
+       -------------------------------------------------------------------- */
+    window.Documents = {
+      clearSelection,
+      bulkAuthorize,
+      bulkArchive,
+      bulkExport
+    };
+
+    /* --------------------------------------------------------------------
+       REACT TO ROLE CHANGE
+       -------------------------------------------------------------------- */
+    Bus.on('role:changed', () => {
+      selectedIds.clear();
+      applyRole();
+      Toast.info('Role Switched', `Now viewing as ${Role.current().label}.`);
+    });
+
+    /* --------------------------------------------------------------------
+       INIT
+       -------------------------------------------------------------------- */
+    applyRole();
+
+  })();
+  </script>
+</body>
+</html>

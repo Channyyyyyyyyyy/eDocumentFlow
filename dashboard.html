@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard — UPHSD Molino | Office of the School Director</title>
+<link rel="stylesheet" href="shared.css" />
+
+<style>
+  /* =====================================================================
+     DASHBOARD-SPECIFIC STYLES
+     Only styles unique to this page live here.
+     Everything else comes from shared.css.
+     ===================================================================== */
+
+  /* ---------- Welcome banner ---------- */
+  .welcome-banner {
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-deep) 100%);
+    border-radius: var(--radius-xl);
+    padding: 26px 30px;
+    color: var(--text-on-maroon);
+    margin-bottom: 22px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    border-bottom: 4px solid var(--gold);
+  }
+
+  body.dark-mode .welcome-banner {
+    background: linear-gradient(135deg, #1a0a0a 0%, #2a0d0d 100%);
+    border-bottom-color: var(--gold);
+  }
+
+  /* Decorative gold orb */
+  .welcome-banner::before {
+    content: '';
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(212,175,55,0.28) 0%, transparent 70%);
+    top: -110px;
+    right: -60px;
+    pointer-events: none;
+  }
+
+  .welcome-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .welcome-avatar {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.35rem;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 4px rgba(212,175,55,0.3);
+    letter-spacing: 0.5px;
+  }
+
+  body.dark-mode .welcome-avatar {
+    background: var(--gold);
+    color: #1a1414;
+  }
+
+  .welcome-text { flex: 1; min-width: 220px; }
+
+  .welcome-text .greeting {
+    font-size: 0.78rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .welcome-text h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.3px;
+    line-height: 1.25;
+  }
+
+  body.dark-mode .welcome-text h1 { color: var(--gold); }
+
+  .welcome-text p {
+    font-size: 0.88rem;
+    color: rgba(249, 245, 240, 0.75);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  body.dark-mode .welcome-text p { color: var(--text-secondary); }
+
+  .welcome-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 2;
+  }
+
+  .welcome-actions .btn {
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    border: 1.5px solid rgba(212,175,55,0.5);
+    backdrop-filter: blur(6px);
+  }
+
+  .welcome-actions .btn:hover {
+    background: var(--gold);
+    color: var(--maroon);
+    border-color: var(--gold);
+    transform: translateY(-1px);
+  }
+
+  body.dark-mode .welcome-actions .btn {
+    background: rgba(212,175,55,0.12);
+    color: var(--gold);
+  }
+
+  body.dark-mode .welcome-actions .btn:hover {
+    background: var(--gold);
+    color: #1a1414;
+  }
+
+  /* ---------- Two-column layout ---------- */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 18px;
+    margin-bottom: 22px;
+  }
+
+  @media (max-width: 1000px) {
+    .dashboard-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Activity feed ---------- */
+  .activity-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-height: 460px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+
+  .activity-item {
+    display: flex;
+    gap: 14px;
+    padding: 12px 8px;
+    border-radius: var(--radius-md);
+    transition: background 0.2s ease;
+    position: relative;
+  }
+
+  .activity-item:hover { background: var(--bg-hover); }
+
+  /* Vertical timeline line */
+  .activity-item::before {
+    content: '';
+    position: absolute;
+    left: 27px;
+    top: 44px;
+    bottom: -8px;
+    width: 2px;
+    background: var(--border-light);
+  }
+
+  .activity-item:last-child::before { display: none; }
+
+  .activity-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 0 0 3px var(--bg-card);
+    transition: box-shadow 0.4s ease;
+  }
+
+  body.dark-mode .activity-icon {
+    box-shadow: 0 0 0 3px var(--bg-card);
+  }
+
+  .activity-icon svg { width: 17px; height: 17px; fill: currentColor; }
+
+  .activity-icon.maroon { background: rgba(123,17,19,0.12); color: var(--maroon); }
+  .activity-icon.gold   { background: rgba(212,175,55,0.18); color: #8a6d1f; }
+  .activity-icon.green  { background: rgba(46,213,115,0.14); color: #1e8a4d; }
+  .activity-icon.blue   { background: rgba(70,130,220,0.14); color: #4682dc; }
+  .activity-icon.red    { background: rgba(255,71,87,0.12); color: #d43a45; }
+
+  body.dark-mode .activity-icon.maroon { background: rgba(212,175,55,0.15); color: var(--gold); }
+  body.dark-mode .activity-icon.gold   { background: rgba(212,175,55,0.2); color: var(--gold-bright); }
+  body.dark-mode .activity-icon.green  { background: rgba(46,213,115,0.15); color: #4ade80; }
+  body.dark-mode .activity-icon.blue   { background: rgba(100,150,240,0.15); color: #7ea8ee; }
+  body.dark-mode .activity-icon.red    { background: rgba(255,107,122,0.15); color: #ff8b96; }
+
+  .activity-body { flex: 1; min-width: 0; }
+
+  .activity-body .activity-title {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin-bottom: 3px;
+  }
+
+  .activity-body .activity-title strong {
+    font-weight: 700;
+    color: var(--text-heading);
+  }
+
+  body.dark-mode .activity-body .activity-title strong {
+    color: var(--gold);
+  }
+
+  .activity-body .activity-meta {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .activity-body .activity-meta .dot-sep {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    display: inline-block;
+  }
+
+  /* ---------- Quick actions panel ---------- */
+  .quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quick-action {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--bg-input);
+    border: 1.5px solid var(--border-light);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+
+  .quick-action:hover {
+    border-color: var(--gold);
+    background: var(--bg-card);
+    transform: translateX(3px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .quick-action .qa-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: var(--maroon);
+    color: var(--gold);
+    transition: all 0.25s ease;
+  }
+
+  body.dark-mode .quick-action .qa-icon {
+    background: var(--gold);
+    color: #1a1414;
+  }
+
+  .quick-action:hover .qa-icon { transform: scale(1.08); }
+
+  .quick-action .qa-icon svg { width: 18px; height: 18px; fill: currentColor; }
+
+  .quick-action .qa-text { flex: 1; min-width: 0; }
+
+  .quick-action .qa-text .qa-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+
+  .quick-action .qa-text .qa-desc {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+
+  .quick-action .qa-arrow {
+    width: 16px;
+    height: 16px;
+    fill: var(--text-muted);
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+  }
+
+  .quick-action:hover .qa-arrow {
+    fill: var(--gold);
+    transform: translateX(3px);
+  }
+
+  /* ---------- My Tasks ---------- */
+  .tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 11px 12px;
+    background: var(--bg-input);
+    border-radius: var(--radius-md);
+    border-left: 3px solid var(--gold);
+    transition: all 0.2s ease;
+  }
+
+  .task-item:hover {
+    background: var(--bg-hover);
+    transform: translateX(2px);
+  }
+
+  .task-item.urgent { border-left-color: #ff4757; }
+  .task-item.done { opacity: 0.55; }
+
+  .task-check {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    border: 1.5px solid var(--border-medium);
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 1px;
+    appearance: none;
+    position: relative;
+    transition: all 0.2s ease;
+  }
+
+  .task-check:checked {
+    background: var(--maroon);
+    border-color: var(--maroon);
+  }
+
+  body.dark-mode .task-check:checked {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+
+  .task-check:checked::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 5px;
+    height: 9px;
+    border: solid var(--gold);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  body.dark-mode .task-check:checked::after {
+    border-color: #1a1414;
+  }
+
+  .task-body { flex: 1; min-width: 0; }
+
+  .task-body .task-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.35;
+  }
+
+  .task-check:checked ~ .task-body .task-title {
+    text-decoration: line-through;
+    color: var(--text-muted);
+  }
+
+  .task-body .task-meta {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .task-tag {
+    display: inline-block;
+    padding: 2px 7px;
+    background: rgba(212,175,55,0.15);
+    color: #8a6d1f;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  body.dark-mode .task-tag {
+    background: rgba(212,175,55,0.18);
+    color: var(--gold);
+  }
+
+  .task-tag.urgent {
+    background: rgba(255,71,87,0.15);
+    color: #d43a45;
+  }
+
+  body.dark-mode .task-tag.urgent {
+    background: rgba(255,107,122,0.15);
+    color: #ff8b96;
+  }
+
+  /* ---------- Section title ---------- */
+  .section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .section-title h2 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title h2 svg {
+    width: 16px;
+    height: 16px;
+    fill: var(--gold);
+  }
+
+  .section-title .link {
+    font-size: 0.78rem;
+    color: var(--maroon);
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    text-decoration: none;
+  }
+
+  .section-title .link:hover { color: var(--gold); }
+  body.dark-mode .section-title .link { color: var(--gold); }
+
+  /* ---------- Mini status chart ---------- */
+  .mini-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 100px;
+    padding: 12px 0 6px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .mini-chart .bar {
+    flex: 1;
+    background: linear-gradient(180deg, var(--maroon), var(--maroon-deep));
+    border-radius: 6px 6px 0 0;
+    position: relative;
+    transition: all 0.3s ease;
+    min-height: 6px;
+  }
+
+  .mini-chart .bar:hover {
+    background: linear-gradient(180deg, var(--gold), var(--gold-dark));
+    transform: scaleY(1.05);
+    transform-origin: bottom;
+  }
+
+  .mini-chart .bar .bar-label {
+    position: absolute;
+    bottom: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .mini-chart .bar .bar-value {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+
+  .chart-caption {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 28px;
+  }
+
+  /* ---------- Responsive tweaks ---------- */
+  @media (max-width: 600px) {
+    .welcome-banner { padding: 20px 22px; }
+    .welcome-text h1 { font-size: 1.2rem; }
+    .welcome-avatar { width: 52px; height: 52px; font-size: 1.1rem; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============================================================
+       SIDEBAR
+       ============================================================ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <!-- 👇 REPLACE WITH YOUR LOGO: <img src="uphsd-logo.png" alt="Logo"> -->
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h3>UPHSD Molino</h3>
+        <p>Director's Office</p>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Main</div>
+      <a class="nav-item active" href="dashboard.html" data-page="dashboard.html">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item" href="documents.html" data-page="documents.html">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        Documents
+      </a>
+      <a class="nav-item" href="approvals.html" data-page="approvals.html">
+        <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        Approvals
+        <span class="nav-badge" id="approvalBadgeSide">0</span>
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Administration</div>
+      <a class="nav-item" href="accounts.html" data-page="accounts.html">
+        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        Account Management
+      </a>
+      <a class="nav-item" href="reports.html" data-page="reports.html">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+        Reports
+      </a>
+      <a class="nav-item" href="settings.html" data-page="settings.html">
+        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.484.484 0 00-.59.22L2.74 8.87a.47.47 0 00.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 00-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1112 8.4a3.6 3.6 0 010 7.2z"/></svg>
+        Settings
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      © <span data-year></span> UPHSD Molino<br/>
+      v1.0 · Director's Office
+    </div>
+  </aside>
+
+  <div class="overlay-backdrop" id="overlayBackdrop"></div>
+
+  <!-- ============================================================
+       MAIN
+       ============================================================ -->
+  <main class="main">
+
+    <!-- ========== TOP BAR ========== -->
+    <header class="topbar">
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
+      </button>
+
+      <div class="page-title">
+        <h1>Dashboard</h1>
+        <p>Welcome back — here's what's happening today</p>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- 🧪 DEV ONLY -->
+        <div class="role-switcher" title="Dev preview">
+          <label>View as</label>
+          <select id="roleSwitcher">
+            <option value="secretary">Secretary</option>
+            <option value="ea">Executive Assistant</option>
+            <option value="director">Director</option>
+          </select>
+        </div>
+
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg id="themeIcon" viewBox="0 0 24 24">
+            <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 7.06a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0z"/>
+          </svg>
+        </button>
+
+        <button class="icon-btn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+          <span class="dot"></span>
+        </button>
+
+        <div class="user-chip" id="userChip" title="Click to log out">
+          <div class="user-avatar" id="userAvatar">MC</div>
+          <div class="user-info">
+            <span class="name" id="userName">Maria Cruz</span>
+            <span class="role" id="userRoleLabel">Secretary</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ========== CONTENT ========== -->
+    <div class="content">
+
+      <!-- WELCOME BANNER -->
+      <div class="welcome-banner">
+        <div class="welcome-content">
+          <div class="welcome-avatar" id="welcomeAvatar">MC</div>
+          <div class="welcome-text">
+            <div class="greeting">Good day 👋</div>
+            <h1>Welcome back, <span id="welcomeName">Maria Cruz</span></h1>
+            <p id="welcomeSubtitle">You have <strong>5 pending items</strong> that need your attention today.</p>
+          </div>
+          <div class="welcome-actions">
+            <a class="btn" href="documents.html">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+              Upload Document
+            </a>
+            <a class="btn" href="approvals.html">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+              View Approvals
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATS CARDS -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon maroon">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statDocuments">247</div>
+            <div class="stat-label">Total Documents</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon gold">
+            <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statPending">5</div>
+            <div class="stat-label">Pending Approvals</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon green">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statAccounts">24</div>
+            <div class="stat-label">Active Accounts</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon blue">
+            <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statThisWeek">18</div>
+            <div class="stat-label">This Week</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TWO COLUMN LAYOUT -->
+      <div class="dashboard-grid">
+
+        <!-- LEFT COLUMN -->
+        <div>
+
+          <!-- RECENT ACTIVITY -->
+          <div class="card" style="margin-bottom:18px;">
+            <div class="section-title">
+              <h2>
+                <svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 00-9 9H1l3.89 3.89.07.14L9 12H6a7 7 0 117 7 6.96 6.96 0 01-4.95-2.05l-1.42 1.42A9 9 0 1013 3zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+                Recent Activity
+              </h2>
+              <a class="link" href="reports.html">View all →</a>
+            </div>
+            <div class="activity-feed" id="activityFeed"></div>
+          </div>
+
+          <!-- MINI CHART — Documents this month -->
+          <div class="card">
+            <div class="section-title">
+              <h2>
+                <svg viewBox="0 0 24 24"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
+                Documents Overview
+              </h2>
+              <a class="link" href="reports.html">Full report →</a>
+            </div>
+            <div class="mini-chart" id="miniChart"></div>
+            <div class="chart-caption">Documents processed per month (last 6 months)</div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div>
+
+          <!-- QUICK ACTIONS -->
+          <div class="card" style="margin-bottom:18px;">
+            <div class="section-title">
+              <h2>
+                <svg viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42A6.92 6.92 0 0119 12a7 7 0 11-14 0 6.92 6.92 0 012.58-5.42L6.17 5.17A9 9 0 1012 21a9 9 0 005.83-15.83z"/></svg>
+                Quick Actions
+              </h2>
+            </div>
+            <div class="quick-actions">
+              <a class="quick-action" href="documents.html">
+                <div class="qa-icon">
+                  <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
+                </div>
+                <div class="qa-text">
+                  <div class="qa-title">Upload Document</div>
+                  <div class="qa-desc">Add a new file to the workflow</div>
+                </div>
+                <svg class="qa-arrow" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+              </a>
+
+              <a class="quick-action" href="accounts.html" id="qaNewAccount">
+                <div class="qa-icon">
+                  <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                </div>
+                <div class="qa-text">
+                  <div class="qa-title">Create Account</div>
+                  <div class="qa-desc">Add a new user to the system</div>
+                </div>
+                <svg class="qa-arrow" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+              </a>
+
+              <a class="quick-action" href="approvals.html">
+                <div class="qa-icon">
+                  <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                </div>
+                <div class="qa-text">
+                  <div class="qa-title">Review Approvals</div>
+                  <div class="qa-desc" id="qaApprovalsDesc">5 items waiting</div>
+                </div>
+                <svg class="qa-arrow" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+              </a>
+
+              <a class="quick-action" href="reports.html">
+                <div class="qa-icon">
+                  <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+                </div>
+                <div class="qa-text">
+                  <div class="qa-title">Generate Report</div>
+                  <div class="qa-desc">Export document analytics</div>
+                </div>
+                <svg class="qa-arrow" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- MY TASKS -->
+          <div class="card">
+            <div class="section-title">
+              <h2>
+                <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                My Tasks
+              </h2>
+              <span class="link" id="taskCounter">0 of 0 done</span>
+            </div>
+            <div class="tasks-list" id="tasksList"></div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ============================================================
+       PAGE SCRIPT
+       ============================================================ -->
+  <script src="app.js"></script>
+  <script>
+  /* ==========================================================================
+     DASHBOARD — Page module
+     ========================================================================== */
+  (function () {
+    'use strict';
+
+    const { Role, Toast, Utils, Bus } = APP;
+
+    /* --------------------------------------------------------------------
+       MOCK DATA — Activity feed
+       -------------------------------------------------------------------- */
+    const activity = [
+      {
+        icon: 'create', color: 'blue',
+        title: '<strong>Maria Cruz</strong> uploaded a new document',
+        subject: 'Budget Proposal FY 2025-2026.pdf',
+        time: new Date(Date.now() - 8 * 60 * 1000),
+        user: 'Maria Cruz'
+      },
+      {
+        icon: 'authorize', color: 'green',
+        title: '<strong>Dr. Ramon Santos</strong> authorized an account creation',
+        subject: 'Carlos Mendoza · Faculty',
+        time: new Date(Date.now() - 32 * 60 * 1000),
+        user: 'Dr. Ramon Santos'
+      },
+      {
+        icon: 'edit', color: 'gold',
+        title: '<strong>Anna Reyes</strong> submitted an edit request',
+        subject: 'Jose Villanueva · Role change',
+        time: new Date(Date.now() - 2 * 60 * 60 * 1000),
+        user: 'Anna Reyes'
+      },
+      {
+        icon: 'reject', color: 'red',
+        title: '<strong>Dr. Ramon Santos</strong> rejected a deletion request',
+        subject: 'Sophia Lim · Resigned notice',
+        time: new Date(Date.now() - 4 * 60 * 60 * 1000),
+        user: 'Dr. Ramon Santos'
+      },
+      {
+        icon: 'view', color: 'maroon',
+        title: '<strong>Liza Fernandez</strong> viewed a confidential file',
+        subject: 'Registrar Report Q4 2024.xlsx',
+        time: new Date(Date.now() - 6 * 60 * 60 * 1000),
+        user: 'Liza Fernandez'
+      },
+      {
+        icon: 'create', color: 'blue',
+        title: '<strong>Maria Cruz</strong> added a new document',
+        subject: 'Faculty Evaluation Summary.pdf',
+        time: new Date(Date.now() - 20 * 60 * 60 * 1000),
+        user: 'Maria Cruz'
+      },
+      {
+        icon: 'authorize', color: 'green',
+        title: '<strong>Dr. Ramon Santos</strong> authorized 3 documents',
+        subject: 'Batch approval · Registrar',
+        time: new Date(Date.now() - 28 * 60 * 60 * 1000),
+        user: 'Dr. Ramon Santos'
+      },
+      {
+        icon: 'edit', color: 'gold',
+        title: '<strong>Anna Reyes</strong> updated a document',
+        subject: 'Meeting Minutes · Jan 10, 2025',
+        time: new Date(Date.now() - 32 * 60 * 60 * 1000),
+        user: 'Anna Reyes'
+      }
+    ];
+
+    /* --------------------------------------------------------------------
+       MOCK DATA — Tasks
+       -------------------------------------------------------------------- */
+    const tasks = [
+      { id: 1, title: 'Review budget proposal from Accounting',      tag: 'Approval', urgent: true,  done: false, due: 'Today' },
+      { id: 2, title: 'Sign faculty evaluation summary',              tag: 'Signature', urgent: false, done: false, due: 'Tomorrow' },
+      { id: 3, title: 'Approve new account — Carlos Mendoza',         tag: 'Account',   urgent: true,  done: false, due: 'Today' },
+      { id: 4, title: 'Confirm deletion request — Sophia Lim',        tag: 'Account',   urgent: false, done: false, due: 'This week' },
+      { id: 5, title: 'Reply to HR memo about staffing',              tag: 'Reply',     urgent: false, done: true,  due: 'Done' }
+    ];
+
+    /* --------------------------------------------------------------------
+       MOCK DATA — Chart
+       -------------------------------------------------------------------- */
+    const monthlyData = [
+      { month: 'Aug', value: 32 },
+      { month: 'Sep', value: 41 },
+      { month: 'Oct', value: 38 },
+      { month: 'Nov', value: 52 },
+      { month: 'Dec', value: 44 },
+      { month: 'Jan', value: 40 }
+    ];
+
+    /* --------------------------------------------------------------------
+       ICON PATHS for activity feed
+       -------------------------------------------------------------------- */
+    const ACTIVITY_ICONS = {
+      create:    '<path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>',
+      authorize: '<path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>',
+      edit:      '<path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>',
+      reject:    '<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>',
+      view:      '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/>'
+    };
+
+    /* --------------------------------------------------------------------
+       RENDER — Activity feed
+       -------------------------------------------------------------------- */
+    function renderActivity() {
+      const feed = document.getElementById('activityFeed');
+      if (!feed) return;
+
+      // Show only latest 6 items
+      feed.innerHTML = activity.slice(0, 6).map(a => `
+        <div class="activity-item">
+          <div class="activity-icon ${a.color}">
+            <svg viewBox="0 0 24 24">${ACTIVITY_ICONS[a.icon] || ACTIVITY_ICONS.view}</svg>
+          </div>
+          <div class="activity-body">
+            <div class="activity-title">
+              ${a.title} — <em>${Utils.escapeHtml(a.subject)}</em>
+            </div>
+            <div class="activity-meta">
+              <span>${Utils.timeAgo(a.time)}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /* --------------------------------------------------------------------
+       RENDER — Tasks
+       -------------------------------------------------------------------- */
+    function renderTasks() {
+      const list = document.getElementById('tasksList');
+      const counter = document.getElementById('taskCounter');
+      if (!list) return;
+
+      list.innerHTML = tasks.map(t => `
+        <div class="task-item ${t.urgent ? 'urgent' : ''} ${t.done ? 'done' : ''}" data-id="${t.id}">
+          <input type="checkbox" class="task-check" ${t.done ? 'checked' : ''} data-id="${t.id}" />
+          <div class="task-body">
+            <div class="task-title">${Utils.escapeHtml(t.title)}</div>
+            <div class="task-meta">
+              <span class="task-tag ${t.urgent ? 'urgent' : ''}">${Utils.escapeHtml(t.tag)}</span>
+              <span>${t.done ? 'Completed' : 'Due · ' + Utils.escapeHtml(t.due)}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Wire up checkboxes
+      list.querySelectorAll('.task-check').forEach(cb => {
+        cb.addEventListener('change', (e) => {
+          const id = parseInt(e.target.dataset.id);
+          const task = tasks.find(t => t.id === id);
+          if (!task) return;
+          task.done = e.target.checked;
+          e.target.closest('.task-item').classList.toggle('done', task.done);
+          updateTaskCounter();
+
+          if (task.done) {
+            Toast.success('Task Completed', `"${task.title}" marked as done.`);
+          } else {
+            Toast.info('Task Reopened', `"${task.title}" is back on your list.`);
+          }
+        });
+      });
+
+      updateTaskCounter();
+    }
+
+    function updateTaskCounter() {
+      const counter = document.getElementById('taskCounter');
+      if (!counter) return;
+      const done = tasks.filter(t => t.done).length;
+      counter.textContent = `${done} of ${tasks.length} done`;
+    }
+
+    /* --------------------------------------------------------------------
+       RENDER — Mini bar chart
+       -------------------------------------------------------------------- */
+    function renderChart() {
+      const chart = document.getElementById('miniChart');
+      if (!chart) return;
+
+      const max = Math.max(...monthlyData.map(m => m.value));
+
+      chart.innerHTML = monthlyData.map(m => {
+        const height = Math.max((m.value / max) * 100, 8); // min 8% height
+        return `
+          <div class="bar" style="height:${height}%;" title="${m.month}: ${m.value} documents">
+            <span class="bar-value">${m.value}</span>
+            <span class="bar-label">${m.month}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* --------------------------------------------------------------------
+       PERSONALIZE — Welcome banner
+       -------------------------------------------------------------------- */
+    function personalizeWelcome() {
+      const user = Role.current();
+
+      const avatarEl = document.getElementById('welcomeAvatar');
+      const nameEl   = document.getElementById('welcomeName');
+      const subEl    = document.getElementById('welcomeSubtitle');
+
+      if (avatarEl) avatarEl.textContent = user.initials;
+      if (nameEl)   nameEl.textContent   = user.userName;
+
+      if (subEl) {
+        const pending = 5; // static for now
+        const greetings = {
+          secretary: `You have <strong>${pending} pending items</strong> to process today.`,
+          ea:        `You have <strong>${pending} pending items</strong> waiting for your review.`,
+          director:  `You have <strong>${pending} items</strong> awaiting your authorization.`
+        };
+        subEl.innerHTML = greetings[user.id] || greetings.secretary;
+      }
+
+      // Update greeting based on time of day
+      const hour = new Date().getHours();
+      const greeting =
+        hour < 12 ? 'Good morning 👋' :
+        hour < 18 ? 'Good afternoon 👋' :
+                    'Good evening 👋';
+      const greetingEl = document.querySelector('.welcome-text .greeting');
+      if (greetingEl) greetingEl.textContent = greeting;
+    }
+
+    /* --------------------------------------------------------------------
+       ROLE-AWARE — Hide create account button for Director
+       -------------------------------------------------------------------- */
+    function applyRole() {
+      const qaNew = document.getElementById('qaNewAccount');
+      if (qaNew) {
+        qaNew.style.display = Role.can('add') ? 'flex' : 'none';
+      }
+
+      // Update "review approvals" description
+      const desc = document.getElementById('qaApprovalsDesc');
+      if (desc) {
+        if (Role.can('authorize')) {
+          desc.textContent = '5 items need your authorization';
+        } else {
+          desc.textContent = 'Track your submitted requests';
+        }
+      }
+
+      personalizeWelcome();
+    }
+
+    /* --------------------------------------------------------------------
+       COUNTER ANIMATION — small nicety on stat cards
+       -------------------------------------------------------------------- */
+    function animateCounters() {
+      document.querySelectorAll('.stat-value').forEach(el => {
+        const target = parseInt(el.textContent.replace(/,/g, '')) || 0;
+        if (target === 0) return;
+
+        let current = 0;
+        const step = Math.max(1, Math.ceil(target / 30));
+        el.textContent = '0';
+
+        const timer = setInterval(() => {
+          current += step;
+          if (current >= target) {
+            current = target;
+            clearInterval(timer);
+          }
+          el.textContent = Utils.number(current);
+        }, 20);
+      });
+    }
+
+    /* --------------------------------------------------------------------
+       INIT
+       -------------------------------------------------------------------- */
+    renderActivity();
+    renderTasks();
+    renderChart();
+    applyRole();
+    animateCounters();
+
+    // React to role change
+    Bus.on('role:changed', () => {
+      applyRole();
+      Toast.info('Role Switched', `Now viewing as ${Role.current().label}.`);
+    });
+
+  })();
+  </script>
+</body>
+</html>
