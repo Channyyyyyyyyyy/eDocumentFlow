@@ -1,0 +1,2226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Account Management — UPHSD Molino | Office of the School Director</title>
+<style>
+  /* =========================================================
+     UPHSD MOLINO — ACCOUNT MANAGEMENT
+     Maroon #7B1113 · Gold #D4AF37 · White #FFFFFF
+     ========================================================= */
+
+  :root {
+    --maroon: #7B1113;
+    --maroon-deep: #5A0C0E;
+    --maroon-light: #9a1a1d;
+    --gold: #D4AF37;
+    --gold-bright: #F4C430;
+    --white: #FFFFFF;
+    --off-white: #F9F5F0;
+
+    --bg-body: #f4efe9;
+    --bg-card: #FFFFFF;
+    --bg-sidebar: #7B1113;
+    --bg-topbar: #FFFFFF;
+    --bg-input: #F9F5F0;
+    --bg-hover: #faf6f0;
+    --bg-table-head: #f9f5f0;
+
+    --text-primary: #2b1a1a;
+    --text-secondary: #6b5a4a;
+    --text-muted: #a89a8a;
+    --text-on-maroon: #f9f5f0;
+    --text-heading: #7B1113;
+
+    --border-light: #e8ddd0;
+    --border-medium: #d4c4b0;
+
+    --status-active-bg: rgba(46, 213, 115, 0.12);
+    --status-active-text: #1e8a4d;
+    --status-active-border: rgba(46, 213, 115, 0.4);
+
+    --status-inactive-bg: rgba(120, 120, 120, 0.12);
+    --status-inactive-text: #5a5a5a;
+    --status-inactive-border: rgba(120, 120, 120, 0.4);
+
+    --status-pending-bg: rgba(244, 196, 48, 0.15);
+    --status-pending-text: #8a6d1f;
+    --status-pending-border: rgba(212, 175, 55, 0.55);
+
+    --status-rejected-bg: rgba(123, 17, 19, 0.1);
+    --status-rejected-text: #7B1113;
+    --status-rejected-border: rgba(123, 17, 19, 0.4);
+
+    --shadow-sm: 0 2px 6px rgba(0,0,0,0.06);
+    --shadow-md: 0 6px 18px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 28px rgba(0,0,0,0.12);
+
+    --sidebar-w: 250px;
+    --topbar-h: 68px;
+  }
+
+  body.dark-mode {
+    --bg-body: #121010;
+    --bg-card: #1a1616;
+    --bg-sidebar: #15090a;
+    --bg-topbar: #1a1616;
+    --bg-input: #241c1c;
+    --bg-hover: #221a1a;
+    --bg-table-head: #221a1a;
+
+    --text-primary: #f0e8dd;
+    --text-secondary: #b8a898;
+    --text-muted: #7a6a5a;
+    --text-heading: #F4C430;
+
+    --border-light: #332727;
+    --border-medium: #443333;
+
+    --status-active-bg: rgba(46, 213, 115, 0.15);
+    --status-active-text: #4ade80;
+    --status-inactive-bg: rgba(150, 150, 150, 0.15);
+    --status-inactive-text: #a0a0a0;
+    --status-pending-bg: rgba(244, 196, 48, 0.18);
+    --status-pending-text: #F4C430;
+    --status-rejected-bg: rgba(255, 100, 100, 0.15);
+    --status-rejected-text: #ff8b96;
+
+    --shadow-sm: 0 2px 6px rgba(0,0,0,0.3);
+    --shadow-md: 0 6px 18px rgba(0,0,0,0.35);
+    --shadow-lg: 0 12px 28px rgba(0,0,0,0.5);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    background: var(--bg-body);
+    color: var(--text-primary);
+    display: flex;
+    min-height: 100vh;
+    transition: background 0.4s ease, color 0.4s ease;
+    overflow-x: hidden;
+  }
+
+  /* =========================================================
+     SIDEBAR
+     ========================================================= */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--bg-sidebar);
+    color: var(--text-on-maroon);
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    transition: transform 0.3s ease, background 0.4s ease;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+  }
+
+  .sidebar-brand {
+    padding: 22px 20px 18px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .sidebar-brand .brand-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    box-shadow: 0 0 0 2px var(--gold);
+  }
+
+  .sidebar-brand .brand-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 4px;
+  }
+
+  .sidebar-brand .brand-logo svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--maroon);
+  }
+
+  .brand-text h3 {
+    color: var(--gold);
+    font-size: 0.78rem;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .brand-text p {
+    color: rgba(249, 245, 240, 0.65);
+    font-size: 0.68rem;
+    margin-top: 2px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .nav-section {
+    padding: 20px 0 8px;
+  }
+
+  .nav-section-title {
+    color: rgba(212, 175, 55, 0.7);
+    font-size: 0.68rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 0 22px 8px;
+    font-weight: 600;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 12px 22px;
+    color: rgba(249, 245, 240, 0.82);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    border-left: 3px solid transparent;
+  }
+
+  .nav-item:hover {
+    background: rgba(212, 175, 55, 0.08);
+    color: var(--gold);
+  }
+
+  .nav-item.active {
+    background: rgba(212, 175, 55, 0.12);
+    color: var(--gold);
+    border-left-color: var(--gold);
+    font-weight: 600;
+  }
+
+  .nav-item svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+    flex-shrink: 0;
+  }
+
+  .nav-item .nav-badge {
+    margin-left: auto;
+    background: var(--gold);
+    color: var(--maroon);
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    min-width: 22px;
+    text-align: center;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 18px 22px;
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+    font-size: 0.7rem;
+    color: rgba(249, 245, 240, 0.5);
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  /* =========================================================
+     MAIN AREA
+     ========================================================= */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: calc(100% - var(--sidebar-w));
+  }
+
+  /* ========== TOP BAR ========== */
+  .topbar {
+    height: var(--topbar-h);
+    background: var(--bg-topbar);
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    padding: 0 28px;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: var(--shadow-sm);
+    transition: background 0.4s ease, border-color 0.4s ease;
+  }
+
+  .hamburger {
+    display: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+    background: transparent;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hamburger svg { width: 20px; height: 20px; fill: var(--text-primary); }
+
+  .page-title {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page-title h1 {
+    color: var(--text-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+
+  .page-title p {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    margin-top: 2px;
+  }
+
+  .topbar-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* Role switcher (DEV ONLY) */
+  .role-switcher {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: var(--bg-input);
+    border: 1px dashed var(--gold);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+
+  .role-switcher label {
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.65rem;
+  }
+
+  .role-switcher select {
+    background: transparent;
+    border: none;
+    color: var(--maroon);
+    font-weight: 700;
+    font-size: 0.78rem;
+    cursor: pointer;
+    outline: none;
+    font-family: inherit;
+  }
+
+  body.dark-mode .role-switcher select { color: var(--gold); }
+
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--border-light);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .icon-btn:hover {
+    background: var(--bg-hover);
+    border-color: var(--gold);
+    color: var(--maroon);
+  }
+
+  body.dark-mode .icon-btn:hover { color: var(--gold); }
+
+  .icon-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+  .icon-btn .dot {
+    position: absolute;
+    top: 8px;
+    right: 9px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2px solid var(--bg-topbar);
+  }
+
+  /* User chip */
+  .user-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 14px 6px 6px;
+    background: var(--bg-input);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+
+  .user-chip:hover { border-color: var(--gold); }
+
+  .user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  .user-info { display: flex; flex-direction: column; line-height: 1.2; }
+  .user-info .name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .user-info .role {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ========== CONTENT ========== */
+  .content {
+    padding: 24px 28px 40px;
+    flex: 1;
+  }
+
+  /* ---------- STATS CARDS ---------- */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+
+  .stat-card {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 18px 20px;
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--gold);
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .stat-icon svg { width: 22px; height: 22px; fill: currentColor; }
+
+  .stat-icon.maroon { background: rgba(123,17,19,0.1); color: var(--maroon); }
+  .stat-icon.gold { background: rgba(212,175,55,0.15); color: #8a6d1f; }
+  .stat-icon.green { background: rgba(46,213,115,0.12); color: #1e8a4d; }
+  .stat-icon.grey { background: rgba(120,120,120,0.12); color: #5a5a5a; }
+
+  body.dark-mode .stat-icon.maroon { background: rgba(212,175,55,0.12); color: var(--gold); }
+  body.dark-mode .stat-icon.gold { background: rgba(212,175,55,0.18); color: var(--gold-bright); }
+  body.dark-mode .stat-icon.green { background: rgba(46,213,115,0.15); color: #4ade80; }
+  body.dark-mode .stat-icon.grey { background: rgba(150,150,150,0.15); color: #a0a0a0; }
+
+  .stat-info .stat-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+  }
+
+  .stat-info .stat-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+
+  /* ---------- TOOLBAR ---------- */
+  .toolbar {
+    background: var(--bg-card);
+    border-radius: 14px;
+    border: 1px solid var(--border-light);
+    padding: 16px 20px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .search-box {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+    max-width: 380px;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: 11px 14px 11px 42px;
+    background: var(--bg-input);
+    border: 1.5px solid var(--border-light);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 0.88rem;
+    outline: none;
+    transition: all 0.25s ease;
+    font-family: inherit;
+  }
+
+  .search-box input::placeholder { color: var(--text-muted); }
+
+  .search-box input:focus {
+    border-color: var(--maroon);
+    background: var(--bg-card);
+    box-shadow: 0 0 0 3px rgba(123,17,19,0.1);
+  }
+
+  body.dark-mode .search-box input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212,175,55,0.15);
+  }
+
+  .search-box svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 17px;
+    height: 17px;
+    fill: var(--text-muted);
+    pointer-events: none;
+  }
+
+  .filter-select {
+    padding: 11px 32px 11px 14px;
+    background: var(--bg-input);
+    border: 1.5px solid var(--border-light);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    outline: none;
+    font-family: inherit;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a89a8a'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 18px;
+    transition: all 0.25s ease;
+    font-weight: 500;
+  }
+
+  .filter-select:focus {
+    border-color: var(--maroon);
+    box-shadow: 0 0 0 3px rgba(123,17,19,0.1);
+  }
+
+  body.dark-mode .filter-select:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212,175,55,0.15);
+  }
+
+  .btn {
+    padding: 11px 18px;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.25s ease;
+    font-family: inherit;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+
+  .btn svg { width: 15px; height: 15px; fill: currentColor; }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
+    color: var(--gold);
+    box-shadow: 0 4px 12px rgba(123,17,19,0.3);
+    border-bottom: 2px solid var(--gold);
+  }
+
+  body.dark-mode .btn-primary {
+    background: linear-gradient(135deg, var(--gold), #b8942a);
+    color: #1a1414;
+    border-bottom-color: #8a6d1f;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(123,17,19,0.4);
+  }
+
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1.5px solid var(--border-light);
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--maroon);
+    color: var(--maroon);
+    background: var(--bg-hover);
+  }
+
+  body.dark-mode .btn-ghost:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  /* ---------- APPROVAL BANNER (Director only) ---------- */
+  .approval-banner {
+    background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.06));
+    border: 1.5px solid var(--gold);
+    border-left: 5px solid var(--gold);
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow-sm);
+    animation: slideDown 0.4s ease;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .approval-banner .banner-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--maroon);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.5); }
+    50% { box-shadow: 0 0 0 10px rgba(212,175,55,0); }
+  }
+
+  .approval-banner .banner-icon svg { width: 22px; height: 22px; fill: currentColor; }
+
+  .approval-banner .banner-text { flex: 1; }
+  .approval-banner .banner-text h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+  }
+  .approval-banner .banner-text p {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+  }
+
+  .approval-banner .banner-cta {
+    background: var(--maroon);
+    color: var(--gold);
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    letter-spacing: 0.3px;
+  }
+
+  .approval-banner .banner-cta:hover {
+    background: var(--maroon-deep);
+    transform: translateY(-1px);
+  }
+
+  body.dark-mode .approval-banner .banner-cta {
+    background: var(--gold);
+    color: #1a1414;
+  }
+
+  /* ---------- BULK ACTION BAR ---------- */
+  .bulk-bar {
+    display: none;
+    background: var(--maroon);
+    color: var(--text-on-maroon);
+    border-radius: 12px;
+    padding: 12px 20px;
+    margin-bottom: 14px;
+    align-items: center;
+    gap: 14px;
+    box-shadow: var(--shadow-md);
+    animation: slideDown 0.3s ease;
+  }
+
+  .bulk-bar.show { display: flex; }
+
+  body.dark-mode .bulk-bar {
+    background: linear-gradient(135deg, #2a1c1c, #1f1414);
+    border: 1.5px solid var(--gold);
+    color: var(--text-primary);
+  }
+
+  .bulk-bar .bulk-count {
+    font-weight: 700;
+    color: var(--gold);
+    font-size: 0.88rem;
+  }
+
+  .bulk-bar .bulk-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+  }
+
+  .bulk-bar .bulk-actions .btn {
+    padding: 8px 14px;
+    font-size: 0.78rem;
+    background: rgba(255,255,255,0.1);
+    color: var(--text-on-maroon);
+    border: 1.5px solid rgba(212,175,55,0.5);
+  }
+
+  .bulk-bar .bulk-actions .btn:hover {
+    background: var(--gold);
+    color: var(--maroon);
+    border-color: var(--gold);
+  }
+
+  body.dark-mode .bulk-bar .bulk-actions .btn {
+    color: var(--text-primary);
+  }
+
+  .bulk-bar .bulk-actions .btn.danger {
+    border-color: #ff6b7a;
+    color: #ffd0d5;
+  }
+  .bulk-bar .bulk-actions .btn.danger:hover {
+    background: #ff6b7a;
+    color: #fff;
+  }
+
+  /* ---------- ACCOUNTS TABLE ---------- */
+  .table-card {
+    background: var(--bg-card);
+    border-radius: 14px;
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: background 0.4s ease, border-color 0.4s ease;
+  }
+
+  .table-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-light);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .table-header-row h2 {
+    font-size: 0.95rem;
+    color: var(--text-heading);
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+
+  .table-header-row .count {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    font-weight: 500;
+  }
+
+  .table-scroll { overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+  }
+
+  thead th {
+    background: var(--bg-table-head);
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-light);
+    white-space: nowrap;
+  }
+
+  thead th.center { text-align: center; }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border-light);
+    transition: background 0.15s ease;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+
+  tbody tr:hover { background: var(--bg-hover); }
+
+  tbody tr.selected { background: rgba(212, 175, 55, 0.08); }
+
+  tbody td {
+    padding: 14px 16px;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    vertical-align: middle;
+  }
+
+  tbody td.center { text-align: center; }
+
+  /* Checkbox */
+  .checkbox-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .checkbox-wrap input {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--border-medium);
+    border-radius: 5px;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+  }
+
+  .checkbox-wrap input:checked {
+    background: var(--maroon);
+    border-color: var(--maroon);
+  }
+
+  body.dark-mode .checkbox-wrap input:checked {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+
+  .checkbox-wrap input:checked::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 5px;
+    height: 9px;
+    border: solid var(--gold);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  body.dark-mode .checkbox-wrap input:checked::after { border-color: #1a1414; }
+
+  /* User cell */
+  .user-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 220px;
+  }
+
+  .user-cell .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    letter-spacing: 0.5px;
+  }
+
+  .user-cell .avatar.gold {
+    background: linear-gradient(135deg, var(--gold), #b8942a);
+    color: var(--maroon);
+  }
+
+  .user-cell .meta .name {
+    font-weight: 600;
+    font-size: 0.86rem;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+
+  .user-cell .meta .email {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* Role tag */
+  .role-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(123,17,19,0.08);
+    color: var(--maroon);
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+
+  body.dark-mode .role-tag {
+    background: rgba(212,175,55,0.15);
+    color: var(--gold);
+  }
+
+  /* Status badge */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    border: 1.5px solid transparent;
+  }
+
+  .status-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .status-badge.active {
+    background: var(--status-active-bg);
+    color: var(--status-active-text);
+    border-color: var(--status-active-border);
+  }
+  .status-badge.inactive {
+    background: var(--status-inactive-bg);
+    color: var(--status-inactive-text);
+    border-color: var(--status-inactive-border);
+  }
+  .status-badge.pending {
+    background: var(--status-pending-bg);
+    color: var(--status-pending-text);
+    border-color: var(--status-pending-border);
+  }
+  .status-badge.rejected {
+    background: var(--status-rejected-bg);
+    color: var(--status-rejected-text);
+    border-color: var(--status-rejected-border);
+  }
+
+  /* Pending approval indicator */
+  .pending-action {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 0.68rem;
+    color: #8a6d1f;
+    background: rgba(244,196,48,0.15);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  body.dark-mode .pending-action {
+    color: var(--gold);
+    background: rgba(244,196,48,0.15);
+  }
+
+  /* Action buttons */
+  .actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+  }
+
+  .action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .action-btn svg { width: 15px; height: 15px; fill: currentColor; }
+
+  .action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .action-btn.view:hover {
+    background: rgba(70,130,220,0.12);
+    border-color: #4682dc;
+    color: #4682dc;
+  }
+
+  .action-btn.edit:hover {
+    background: rgba(212,175,55,0.15);
+    border-color: var(--gold);
+    color: #8a6d1f;
+  }
+
+  body.dark-mode .action-btn.edit:hover { color: var(--gold); }
+
+  .action-btn.delete:hover {
+    background: rgba(123,17,19,0.1);
+    border-color: var(--maroon);
+    color: var(--maroon);
+  }
+
+  body.dark-mode .action-btn.delete:hover {
+    background: rgba(255,107,122,0.15);
+    border-color: #ff6b7a;
+    color: #ff8b96;
+  }
+
+  .action-btn.authorize {
+    background: linear-gradient(135deg, var(--gold), #b8942a);
+    border-color: var(--gold);
+    color: var(--maroon);
+    width: auto;
+    padding: 0 12px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    gap: 5px;
+  }
+
+  .action-btn.authorize:hover {
+    box-shadow: 0 4px 12px rgba(212,175,55,0.4);
+    transform: translateY(-1px);
+  }
+
+  .action-btn.authorize svg { width: 14px; height: 14px; }
+
+  /* Locked message */
+  .no-permission {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-style: italic;
+    white-space: nowrap;
+  }
+
+  /* Empty state */
+  .empty-state {
+    display: none;
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .empty-state.show { display: block; }
+
+  .empty-state .empty-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--bg-input);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+  }
+
+  .empty-state .empty-icon svg {
+    width: 40px;
+    height: 40px;
+    fill: var(--text-muted);
+  }
+
+  .empty-state h3 {
+    color: var(--text-primary);
+    font-size: 1rem;
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+
+  .empty-state p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    max-width: 380px;
+    margin: 0 auto 20px;
+    line-height: 1.5;
+  }
+
+  /* Pagination */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-top: 1px solid var(--border-light);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .pagination .page-info {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .pagination .page-controls {
+    display: flex;
+    gap: 6px;
+  }
+
+  .page-btn {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+
+  .page-btn:hover:not(:disabled):not(.active) {
+    background: var(--bg-hover);
+    border-color: var(--gold);
+    color: var(--maroon);
+  }
+
+  body.dark-mode .page-btn:hover:not(:disabled):not(.active) { color: var(--gold); }
+
+  .page-btn.active {
+    background: var(--maroon);
+    border-color: var(--maroon);
+    color: var(--gold);
+  }
+
+  body.dark-mode .page-btn.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #1a1414;
+  }
+
+  .page-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* =========================================================
+     RESPONSIVE
+     ========================================================= */
+  .overlay-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 99;
+  }
+
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; width: 100%; }
+    .hamburger { display: flex; }
+    .overlay-backdrop.show { display: block; }
+    .role-switcher { display: none; }
+    .user-info { display: none; }
+  }
+
+  @media (max-width: 600px) {
+    .topbar { padding: 0 16px; }
+    .content { padding: 18px 16px 30px; }
+    .page-title h1 { font-size: 1rem; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .stat-info .stat-value { font-size: 1.3rem; }
+    .toolbar { padding: 14px; }
+    .search-box { max-width: 100%; }
+    .filter-select { flex: 1; }
+  }
+
+  /* =========================================================
+     TOAST
+     ========================================================= */
+  .toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .toast {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-left: 4px solid var(--maroon);
+    border-radius: 10px;
+    padding: 14px 18px;
+    min-width: 280px;
+    max-width: 360px;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    animation: toastIn 0.35s ease;
+  }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .toast.fade-out { animation: toastOut 0.3s ease forwards; }
+  @keyframes toastOut {
+    to { opacity: 0; transform: translateX(30px); }
+  }
+
+  .toast.gold { border-left-color: var(--gold); }
+  .toast.green { border-left-color: #2ed573; }
+  .toast.red { border-left-color: #ff4757; }
+
+  .toast .toast-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .toast .toast-icon svg { width: 100%; height: 100%; }
+
+  .toast .toast-text h4 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+
+  .toast .toast-text p {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============================================================
+       SIDEBAR
+       ============================================================ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <!-- 👇 REPLACE WITH YOUR LOGO: <img src="uphsd-logo.png" alt="Logo"> -->
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h3>UPHSD Molino</h3>
+        <p>Director's Office</p>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Main</div>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        Documents
+      </a>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        Approvals
+        <span class="nav-badge" id="approvalBadgeSide">3</span>
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Administration</div>
+      <a class="nav-item active">
+        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        Account Management
+      </a>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+        Reports
+      </a>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.484.484 0 00-.59.22L2.74 8.87a.47.47 0 00.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 00-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1112 8.4a3.6 3.6 0 010 7.2z"/></svg>
+        Settings
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      © <span id="year"></span> UPHSD Molino<br/>
+      v1.0 · Director's Office
+    </div>
+  </aside>
+
+  <div class="overlay-backdrop" id="overlayBackdrop"></div>
+
+  <!-- ============================================================
+       MAIN
+       ============================================================ -->
+  <main class="main">
+
+    <!-- ========== TOP BAR ========== -->
+    <header class="topbar">
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
+      </button>
+
+      <div class="page-title">
+        <h1>Account Management</h1>
+        <p>Manage user accounts and authorization requests</p>
+      </div>
+
+      <div class="topbar-actions">
+
+        <!-- 🧪 DEV ONLY: Role Switcher -->
+        <div class="role-switcher" title="Dev preview — switch role to see permissions">
+          <label>View as</label>
+          <select id="roleSwitcher">
+            <option value="secretary">Secretary</option>
+            <option value="ea">Executive Assistant</option>
+            <option value="director">Director</option>
+          </select>
+        </div>
+
+        <!-- Dark mode toggle -->
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg id="themeIcon" viewBox="0 0 24 24">
+            <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 7.06a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0z"/>
+          </svg>
+        </button>
+
+        <!-- Notifications -->
+        <button class="icon-btn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+          <span class="dot"></span>
+        </button>
+
+        <!-- User chip -->
+        <div class="user-chip" id="userChip">
+          <div class="user-avatar" id="userAvatar">MC</div>
+          <div class="user-info">
+            <span class="name" id="userName">Maria Cruz</span>
+            <span class="role" id="userRoleLabel">Secretary</span>
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- ========== CONTENT ========== -->
+    <div class="content">
+
+      <!-- STATS -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon maroon">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statTotal">24</div>
+            <div class="stat-label">Total Accounts</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon green">
+            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statActive">18</div>
+            <div class="stat-label">Active</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon gold">
+            <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statPending">3</div>
+            <div class="stat-label">Pending Authorization</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon grey">
+            <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="statInactive">3</div>
+            <div class="stat-label">Inactive</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- APPROVAL BANNER (Director only, auto-shows) -->
+      <div class="approval-banner" id="approvalBanner" style="display:none;">
+        <div class="banner-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        </div>
+        <div class="banner-text">
+          <h3>You have <span id="bannerCount">3</span> pending authorization requests</h3>
+          <p>Account creation, edits, and deletion requests from Secretary and Executive Assistant are waiting for your approval.</p>
+        </div>
+        <button class="banner-cta" onclick="filterPending()">Review Now →</button>
+      </div>
+
+      <!-- BULK ACTION BAR -->
+      <div class="bulk-bar" id="bulkBar">
+        <span class="bulk-count" id="bulkCount">0 selected</span>
+        <div class="bulk-actions" id="bulkActions">
+          <!-- Filled dynamically by JS based on role -->
+        </div>
+        <button class="btn btn-ghost" style="background:transparent;color:inherit;border-color:rgba(255,255,255,0.3);" onclick="clearSelection()">Clear</button>
+      </div>
+
+      <!-- TOOLBAR -->
+      <div class="toolbar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="text" id="searchInput" placeholder="Search by name or email..." />
+        </div>
+
+        <select class="filter-select" id="filterRole">
+          <option value="">All Roles</option>
+          <option value="Secretary">Secretary</option>
+          <option value="Executive Assistant">Executive Assistant</option>
+          <option value="Director">Director</option>
+          <option value="Faculty">Faculty</option>
+          <option value="Staff">Staff</option>
+          <option value="Department Head">Department Head</option>
+        </select>
+
+        <select class="filter-select" id="filterDept">
+          <option value="">All Departments</option>
+          <option value="Director's Office">Director's Office</option>
+          <option value="Registrar">Registrar</option>
+          <option value="Accounting">Accounting</option>
+          <option value="Human Resources">Human Resources</option>
+          <option value="Academics">Academics</option>
+          <option value="Student Affairs">Student Affairs</option>
+        </select>
+
+        <select class="filter-select" id="filterStatus">
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+          <option value="pending">Pending Authorization</option>
+          <option value="rejected">Rejected</option>
+        </select>
+
+        <button class="btn btn-primary" id="btnNewAccount" style="margin-left:auto;">
+          <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          New Account
+        </button>
+      </div>
+
+      <!-- TABLE -->
+      <div class="table-card">
+        <div class="table-header-row">
+          <h2>User Accounts</h2>
+          <span class="count" id="resultCount">Showing 0 of 0 accounts</span>
+        </div>
+
+        <div class="table-scroll">
+          <table id="accountsTable">
+            <thead>
+              <tr>
+                <th style="width:40px;" class="center">
+                  <label class="checkbox-wrap">
+                    <input type="checkbox" id="selectAll" />
+                  </label>
+                </th>
+                <th>User</th>
+                <th>Role</th>
+                <th>Department</th>
+                <th>Status</th>
+                <th>Last Login</th>
+                <th style="text-align:right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="accountsBody">
+              <!-- Filled by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          </div>
+          <h3>No accounts found</h3>
+          <p>Try adjusting your search or filters. If you can't find who you're looking for, you may need to create a new account.</p>
+          <button class="btn btn-primary" onclick="document.getElementById('btnNewAccount').click()">
+            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            Add New Account
+          </button>
+        </div>
+
+        <!-- PAGINATION -->
+        <div class="pagination" id="pagination">
+          <span class="page-info" id="pageInfo">Page 1 of 3</span>
+          <div class="page-controls">
+            <button class="page-btn" id="prevPage" disabled>‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn" id="nextPage">›</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ============================================================
+       TOAST CONTAINER
+       ============================================================ -->
+  <div class="toast-container" id="toastContainer"></div>
+
+<script>
+/* ==========================================================================
+   UPHSD MOLINO — ACCOUNT MANAGEMENT
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   ROLE DEFINITIONS
+   Each role has a set of allowed actions.
+   -------------------------------------------------------------------------- */
+const ROLES = {
+  secretary: {
+    label: 'Secretary',
+    userName: 'Maria Cruz',
+    initials: 'MC',
+    permissions: ['add', 'edit', 'delete', 'view']
+  },
+  ea: {
+    label: 'Executive Assistant',
+    userName: 'Anna Reyes',
+    initials: 'AR',
+    permissions: ['add', 'edit', 'delete', 'view']
+  },
+  director: {
+    label: 'School Director',
+    userName: 'Dr. Ramon Santos',
+    initials: 'RS',
+    permissions: ['edit', 'view', 'authorize']
+  }
+};
+
+let currentRole = 'secretary'; // default
+let currentUser = ROLES[currentRole];
+
+/* --------------------------------------------------------------------------
+   MOCK DATA — Accounts
+   status: 'active' | 'inactive' | 'pending' | 'rejected'
+   pendingType: null | 'create' | 'edit' | 'delete'  (only if pending)
+   -------------------------------------------------------------------------- */
+const accounts = [
+  {
+    id: 1, name: 'Maria Cruz', email: 'maria.cruz@uphsd.edu.ph',
+    role: 'Secretary', dept: "Director's Office", status: 'active',
+    lastLogin: '2025-01-15 09:24 AM', initials: 'MC'
+  },
+  {
+    id: 2, name: 'Anna Reyes', email: 'anna.reyes@uphsd.edu.ph',
+    role: 'Executive Assistant', dept: "Director's Office", status: 'active',
+    lastLogin: '2025-01-15 08:12 AM', initials: 'AR'
+  },
+  {
+    id: 3, name: 'Dr. Ramon Santos', email: 'ramon.santos@uphsd.edu.ph',
+    role: 'Director', dept: "Director's Office", status: 'active',
+    lastLogin: '2025-01-15 10:03 AM', initials: 'RS'
+  },
+  {
+    id: 4, name: 'Carlos Mendoza', email: 'carlos.mendoza@uphsd.edu.ph',
+    role: 'Faculty', dept: 'Academics', status: 'pending',
+    pendingType: 'create', lastLogin: '—', initials: 'CM',
+    requestedBy: 'Maria Cruz'
+  },
+  {
+    id: 5, name: 'Liza Fernandez', email: 'liza.fernandez@uphsd.edu.ph',
+    role: 'Staff', dept: 'Registrar', status: 'active',
+    lastLogin: '2025-01-14 04:45 PM', initials: 'LF'
+  },
+  {
+    id: 6, name: 'Jose Villanueva', email: 'jose.villanueva@uphsd.edu.ph',
+    role: 'Department Head', dept: 'Accounting', status: 'pending',
+    pendingType: 'edit', lastLogin: '2025-01-10 02:30 PM', initials: 'JV',
+    requestedBy: 'Anna Reyes',
+    pendingNote: 'Update role from Staff → Department Head'
+  },
+  {
+    id: 7, name: 'Rina Gomez', email: 'rina.gomez@uphsd.edu.ph',
+    role: 'Staff', dept: 'Human Resources', status: 'active',
+    lastLogin: '2025-01-13 11:18 AM', initials: 'RG'
+  },
+  {
+    id: 8, name: 'Mark Bautista', email: 'mark.bautista@uphsd.edu.ph',
+    role: 'Faculty', dept: 'Academics', status: 'inactive',
+    lastLogin: '2024-12-20 03:00 PM', initials: 'MB'
+  },
+  {
+    id: 9, name: 'Sophia Lim', email: 'sophia.lim@uphsd.edu.ph',
+    role: 'Staff', dept: 'Student Affairs', status: 'pending',
+    pendingType: 'delete', lastLogin: '2025-01-05 09:00 AM', initials: 'SL',
+    requestedBy: 'Maria Cruz',
+    pendingNote: 'Resigned — request to deactivate account'
+  },
+  {
+    id: 10, name: 'Gabriel Tan', email: 'gabriel.tan@uphsd.edu.ph',
+    role: 'Faculty', dept: 'Academics', status: 'active',
+    lastLogin: '2025-01-15 07:45 AM', initials: 'GT'
+  },
+  {
+    id: 11, name: 'Patricia Aquino', email: 'patricia.aquino@uphsd.edu.ph',
+    role: 'Staff', dept: 'Registrar', status: 'active',
+    lastLogin: '2025-01-14 01:22 PM', initials: 'PA'
+  },
+  {
+    id: 12, name: 'Daniel Rivera', email: 'daniel.rivera@uphsd.edu.ph',
+    role: 'Department Head', dept: 'Academics', status: 'inactive',
+    lastLogin: '2024-11-30 05:10 PM', initials: 'DR'
+  }
+];
+
+/* --------------------------------------------------------------------------
+   STATE
+   -------------------------------------------------------------------------- */
+let selectedIds = new Set();
+let filteredAccounts = [...accounts];
+
+/* --------------------------------------------------------------------------
+   HELPERS
+   -------------------------------------------------------------------------- */
+function hasPermission(action) {
+  return currentUser.permissions.includes(action);
+}
+
+function getInitials(name) {
+  return name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+}
+
+function statusLabel(status) {
+  return {
+    active: 'Active',
+    inactive: 'Inactive',
+    pending: 'Pending Auth',
+    rejected: 'Rejected'
+  }[status] || status;
+}
+
+function pendingLabel(type) {
+  return {
+    create: 'Create request',
+    edit: 'Edit request',
+    delete: 'Delete request'
+  }[type] || 'Pending';
+}
+
+/* --------------------------------------------------------------------------
+   TOAST
+   -------------------------------------------------------------------------- */
+function showToast(type, title, message) {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + (type || '');
+
+  const icons = {
+    success: `<svg viewBox="0 0 24 24" fill="#2ed573"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>`,
+    gold:    `<svg viewBox="0 0 24 24" fill="#D4AF37"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3z"/></svg>`,
+    error:   `<svg viewBox="0 0 24 24" fill="#ff4757"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>`,
+    info:    `<svg viewBox="0 0 24 24" fill="#4682dc"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`
+  };
+
+  toast.innerHTML = `
+    <div class="toast-icon">${icons[type] || icons.info}</div>
+    <div class="toast-text">
+      <h4>${title}</h4>
+      <p>${message}</p>
+    </div>
+  `;
+
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add('fade-out');
+    setTimeout(() => toast.remove(), 300);
+  }, 3800);
+}
+
+/* --------------------------------------------------------------------------
+   RENDER — Accounts table
+   -------------------------------------------------------------------------- */
+function renderAccounts() {
+  const tbody = document.getElementById('accountsBody');
+  const emptyState = document.getElementById('emptyState');
+  const table = document.getElementById('accountsTable');
+  const pagination = document.getElementById('pagination');
+
+  // Apply filters
+  const search = document.getElementById('searchInput').value.toLowerCase().trim();
+  const roleFilter = document.getElementById('filterRole').value;
+  const deptFilter = document.getElementById('filterDept').value;
+  const statusFilter = document.getElementById('filterStatus').value;
+
+  filteredAccounts = accounts.filter(a => {
+    const matchesSearch = !search ||
+      a.name.toLowerCase().includes(search) ||
+      a.email.toLowerCase().includes(search);
+    const matchesRole = !roleFilter || a.role === roleFilter;
+    const matchesDept = !deptFilter || a.dept === deptFilter;
+    const matchesStatus = !statusFilter || a.status === statusFilter;
+    return matchesSearch && matchesRole && matchesDept && matchesStatus;
+  });
+
+  // Update count
+  document.getElementById('resultCount').textContent =
+    `Showing ${filteredAccounts.length} of ${accounts.length} accounts`;
+
+  // Update stats
+  updateStats();
+
+  // Empty state
+  if (filteredAccounts.length === 0) {
+    tbody.innerHTML = '';
+    table.style.display = 'none';
+    pagination.style.display = 'none';
+    emptyState.classList.add('show');
+    return;
+  } else {
+    table.style.display = '';
+    pagination.style.display = '';
+    emptyState.classList.remove('show');
+  }
+
+  // Build rows
+  tbody.innerHTML = filteredAccounts.map(a => {
+    const isSelected = selectedIds.has(a.id);
+    return `
+      <tr class="${isSelected ? 'selected' : ''}" data-id="${a.id}">
+        <td class="center">
+          <label class="checkbox-wrap">
+            <input type="checkbox" class="row-checkbox" data-id="${a.id}" ${isSelected ? 'checked' : ''}/>
+          </label>
+        </td>
+        <td>
+          <div class="user-cell">
+            <div class="avatar ${a.role === 'Director' ? 'gold' : ''}">${a.initials}</div>
+            <div class="meta">
+              <div class="name">${a.name}</div>
+              <div class="email">${a.email}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="role-tag">${a.role}</span></td>
+        <td>${a.dept}</td>
+        <td>
+          <span class="status-badge ${a.status}">${statusLabel(a.status)}</span>
+          ${a.status === 'pending' && a.pendingType
+            ? `<div class="pending-action">${pendingLabel(a.pendingType)}${a.requestedBy ? ' · ' + a.requestedBy : ''}</div>`
+            : ''}
+        </td>
+        <td>${a.lastLogin}</td>
+        <td>
+          <div class="actions">${renderActions(a)}</div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  // Attach row checkbox listeners
+  tbody.querySelectorAll('.row-checkbox').forEach(cb => {
+    cb.addEventListener('change', (e) => {
+      const id = parseInt(e.target.dataset.id);
+      if (e.target.checked) selectedIds.add(id);
+      else selectedIds.delete(id);
+      updateBulkBar();
+      e.target.closest('tr').classList.toggle('selected', e.target.checked);
+      updateSelectAllState();
+    });
+  });
+
+  // Attach action button listeners
+  tbody.querySelectorAll('[data-action]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const action = btn.dataset.action;
+      const id = parseInt(btn.dataset.id);
+      handleAction(action, id);
+    });
+  });
+
+  updateBulkBar();
+  updateSelectAllState();
+  updatePaginationInfo();
+}
+
+/* --------------------------------------------------------------------------
+   RENDER — Action buttons per row (role-aware)
+   -------------------------------------------------------------------------- */
+function renderActions(account) {
+  const buttons = [];
+
+  // VIEW — everyone
+  if (hasPermission('view')) {
+    buttons.push(`
+      <button class="action-btn view" data-action="view" data-id="${account.id}" title="View">
+        <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
+      </button>
+    `);
+  }
+
+  // EDIT — everyone (Director can edit too)
+  if (hasPermission('edit')) {
+    buttons.push(`
+      <button class="action-btn edit" data-action="edit" data-id="${account.id}" title="Edit">
+        <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+      </button>
+    `);
+  }
+
+  // DELETE — Secretary / EA only
+  if (hasPermission('delete')) {
+    buttons.push(`
+      <button class="action-btn delete" data-action="delete" data-id="${account.id}" title="Delete">
+        <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+      </button>
+    `);
+  }
+
+  // AUTHORIZE — Director only, and only for pending accounts
+  if (hasPermission('authorize') && account.status === 'pending') {
+    buttons.push(`
+      <button class="action-btn authorize" data-action="authorize" data-id="${account.id}" title="Authorize">
+        <svg viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        Authorize
+      </button>
+    `);
+  }
+
+  return buttons.join('');
+}
+
+/* --------------------------------------------------------------------------
+   ACTION HANDLER
+   -------------------------------------------------------------------------- */
+function handleAction(action, id) {
+  const account = accounts.find(a => a.id === id);
+  if (!account) return;
+
+  switch (action) {
+    case 'view':
+      showToast('info', 'View Account', `Opening details for ${account.name}...`);
+      // TODO: open drawer / modal with account details
+      break;
+
+    case 'edit':
+      showToast('gold', 'Edit Account', `Editing ${account.name}... Changes will require Director authorization.`);
+      // TODO: open edit modal
+      break;
+
+    case 'delete':
+      if (confirm(`Request deletion of "${account.name}"?\n\nThis will be sent to the School Director for authorization.`)) {
+        account.status = 'pending';
+        account.pendingType = 'delete';
+        account.requestedBy = currentUser.label;
+        showToast('gold', 'Deletion Request Sent', `Request to delete ${account.name} is now pending Director approval.`);
+        renderAccounts();
+      }
+      break;
+
+    case 'authorize':
+      authorizeAccount(account);
+      break;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   AUTHORIZE (Director only)
+   -------------------------------------------------------------------------- */
+function authorizeAccount(account) {
+  const verb = {
+    create: 'creation',
+    edit: 'edit',
+    delete: 'deletion'
+  }[account.pendingType] || 'request';
+
+  if (!confirm(`Authorize the ${verb} of "${account.name}"?\n\nThis action will be final.`)) return;
+
+  if (account.pendingType === 'create') {
+    account.status = 'active';
+    account.lastLogin = 'Never';
+  } else if (account.pendingType === 'edit') {
+    account.status = 'active';
+  } else if (account.pendingType === 'delete') {
+    account.status = 'inactive';
+  }
+
+  account.pendingType = null;
+  account.pendingNote = null;
+  account.requestedBy = null;
+
+  showToast('success', 'Authorization Granted', `${account.name}'s ${verb} has been authorized.`);
+  renderAccounts();
+}
+
+/* --------------------------------------------------------------------------
+   BULK SELECTION
+   -------------------------------------------------------------------------- */
+function updateBulkBar() {
+  const bulkBar = document.getElementById('bulkBar');
+  const bulkCount = document.getElementById('bulkCount');
+  const bulkActions = document.getElementById('bulkActions');
+
+  if (selectedIds.size === 0) {
+    bulkBar.classList.remove('show');
+    return;
+  }
+
+  bulkBar.classList.add('show');
+  bulkCount.textContent = `${selectedIds.size} selected`;
+
+  // Build bulk actions based on role
+  const btns = [];
+
+  if (hasPermission('delete')) {
+    btns.push(`<button class="btn danger" onclick="bulkDelete()">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+      Request Delete
+    </button>`);
+  }
+
+  if (hasPermission('authorize')) {
+    btns.push(`<button class="btn" onclick="bulkAuthorize()">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+      Authorize All
+    </button>`);
+  }
+
+  btns.push(`<button class="btn" onclick="bulkExport()">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+    Export
+  </button>`);
+
+  bulkActions.innerHTML = btns.join('');
+}
+
+function clearSelection() {
+  selectedIds.clear();
+  renderAccounts();
+}
+
+function bulkDelete() {
+  if (selectedIds.size === 0) return;
+  if (!confirm(`Send deletion request for ${selectedIds.size} account(s)?\n\nThese will go to the School Director for authorization.`)) return;
+
+  selectedIds.forEach(id => {
+    const a = accounts.find(x => x.id === id);
+    if (a) {
+      a.status = 'pending';
+      a.pendingType = 'delete';
+      a.requestedBy = currentUser.label;
+    }
+  });
+
+  showToast('gold', 'Bulk Deletion Requested', `${selectedIds.size} account(s) are now pending Director authorization.`);
+  selectedIds.clear();
+  renderAccounts();
+}
+
+function bulkAuthorize() {
+  if (selectedIds.size === 0) return;
+  const pendingSelected = [...selectedIds].filter(id => {
+    const a = accounts.find(x => x.id === id);
+    return a && a.status === 'pending';
+  });
+
+  if (pendingSelected.length === 0) {
+    showToast('error', 'No Pending Accounts', 'None of the selected accounts are pending authorization.');
+    return;
+  }
+
+  if (!confirm(`Authorize ${pendingSelected.length} pending request(s)?`)) return;
+
+  pendingSelected.forEach(id => {
+    const a = accounts.find(x => x.id === id);
+    if (!a) return;
+    if (a.pendingType === 'create') { a.status = 'active'; a.lastLogin = 'Never'; }
+    else if (a.pendingType === 'edit') { a.status = 'active'; }
+    else if (a.pendingType === 'delete') { a.status = 'inactive'; }
+    a.pendingType = null;
+    a.requestedBy = null;
+  });
+
+  showToast('success', 'Bulk Authorization Complete', `${pendingSelected.length} request(s) authorized.`);
+  selectedIds.clear();
+  renderAccounts();
+}
+
+function bulkExport() {
+  showToast('info', 'Export Started', `Preparing CSV export for ${selectedIds.size} account(s)...`);
+}
+
+/* --------------------------------------------------------------------------
+   SELECT ALL
+   -------------------------------------------------------------------------- */
+function updateSelectAllState() {
+  const selectAll = document.getElementById('selectAll');
+  const visibleIds = filteredAccounts.map(a => a.id);
+  const allSelected = visibleIds.length > 0 && visibleIds.every(id => selectedIds.has(id));
+  const someSelected = visibleIds.some(id => selectedIds.has(id));
+  selectAll.checked = allSelected;
+  selectAll.indeterminate = !allSelected && someSelected;
+}
+
+document.getElementById('selectAll').addEventListener('change', (e) => {
+  if (e.target.checked) {
+    filteredAccounts.forEach(a => selectedIds.add(a.id));
+  } else {
+    filteredAccounts.forEach(a => selectedIds.delete(a.id));
+  }
+  renderAccounts();
+});
+
+/* --------------------------------------------------------------------------
+   STATS
+   -------------------------------------------------------------------------- */
+function updateStats() {
+  document.getElementById('statTotal').textContent = accounts.length;
+  document.getElementById('statActive').textContent = accounts.filter(a => a.status === 'active').length;
+  document.getElementById('statPending').textContent = accounts.filter(a => a.status === 'pending').length;
+  document.getElementById('statInactive').textContent = accounts.filter(a => a.status === 'inactive').length;
+  document.getElementById('bannerCount').textContent = accounts.filter(a => a.status === 'pending').length;
+  document.getElementById('approvalBadgeSide').textContent = accounts.filter(a => a.status === 'pending').length;
+}
+
+/* --------------------------------------------------------------------------
+   ROLE — Apply permissions to UI
+   -------------------------------------------------------------------------- */
+function applyRole() {
+  currentUser = ROLES[currentRole];
+
+  // Update user chip
+  document.getElementById('userName').textContent = currentUser.userName;
+  document.getElementById('userRoleLabel').textContent = currentUser.label;
+  document.getElementById('userAvatar').textContent = currentUser.initials;
+
+  // Show / hide "New Account" button
+  const btnNew = document.getElementById('btnNewAccount');
+  btnNew.style.display = hasPermission('add') ? 'inline-flex' : 'none';
+
+  // Show / hide approval banner (Director only)
+  const banner = document.getElementById('approvalBanner');
+  const pendingCount = accounts.filter(a => a.status === 'pending').length;
+  banner.style.display = (hasPermission('authorize') && pendingCount > 0) ? 'flex' : 'none';
+
+  // Re-render table (action buttons adapt to role)
+  renderAccounts();
+}
+
+document.getElementById('roleSwitcher').addEventListener('change', (e) => {
+  currentRole = e.target.value;
+  selectedIds.clear();
+  applyRole();
+  showToast('info', 'Role Switched', `Now viewing as ${currentUser.label}.`);
+});
+
+/* --------------------------------------------------------------------------
+   NEW ACCOUNT
+   -------------------------------------------------------------------------- */
+document.getElementById('btnNewAccount').addEventListener('click', () => {
+  if (!hasPermission('add')) {
+    showToast('error', 'Permission Denied', 'Only Secretary and Executive Assistant can create new accounts.');
+    return;
+  }
+  showToast('gold', 'New Account', 'The "Create Account" modal will open in the next step.');
+  // TODO: Step 2 — open modal
+});
+
+/* --------------------------------------------------------------------------
+   FILTERS
+   -------------------------------------------------------------------------- */
+['searchInput', 'filterRole', 'filterDept', 'filterStatus'].forEach(id => {
+  document.getElementById(id).addEventListener('input', renderAccounts);
+  document.getElementById(id).addEventListener('change', renderAccounts);
+});
+
+function filterPending() {
+  document.getElementById('filterStatus').value = 'pending';
+  renderAccounts();
+  window.scrollTo({ top: document.querySelector('.table-card').offsetTop - 100, behavior: 'smooth' });
+}
+
+/* --------------------------------------------------------------------------
+   PAGINATION (visual only for now)
+   -------------------------------------------------------------------------- */
+function updatePaginationInfo() {
+  document.getElementById('pageInfo').textContent = `Page 1 of 1 · ${filteredAccounts.length} records`;
+}
+
+/* --------------------------------------------------------------------------
+   DARK MODE
+   -------------------------------------------------------------------------- */
+const THEME_KEY = 'uphsdTheme';
+
+function applyTheme(theme) {
+  const isDark = theme === 'dark';
+  document.body.classList.toggle('dark-mode', isDark);
+  const icon = document.getElementById('themeIcon');
+  icon.innerHTML = isDark
+    ? `<path d="M21.64 13a1 1 0 00-1.05-.14 8.05 8.05 0 01-3.37.73 8.15 8.15 0 01-8.14-8.1 8.59 8.59 0 01.25-2A1 1 0 008 2.36a10.14 10.14 0 1014 11.69 1 1 0 00-.36-1.05z"/>`
+    : `<path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 7.06a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0z"/>`;
+}
+
+function getInitialTheme() {
+  const saved = localStorage.getItem(THEME_KEY);
+  if (saved === 'dark' || saved === 'light') return saved;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+applyTheme(getInitialTheme());
+
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const isDark = document.body.classList.contains('dark-mode');
+  const next = isDark ? 'light' : 'dark';
+  applyTheme(next);
+  localStorage.setItem(THEME_KEY, next);
+});
+
+/* --------------------------------------------------------------------------
+   MOBILE SIDEBAR
+   -------------------------------------------------------------------------- */
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('overlayBackdrop').classList.add('show');
+});
+
+document.getElementById('overlayBackdrop').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlayBackdrop').classList.remove('show');
+});
+
+/* --------------------------------------------------------------------------
+   INIT
+   -------------------------------------------------------------------------- */
+document.getElementById('year').textContent = new Date().getFullYear();
+applyRole();
+
+</script>
+</body>
+</html>
