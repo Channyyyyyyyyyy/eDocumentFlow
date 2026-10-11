@@ -20,40 +20,60 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
 
+  /* =========================================================
+     BACKGROUND  ←  PUT YOUR SCHOOL IMAGE HERE
+     ========================================================= */
   body {
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #4a0a0c 0%, #7B1113 50%, #5A0C0E 100%);
     padding: 20px;
     position: relative;
     overflow: hidden;
+
+    /* Fallback maroon gradient (shows while image loads or if it fails) */
+    background: linear-gradient(135deg, #4a0a0c 0%, #7B1113 50%, #5A0C0E 100%);
   }
 
-  body::before,
+  /* --- Background image layer --- */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+
+    /* 👇 REPLACE "school-bg.jpg" WITH YOUR ACTUAL IMAGE FILENAME 👇 */
+    background-image: url('school-bg.jpg');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+    /* ---- BLUR AMOUNT ---- */
+    filter: blur(6px) brightness(0.85);
+    transform: scale(1.08); /* prevents white edges from blur */
+    z-index: 0;
+  }
+
+  /* --- Maroon tint overlay (keeps white card readable) --- */
   body::after {
     content: '';
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(90px);
-    opacity: 0.35;
-  }
-  body::before {
-    width: 450px;
-    height: 450px;
-    background: #D4AF37;
-    top: -180px;
-    left: -180px;
-  }
-  body::after {
-    width: 500px;
-    height: 500px;
-    background: #F4C430;
-    bottom: -220px;
-    right: -220px;
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background:
+      linear-gradient(
+        135deg,
+        rgba(74, 10, 12, 0.85) 0%,
+        rgba(123, 17, 19, 0.75) 50%,
+        rgba(90, 12, 14, 0.85) 100%
+      );
+    pointer-events: none;
   }
 
+  /* ========== LOGIN CARD ========== */
   .login-container {
     position: relative;
     z-index: 2;
@@ -63,8 +83,8 @@
     border-radius: 20px;
     padding: 45px 40px;
     box-shadow:
-      0 25px 50px rgba(0, 0, 0, 0.45),
-      0 0 0 4px rgba(212, 175, 55, 0.25);
+      0 25px 50px rgba(0, 0, 0, 0.55),
+      0 0 0 4px rgba(212, 175, 55, 0.35);
     animation: fadeIn 0.7s ease;
     border-top: 6px solid #D4AF37;
   }
@@ -82,7 +102,6 @@
     margin-bottom: 30px;
   }
 
-  /* --- Circular logo container --- */
   .logo-circle {
     width: 110px;
     height: 110px;
@@ -100,7 +119,6 @@
     position: relative;
   }
 
-  /* --- The actual logo image --- */
   .logo-circle img {
     width: 100%;
     height: 100%;
@@ -109,7 +127,6 @@
     display: block;
   }
 
-  /* --- Fallback icon (shows if image fails to load) --- */
   .logo-circle .fallback-icon {
     width: 55px;
     height: 55px;
@@ -117,7 +134,6 @@
     display: none;
   }
 
-  /* When image fails, JS adds .img-failed to .logo-circle */
   .logo-circle.img-failed img {
     display: none;
   }
@@ -125,7 +141,6 @@
     display: block;
   }
 
-  /* --- School name & subtitle --- */
   .logo-area h1 {
     color: #7B1113;
     font-size: 1.1rem;
@@ -409,6 +424,8 @@
     .logo-area h1 { font-size: 0.95rem; }
     .logo-circle { width: 92px; height: 92px; }
     .logo-circle .fallback-icon { width: 45px; height: 45px; }
+    /* Reduce blur on mobile so image stays visible */
+    body::before { filter: blur(4px) brightness(0.85); }
   }
 </style>
 </head>
@@ -418,17 +435,6 @@
 
     <!-- =================================================================
          🎓 LOGO SLOT  🎓
-         =================================================================
-         Put your UPHSD Molino logo image in the SAME folder as this HTML
-         file, then update the "src" below.
-
-         Recommended filenames:
-           • uphsd-logo.png
-           • uphsd-logo.svg   (best quality — scales perfectly)
-
-         Recommended image specs:
-           • Square image (1:1 ratio)
-           • At least 300x300 px (transparent background PNG preferred)
          ================================================================= -->
     <div class="logo-area">
       <div class="logo-circle" id="logoCircle">
@@ -438,12 +444,10 @@
           src="uphsd-logo.png"
           alt="UPHSD Molino Campus Logo"
         />
-        <!-- Fallback icon — auto-shows if logo image is missing -->
         <svg class="fallback-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
         </svg>
       </div>
-      <!-- ================================================================= -->
 
       <h1>
         University of Perpetual Help System DALTA<br/>
@@ -531,12 +535,9 @@
   document.getElementById('year').textContent = new Date().getFullYear();
 
   // ---- LOGO FALLBACK ----
-  // If the logo image can't load (wrong filename / missing file),
-  // hide it and show the graduation-cap icon instead.
   schoolLogo.addEventListener('error', () => {
     logoCircle.classList.add('img-failed');
   });
-  // If the logo successfully loads, make sure fallback stays hidden
   schoolLogo.addEventListener('load', () => {
     logoCircle.classList.remove('img-failed');
   });
@@ -624,31 +625,29 @@
 
     setLoading(true);
 
-    /*
-     * ============================================================
-     *  BACKEND INTEGRATION POINT
-     * ------------------------------------------------------------
-     *  fetch('/api/admin/login', {
-     *      method: 'POST',
-     *      headers: { 'Content-Type': 'application/json' },
-     *      body: JSON.stringify(payload)
-     *  })
-     *  .then(res => res.json())
-     *  .then(data => {
-     *      setLoading(false);
-     *      if (data.success) {
-     *          showMessage(successBox, 'Login successful. Redirecting...');
-     *          setTimeout(() => { window.location.href = '/dashboard'; }, 1200);
-     *      } else {
-     *          showMessage(errorBox, data.message || 'Invalid credentials.');
-     *      }
-     *  })
-     *  .catch(() => {
-     *      setLoading(false);
-     *      showMessage(errorBox, 'Server error. Please try again.');
-     *  });
-     * ============================================================
-     */
+    /* ============================================================
+       BACKEND INTEGRATION POINT
+       ============================================================
+       fetch('/api/admin/login', {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify(payload)
+       })
+       .then(res => res.json())
+       .then(data => {
+           setLoading(false);
+           if (data.success) {
+               showMessage(successBox, 'Login successful. Redirecting...');
+               setTimeout(() => { window.location.href = '/dashboard'; }, 1200);
+           } else {
+               showMessage(errorBox, data.message || 'Invalid credentials.');
+           }
+       })
+       .catch(() => {
+           setLoading(false);
+           showMessage(errorBox, 'Server error. Please try again.');
+       });
+       ============================================================ */
 
     // ----- MOCK RESPONSE (remove when backend is ready) -----
     console.log('Login payload sent to backend:', payload);
