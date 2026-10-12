@@ -7,33 +7,6 @@
 <link rel="stylesheet" href="shared.css" />
 
 <style>
-  /* =====================================================================
-     ROUTING & TRACKING — PAGE-SPECIFIC STYLES
-     ===================================================================== */
-
-  /* ---------- Read-only notice ---------- */
-  .view-only-notice {
-    background: rgba(212,175,55,0.12);
-    border: 1.5px solid var(--gold);
-    border-left: 5px solid var(--gold);
-    border-radius: var(--radius-lg);
-    padding: 14px 18px;
-    margin-bottom: 18px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-  }
-  .view-only-notice svg {
-    width: 22px;
-    height: 22px;
-    fill: var(--gold);
-    flex-shrink: 0;
-  }
-  .view-only-notice strong { color: var(--text-primary); }
-
-  /* ---------- Tabs ---------- */
   .routing-tabs {
     display: flex;
     gap: 4px;
@@ -99,7 +72,6 @@
     color: #1a1414;
   }
 
-  /* ---------- Document cell ---------- */
   .doc-cell {
     display: flex;
     align-items: center;
@@ -145,7 +117,6 @@
     margin-top: 3px;
   }
 
-  /* ---------- Route flow (from → to) ---------- */
   .route-flow {
     display: flex;
     align-items: center;
@@ -169,7 +140,6 @@
     flex-shrink: 0;
   }
 
-  /* ---------- Routing status badges ---------- */
   .routing-status {
     display: inline-flex;
     align-items: center;
@@ -190,21 +160,20 @@
     background: currentColor;
   }
 
-  .routing-status.draft       { background: rgba(120,120,120,0.12); color: #5a5a5a; border-color: rgba(120,120,120,0.4); }
-  .routing-status.in-transit  { background: rgba(70,130,220,0.12);  color: #4682dc; border-color: rgba(70,130,220,0.4); }
-  .routing-status.received    { background: rgba(139,92,246,0.12);  color: #8b5cf6; border-color: rgba(139,92,246,0.4); }
-  .routing-status.under-review{ background: rgba(244,196,48,0.15);  color: #8a6d1f; border-color: rgba(212,175,55,0.55); }
-  .routing-status.completed   { background: rgba(46,213,115,0.12);  color: #1e8a4d; border-color: rgba(46,213,115,0.4); }
-  .routing-status.returned    { background: rgba(255,71,87,0.12);   color: #d43a45; border-color: rgba(255,71,87,0.4); }
+  .routing-status.draft        { background: rgba(120,120,120,0.12); color: #5a5a5a; border-color: rgba(120,120,120,0.4); }
+  .routing-status.in-transit   { background: rgba(70,130,220,0.12);  color: #4682dc; border-color: rgba(70,130,220,0.4); }
+  .routing-status.received     { background: rgba(139,92,246,0.12);  color: #8b5cf6; border-color: rgba(139,92,246,0.4); }
+  .routing-status.under-review { background: rgba(244,196,48,0.15);  color: #8a6d1f; border-color: rgba(212,175,55,0.55); }
+  .routing-status.completed    { background: rgba(46,213,115,0.12);  color: #1e8a4d; border-color: rgba(46,213,115,0.4); }
+  .routing-status.returned     { background: rgba(255,71,87,0.12);   color: #d43a45; border-color: rgba(255,71,87,0.4); }
 
-  body.dark-mode .routing-status.draft       { color: #a0a0a0; }
-  body.dark-mode .routing-status.in-transit  { color: #7ea8ee; }
-  body.dark-mode .routing-status.received    { color: #b298fa; }
-  body.dark-mode .routing-status.under-review{ color: var(--gold); }
-  body.dark-mode .routing-status.completed   { color: #4ade80; }
-  body.dark-mode .routing-status.returned    { color: #ff8b96; }
+  body.dark-mode .routing-status.draft        { color: #a0a0a0; }
+  body.dark-mode .routing-status.in-transit   { color: #7ea8ee; }
+  body.dark-mode .routing-status.received     { color: #b298fa; }
+  body.dark-mode .routing-status.under-review { color: var(--gold); }
+  body.dark-mode .routing-status.completed    { color: #4ade80; }
+  body.dark-mode .routing-status.returned     { color: #ff8b96; }
 
-  /* ---------- Priority ---------- */
   .priority {
     display: inline-flex;
     align-items: center;
@@ -225,7 +194,6 @@
   .priority.low    { color: #1e8a4d; }
   .priority.low::before { background: #2ed573; }
 
-  /* ---------- Route Document Modal ---------- */
   .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -235,7 +203,6 @@
     .form-row { grid-template-columns: 1fr; }
   }
 
-  /* ---------- Timeline (view modal) ---------- */
   .route-timeline {
     display: flex;
     flex-direction: column;
@@ -319,17 +286,35 @@
   .route-step.done:not(:last-child)::after {
     background: rgba(46,213,115,0.4);
   }
+
+  .view-only-notice {
+    background: rgba(212,175,55,0.12);
+    border: 1.5px solid var(--gold);
+    border-left: 5px solid var(--gold);
+    border-radius: var(--radius-lg);
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+  .view-only-notice svg {
+    width: 22px;
+    height: 22px;
+    fill: var(--gold);
+    flex-shrink: 0;
+  }
+  .view-only-notice strong { color: var(--text-primary); }
 </style>
 </head>
 <body>
 
-  <!-- ============================================================
-       SIDEBAR
-       ============================================================ -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <div class="brand-logo">
-        <img src="uphsd-logo.png" alt="Logo">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
         </svg>
       </div>
@@ -356,7 +341,7 @@
       <a class="nav-item" href="approvals.html" data-page="approvals.html">
         <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
         Approvals
-        <span class="nav-badge" id="approvalBadgeSide">5</span>
+        <span class="nav-badge" id="approvalBadgeSide">0</span>
       </a>
       <a class="nav-item" href="notifications.html" data-page="notifications.html">
         <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
@@ -388,12 +373,8 @@
 
   <div class="overlay-backdrop" id="overlayBackdrop"></div>
 
-  <!-- ============================================================
-       MAIN
-       ============================================================ -->
   <main class="main">
 
-    <!-- ========== TOP BAR ========== -->
     <header class="topbar">
       <button class="hamburger" id="hamburger" aria-label="Menu">
         <svg viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
@@ -404,8 +385,7 @@
         <p>Route documents through the workflow and monitor their movement</p>
       </div>
 
-      
-
+      <div class="topbar-actions">
         <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
           <svg id="themeIcon" viewBox="0 0 24 24">
             <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 7.06a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0z"/>
@@ -418,19 +398,17 @@
         </button>
 
         <div class="user-chip" id="userChip" title="Click to log out">
-          <div class="user-avatar" id="userAvatar">MC</div>
+          <div class="user-avatar" id="userAvatar">—</div>
           <div class="user-info">
-            <span class="name" id="userName">Maria Cruz</span>
-            <span class="role" id="userRoleLabel">Secretary</span>
+            <span class="name" id="userName">—</span>
+            <span class="role" id="userRoleLabel">—</span>
           </div>
         </div>
       </div>
     </header>
 
-    <!-- ========== CONTENT ========== -->
     <div class="content">
 
-      <!-- Director read-only notice -->
       <div class="view-only-notice" id="viewOnlyNotice" style="display:none;">
         <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
         <span>
@@ -438,7 +416,6 @@
         </span>
       </div>
 
-      <!-- STATS -->
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon maroon">
@@ -481,7 +458,6 @@
         </div>
       </div>
 
-      <!-- TABS -->
       <div class="routing-tabs" id="routingTabs">
         <button class="routing-tab active" data-tab="all">
           All Routes <span class="tab-count" data-count="all">0</span>
@@ -506,14 +482,12 @@
         </button>
       </div>
 
-      <!-- BULK BAR -->
       <div class="bulk-bar" id="bulkBar">
         <span class="bulk-count" id="bulkCount">0 selected</span>
         <div class="bulk-actions" id="bulkActions"></div>
         <button class="btn btn-ghost" style="background:transparent;color:inherit;border-color:rgba(255,255,255,0.3);" onclick="Routing.clearSelection()">Clear</button>
       </div>
 
-      <!-- TOOLBAR -->
       <div class="toolbar">
         <div class="search-box">
           <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
@@ -547,14 +521,12 @@
           <option value="low">Low</option>
         </select>
 
-        <!-- Route Document button — hidden by default, shown only for Secretary -->
         <button class="btn btn-primary" id="btnRouteDoc" style="margin-left:auto;display:none;">
           <svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
           Route Document
         </button>
       </div>
 
-      <!-- TABLE -->
       <div class="table-card">
         <div class="table-header-row">
           <h2 id="tableTitle">All Routed Documents</h2>
@@ -611,7 +583,7 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- ============================================================
-       MODAL — Route Document (Secretary only)
+       MODAL — Route Document
        ============================================================ -->
   <div class="modal-backdrop" id="routeModal">
     <div class="modal">
@@ -630,13 +602,8 @@
           <label for="routeDocSelect">Document <span class="req">*</span></label>
           <select id="routeDocSelect">
             <option value="">Select document...</option>
-            <option value="Budget Proposal FY 2025-2026.pdf">Budget Proposal FY 2025-2026.pdf</option>
-            <option value="HR Staffing Memo.docx">HR Staffing Memo.docx</option>
-            <option value="Faculty Evaluation Summary.docx">Faculty Evaluation Summary.docx</option>
-            <option value="Registrar Report Q4 2024.xlsx">Registrar Report Q4 2024.xlsx</option>
-            <option value="Board Resolution Jan 2025.pdf">Board Resolution Jan 2025.pdf</option>
-            <option value="Student Affairs Report.pdf">Student Affairs Report.pdf</option>
           </select>
+          <div class="form-hint">Documents you upload will appear here once loaded from the backend.</div>
         </div>
 
         <div class="form-row">
@@ -742,7 +709,6 @@
 
       <div class="modal-footer" id="viewFooter">
         <button class="btn btn-ghost" onclick="APP.Modal.close('viewModal')">Close</button>
-        <!-- 🔄 Status update button — shown to Secretary + EA only -->
         <button class="btn btn-primary" id="btnUpdateStatus" style="display:none;">
           <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4a8 8 0 00-7.73 6H2l4 4 4-4H6.07A6 6 0 1112 18a5.98 5.98 0 01-4.24-1.76l-1.41 1.41A8 8 0 1019.73 6H22l-4 4-4-4h3.65z"/></svg>
           Update Status
@@ -752,7 +718,7 @@
   </div>
 
   <!-- ============================================================
-       MODAL — Update Status (Secretary + EA)
+       MODAL — Update Status
        ============================================================ -->
   <div class="modal-backdrop" id="updateModal">
     <div class="modal" style="max-width:460px;">
@@ -799,19 +765,23 @@
   <script src="app.js"></script>
   <script>
   /* ==========================================================================
-     ROUTING & TRACKING — Page module (aligned with use case diagram)
-
-     Permissions (per diagram):
-       Secretary  → routing:route ✓, routing:update ✓, routing:track ✓, routing:view ✓
-       EA         → routing:route ✗, routing:update ✓, routing:track ✓, routing:view ✓
-       Director   → routing:route ✗, routing:update ✗, routing:track ✗, routing:view ✓
+     ROUTING & TRACKING — Page module (with auth guard)
      ========================================================================== */
   (function () {
     'use strict';
 
-    const { Role, Toast, Utils, Modal, Bus } = APP;
+    // ============================================================
+    // 🛡️ AUTH GUARD — must be FIRST
+    // ============================================================
+    if (!window.APP || !window.APP.Auth) {
+      console.error('[Routing] app.js not loaded!');
+      return;
+    }
+    if (!window.APP.Auth.requireLogin()) return;
 
-       /* --------------------------------------------------------------------
+    const { Role, Toast, Utils, Modal } = window.APP;
+
+    /* --------------------------------------------------------------------
        DATA — loaded from backend
        -------------------------------------------------------------------- */
     let routes = [];
@@ -825,7 +795,9 @@
         routes = [];
       } catch (err) {
         console.error('[Routing] Failed to load:', err);
-        Toast.error('Load Failed', 'Could not load routed documents.');
+        if (window.APP && window.APP.Toast) {
+          window.APP.Toast.error('Load Failed', 'Could not load routed documents.');
+        }
         routes = [];
       }
       renderRoutes();
@@ -901,55 +873,48 @@
       $('statCompleted').textContent   = routes.filter(r => r.status === 'completed').length;
 
       const counts = {
-        all:           routes.length,
-        draft:         routes.filter(r => r.status === 'draft').length,
-        'in-transit':  routes.filter(r => r.status === 'in-transit').length,
-        received:      routes.filter(r => r.status === 'received').length,
-        'under-review':routes.filter(r => r.status === 'under-review').length,
-        completed:     routes.filter(r => r.status === 'completed').length,
-        returned:      routes.filter(r => r.status === 'returned').length
+        all:            routes.length,
+        draft:          routes.filter(r => r.status === 'draft').length,
+        'in-transit':   routes.filter(r => r.status === 'in-transit').length,
+        received:       routes.filter(r => r.status === 'received').length,
+        'under-review': routes.filter(r => r.status === 'under-review').length,
+        completed:      routes.filter(r => r.status === 'completed').length,
+        returned:       routes.filter(r => r.status === 'returned').length
       };
       Object.entries(counts).forEach(([k, v]) => {
-        const el = document.querySelector(`[data-count="${k}"]`);
+        const el = document.querySelector('[data-count="' + k + '"]');
         if (el) el.textContent = v;
       });
     }
 
     /* --------------------------------------------------------------------
-       RENDER — Action buttons per row (ALIGNED WITH DIAGRAM)
-       --------------------------------------------------------------------
-       Secretary  → Route ✓ Update ✓ Track ✓ View ✓
-       EA         → Route ✗ Update ✓ Track ✓ View ✓
-       Director   → Route ✗ Update ✗ Track ✗ View ✓
+       RENDER — Action buttons per row
        -------------------------------------------------------------------- */
     function renderActions(route) {
       const btns = [];
 
-      // VIEW — everyone
       if (Role.can('routing:view')) {
-        btns.push(`
-          <button class="action-btn view" data-action="view" data-id="${route.id}" title="Track / View">
-            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
-          </button>
-        `);
+        btns.push(
+          '<button class="action-btn view" data-action="view" data-id="' + route.id + '" title="Track / View">' +
+            '<svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>' +
+          '</button>'
+        );
       }
 
-      // UPDATE STATUS — Secretary + EA
       if (Role.can('routing:update')) {
-        btns.push(`
-          <button class="action-btn edit" data-action="update" data-id="${route.id}" title="Update Status">
-            <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4a8 8 0 00-7.73 6H2l4 4 4-4H6.07A6 6 0 1112 18a5.98 5.98 0 01-4.24-1.76l-1.41 1.41A8 8 0 1019.73 6H22l-4 4-4-4h3.65z"/></svg>
-          </button>
-        `);
+        btns.push(
+          '<button class="action-btn edit" data-action="update" data-id="' + route.id + '" title="Update Status">' +
+            '<svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4a8 8 0 00-7.73 6H2l4 4 4-4H6.07A6 6 0 1112 18a5.98 5.98 0 01-4.24-1.76l-1.41 1.41A8 8 0 1019.73 6H22l-4 4-4-4h3.65z"/></svg>' +
+          '</button>'
+        );
       }
 
-      // TRACK — Secretary + EA (opens view modal too, but as a "Track" icon)
       if (Role.can('routing:track')) {
-        btns.push(`
-          <button class="action-btn" data-action="track" data-id="${route.id}" title="Track Progress" style="color:var(--gold);">
-            <svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
-          </button>
-        `);
+        btns.push(
+          '<button class="action-btn" data-action="track" data-id="' + route.id + '" title="Track Progress" style="color:var(--gold);">' +
+            '<svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>' +
+          '</button>'
+        );
       }
 
       return btns.join('');
@@ -978,8 +943,7 @@
         return true;
       });
 
-      els.resultCount.textContent = `Showing ${filteredRoutes.length} of ${routes.length} routes`;
-
+      els.resultCount.textContent = 'Showing ' + filteredRoutes.length + ' of ' + routes.length + ' routes';
       updateStats();
 
       const tabLabels = {
@@ -1008,42 +972,36 @@
       els.tbody.innerHTML = filteredRoutes.map(r => {
         const isSelected = selectedIds.has(r.id);
         const extClass = fileExtClass(r.ext);
-        return `
-          <tr class="${isSelected ? 'selected' : ''}" data-id="${r.id}">
-            <td class="center">
-              <label class="checkbox-wrap">
-                <input type="checkbox" class="row-checkbox" data-id="${r.id}" ${isSelected ? 'checked' : ''}/>
-              </label>
-            </td>
-            <td>
-              <div class="doc-cell">
-                <div class="doc-icon ${extClass}">${Utils.escapeHtml(r.ext)}</div>
-                <div class="doc-info">
-                  <div class="doc-name" title="${Utils.escapeHtml(r.documentName)}">${Utils.escapeHtml(r.documentName)}</div>
-                  <div class="doc-meta">${Utils.escapeHtml(r.id)}</div>
-                </div>
-              </div>
-            </td>
-            <td>
-              <div class="route-flow">
-                <span class="route-dept">${Utils.escapeHtml(r.from)}</span>
-                <span class="route-arrow">→</span>
-                <span class="route-dept">${Utils.escapeHtml(r.to)}</span>
-              </div>
-            </td>
-            <td><span class="priority ${r.priority}">${Utils.capitalize(r.priority)}</span></td>
-            <td><span class="routing-status ${r.status}">${statusLabel(r.status)}</span></td>
-            <td>
-              <div style="font-size:0.82rem;font-weight:500;">${Utils.escapeHtml(r.routedBy)}</div>
-            </td>
-            <td>
-              <div style="font-size:0.78rem;color:var(--text-muted);">${Utils.escapeHtml(r.date)}</div>
-            </td>
-            <td>
-              <div class="actions">${renderActions(r)}</div>
-            </td>
-          </tr>
-        `;
+        return (
+          '<tr class="' + (isSelected ? 'selected' : '') + '" data-id="' + r.id + '">' +
+            '<td class="center">' +
+              '<label class="checkbox-wrap">' +
+                '<input type="checkbox" class="row-checkbox" data-id="' + r.id + '" ' + (isSelected ? 'checked' : '') + '/>' +
+              '</label>' +
+            '</td>' +
+            '<td>' +
+              '<div class="doc-cell">' +
+                '<div class="doc-icon ' + extClass + '">' + Utils.escapeHtml(r.ext) + '</div>' +
+                '<div class="doc-info">' +
+                  '<div class="doc-name" title="' + Utils.escapeHtml(r.documentName) + '">' + Utils.escapeHtml(r.documentName) + '</div>' +
+                  '<div class="doc-meta">' + Utils.escapeHtml(r.id) + '</div>' +
+                '</div>' +
+              '</div>' +
+            '</td>' +
+            '<td>' +
+              '<div class="route-flow">' +
+                '<span class="route-dept">' + Utils.escapeHtml(r.from) + '</span>' +
+                '<span class="route-arrow">→</span>' +
+                '<span class="route-dept">' + Utils.escapeHtml(r.to) + '</span>' +
+              '</div>' +
+            '</td>' +
+            '<td><span class="priority ' + r.priority + '">' + Utils.capitalize(r.priority) + '</span></td>' +
+            '<td><span class="routing-status ' + r.status + '">' + statusLabel(r.status) + '</span></td>' +
+            '<td><div style="font-size:0.82rem;font-weight:500;">' + Utils.escapeHtml(r.routedBy) + '</div></td>' +
+            '<td><div style="font-size:0.78rem;color:var(--text-muted);">' + Utils.escapeHtml(r.date) + '</div></td>' +
+            '<td><div class="actions">' + renderActions(r) + '</div></td>' +
+          '</tr>'
+        );
       }).join('');
 
       els.tbody.querySelectorAll('.row-checkbox').forEach(cb => {
@@ -1066,7 +1024,7 @@
 
       updateBulkBar();
       updateSelectAllState();
-      els.pageInfo.textContent = `Page 1 of 1 · ${filteredRoutes.length} records`;
+      els.pageInfo.textContent = 'Page 1 of 1 · ' + filteredRoutes.length + ' records';
     }
 
     /* --------------------------------------------------------------------
@@ -1096,38 +1054,36 @@
       $('viewDocTitle').textContent    = route.documentName;
       $('viewDocSubtitle').textContent = route.id;
       $('viewRouteId').textContent     = route.id;
-      $('viewPriority').innerHTML      = `<span class="priority ${route.priority}">${Utils.capitalize(route.priority)}</span>`;
+      $('viewPriority').innerHTML      = '<span class="priority ' + route.priority + '">' + Utils.capitalize(route.priority) + '</span>';
       $('viewFrom').textContent        = route.from;
       $('viewTo').textContent          = route.to;
       $('viewRoutedBy').textContent    = route.routedBy;
-      $('viewStatus').innerHTML        = `<span class="routing-status ${route.status}">${statusLabel(route.status)}</span>`;
+      $('viewStatus').innerHTML        = '<span class="routing-status ' + route.status + '">' + statusLabel(route.status) + '</span>';
 
-      // Build timeline
-      $('routeTimeline').innerHTML = route.timeline.map(step => {
+      $('routeTimeline').innerHTML = (route.timeline || []).map(step => {
         const icon = step.state === 'done'
           ? '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>'
           : step.state === 'returned'
           ? '<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>'
           : '<path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>';
         const extra = step.from && step.to
-          ? `<div class="step-time" style="margin-top:2px;">${Utils.escapeHtml(step.from)} → ${Utils.escapeHtml(step.to)}</div>`
+          ? '<div class="step-time" style="margin-top:2px;">' + Utils.escapeHtml(step.from) + ' → ' + Utils.escapeHtml(step.to) + '</div>'
           : '';
-        return `
-          <div class="route-step ${step.state}">
-            <div class="step-dot">
-              <svg viewBox="0 0 24 24">${icon}</svg>
-            </div>
-            <div class="step-body">
-              <div class="step-title">${Utils.escapeHtml(step.title)} ${step.by ? `<strong>· ${Utils.escapeHtml(step.by)}</strong>` : ''}</div>
-              ${extra}
-              <div class="step-time">${Utils.escapeHtml(step.time)}</div>
-              ${step.note ? `<div class="step-note">${Utils.escapeHtml(step.note)}</div>` : ''}
-            </div>
-          </div>
-        `;
+        return (
+          '<div class="route-step ' + step.state + '">' +
+            '<div class="step-dot">' +
+              '<svg viewBox="0 0 24 24">' + icon + '</svg>' +
+            '</div>' +
+            '<div class="step-body">' +
+              '<div class="step-title">' + Utils.escapeHtml(step.title) + (step.by ? ' <strong>· ' + Utils.escapeHtml(step.by) + '</strong>' : '') + '</div>' +
+              extra +
+              '<div class="step-time">' + Utils.escapeHtml(step.time) + '</div>' +
+              (step.note ? '<div class="step-note">' + Utils.escapeHtml(step.note) + '</div>' : '') +
+            '</div>' +
+          '</div>'
+        );
       }).join('');
 
-      // Show/hide "Update Status" in footer — Secretary + EA only
       const btnUpdate = $('btnUpdateStatus');
       if (btnUpdate) {
         btnUpdate.style.display = Role.can('routing:update') ? 'inline-flex' : 'none';
@@ -1143,7 +1099,6 @@
         return;
       }
       Modal.close('viewModal');
-      // Small delay so modal transition completes
       setTimeout(() => openUpdateModal(currentViewRoute), 250);
     });
 
@@ -1156,7 +1111,7 @@
         return;
       }
       currentUpdateRoute = route;
-      $('updateSubtitle').textContent = `${route.id} · ${route.documentName}`;
+      $('updateSubtitle').textContent = route.id + ' · ' + route.documentName;
       $('newStatus').value = '';
       $('statusNote').value = '';
       Modal.open('updateModal');
@@ -1178,22 +1133,25 @@
       }
 
       const ok = await APP.confirm({
-        title: `Update route to "${statusLabel(newStatus)}"?`,
+        title: 'Update route to "' + statusLabel(newStatus) + '"?',
         message: 'This will be recorded in the routing timeline.',
         confirmText: 'Update'
       });
       if (!ok) return;
 
       currentUpdateRoute.status = newStatus;
+      if (!currentUpdateRoute.timeline) currentUpdateRoute.timeline = [];
       currentUpdateRoute.timeline.push({
-        title: `Status → ${statusLabel(newStatus)}`,
-        by: Role.current().userName,
-        time: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        title: 'Status → ' + statusLabel(newStatus),
+        by: window.APP.Auth.currentUser().name,
+        time: new Date().toLocaleString('en-US', {
+          month: 'short', day: 'numeric', year: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        }),
         state: newStatus === 'returned' ? 'returned' : newStatus === 'completed' ? 'done' : 'current',
         note: note || undefined
       });
 
-      // If there were "current" steps earlier, mark them done
       currentUpdateRoute.timeline.forEach((s, i) => {
         if (i < currentUpdateRoute.timeline.length - 1 && s.state === 'current') {
           s.state = 'done';
@@ -1201,7 +1159,7 @@
       });
 
       Modal.close('updateModal');
-      Toast.success('Status Updated', `Route ${currentUpdateRoute.id} is now "${statusLabel(newStatus)}".`);
+      Toast.success('Status Updated', 'Route ' + currentUpdateRoute.id + ' is now "' + statusLabel(newStatus) + '".');
       renderRoutes();
     });
 
@@ -1215,21 +1173,19 @@
       }
 
       els.bulkBar.classList.add('show');
-      els.bulkCount.textContent = `${selectedIds.size} selected`;
+      els.bulkCount.textContent = selectedIds.size + ' selected';
 
       const btns = [];
 
       if (Role.can('routing:update')) {
-        btns.push(`<button class="btn" onclick="Routing.bulkUpdateStatus()">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35A7.958 7.958 0 0012 4a8 8 0 00-7.73 6H2l4 4 4-4H6.07A6 6 0 1112 18a5.98 5.98 0 01-4.24-1.76l-1.41 1.41A8 8 0 1019.73 6H22l-4 4-4-4h3.65z"/></svg>
-          Bulk Update
-        </button>`);
+        btns.push('<button class="btn" onclick="Routing.bulkUpdateStatus()">' +
+          '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35A7.958 7.958 0 0012 4a8 8 0 00-7.73 6H2l4 4 4-4H6.07A6 6 0 1112 18a5.98 5.98 0 01-4.24-1.76l-1.41 1.41A8 8 0 1019.73 6H22l-4 4-4-4h3.65z"/></svg>' +
+          'Bulk Update</button>');
       }
 
-      btns.push(`<button class="btn" onclick="Routing.bulkExport()">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-        Export
-      </button>`);
+      btns.push('<button class="btn" onclick="Routing.bulkExport()">' +
+        '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>' +
+        'Export</button>');
 
       els.bulkActions.innerHTML = btns.join('');
     }
@@ -1245,7 +1201,7 @@
         return;
       }
       const ok = await APP.confirm({
-        title: `Update status for ${selectedIds.size} route(s)?`,
+        title: 'Update status for ' + selectedIds.size + ' route(s)?',
         message: 'You will be asked to select the new status next.',
         confirmText: 'Continue'
       });
@@ -1254,7 +1210,7 @@
     }
 
     function bulkExport() {
-      Toast.info('Export Started', `Preparing CSV export for ${selectedIds.size} route(s)...`);
+      Toast.info('Export Started', 'Preparing CSV export for ' + selectedIds.size + ' route(s)...');
     }
 
     /* --------------------------------------------------------------------
@@ -1329,7 +1285,7 @@
       if (!to)      { Toast.error('Missing Destination', 'Please select the destination department.'); return; }
       if (from === to) { Toast.error('Invalid Route', 'Origin and destination cannot be the same.'); return; }
 
-      const newId = `RT-2025-${String(routes.length + 1).padStart(3, '0')}`;
+      const newId = 'RT-' + new Date().getFullYear() + '-' + String(routes.length + 1).padStart(3, '0');
       const now = new Date();
       const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' +
         now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -1344,17 +1300,17 @@
         to: to,
         priority: priority,
         status: 'in-transit',
-        routedBy: Role.current().userName,
+        routedBy: window.APP.Auth.currentUser().name,
         date: dateStr,
         notes: notes,
         timeline: [
-          { title: 'Created', by: Role.current().userName, time: dateStr, state: 'done' },
-          { title: 'Routed', from: from, to: to, by: Role.current().userName, time: dateStr, state: 'current' }
+          { title: 'Created', by: window.APP.Auth.currentUser().name, time: dateStr, state: 'done' },
+          { title: 'Routed', from: from, to: to, by: window.APP.Auth.currentUser().name, time: dateStr, state: 'current' }
         ]
       });
 
       Modal.close('routeModal');
-      Toast.gold('Document Routed', `"${docName}" is now in transit to ${to}.`);
+      Toast.gold('Document Routed', '"' + docName + '" is now in transit to ' + to + '.');
       currentTab = 'in-transit';
       document.querySelectorAll('.routing-tab').forEach(t => {
         t.classList.toggle('active', t.dataset.tab === 'in-transit');
@@ -1363,23 +1319,23 @@
     });
 
     /* --------------------------------------------------------------------
-       ROLE-AWARE UI (ALIGNED WITH DIAGRAM)
+       ROLE-AWARE UI
        -------------------------------------------------------------------- */
     function applyRole() {
+      const user = window.APP.Auth.currentUser();
+      const roleId = user ? user.role : 'secretary';
+
       const canRoute = Role.can('routing:route');
 
-      // Route Document button — Secretary only
       els.btnRouteDoc.style.display = canRoute ? 'inline-flex' : 'none';
       if (els.btnEmptyRoute) {
         els.btnEmptyRoute.style.display = canRoute ? 'inline-flex' : 'none';
       }
 
-      // Director notice
       if (els.notice) {
-        els.notice.style.display = (Role.id() === 'director') ? 'flex' : 'none';
+        els.notice.style.display = (roleId === 'director') ? 'flex' : 'none';
       }
 
-      // Empty state copy
       if (els.emptyCopy) {
         els.emptyCopy.textContent = canRoute
           ? 'Try adjusting your search or filters. Or route a new document to get started.'
@@ -1399,19 +1355,11 @@
     };
 
     /* --------------------------------------------------------------------
-       REACT TO ROLE CHANGE
-       -------------------------------------------------------------------- */
-    Bus.on('role:changed', () => {
-      selectedIds.clear();
-      applyRole();
-      Toast.info('Role Switched', `Now viewing as ${Role.current().label}.`);
-    });
-
-    /* --------------------------------------------------------------------
        INIT
        -------------------------------------------------------------------- */
     applyRole();
     loadRoutes();
+
   })();
   </script>
 </body>
