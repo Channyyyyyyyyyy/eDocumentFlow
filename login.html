@@ -9,7 +9,6 @@
 <style>
   /* =====================================================================
      LOGIN PAGE — STANDALONE STYLES
-     (Does NOT use the shared dashboard layout — it's its own full screen)
      ===================================================================== */
 
   * {
@@ -392,6 +391,7 @@
 
   .remember input {
     appearance: none;
+    -webkit-appearance: none;
     width: 16px;
     height: 16px;
     border: 1.5px solid #7B1113;
@@ -400,6 +400,7 @@
     cursor: pointer;
     position: relative;
     transition: all 0.25s ease;
+    flex-shrink: 0;
   }
 
   body.dark-mode .remember input { border-color: #D4AF37; }
@@ -746,7 +747,20 @@
   (function () {
     'use strict';
 
-    const { Auth, Theme, Toast, Utils, Storage, APP } = window;
+    // Safety check: make sure app.js loaded
+    if (typeof window.APP === 'undefined' || !window.APP.Auth) {
+      console.error('[Login] app.js not loaded or APP.Auth missing!');
+      document.body.innerHTML = '<div style="color:#fff;padding:40px;text-align:center;font-family:sans-serif;">' +
+        '<h2>⚠️ app.js failed to load</h2>' +
+        '<p>Make sure <code>app.js</code> is in the same folder as <code>login.html</code>.</p>' +
+        '</div>';
+      return;
+    }
+
+    const Auth        = window.APP.Auth;
+    const Theme       = window.APP.Theme;
+    const Storage     = window.APP.Storage;
+    const Utils       = window.APP.Utils;
 
     /* --------------------------------------------------------------------
        Element references
@@ -770,16 +784,16 @@
     /* --------------------------------------------------------------------
        If already logged in → skip login page
        -------------------------------------------------------------------- */
-    APP.Auth.skipLoginIfLoggedIn();
+    Auth.skipLoginIfLoggedIn();
 
     /* --------------------------------------------------------------------
        LOGO FALLBACK
        -------------------------------------------------------------------- */
     if (schoolLogo) {
-      schoolLogo.addEventListener('error', () => {
+      schoolLogo.addEventListener('error', function () {
         logoCircle.classList.add('img-failed');
       });
-      schoolLogo.addEventListener('load', () => {
+      schoolLogo.addEventListener('load', function () {
         logoCircle.classList.remove('img-failed');
       });
     }
@@ -787,14 +801,14 @@
     /* --------------------------------------------------------------------
        DARK MODE TOGGLE
        -------------------------------------------------------------------- */
-    themeToggle.addEventListener('click', () => {
+    themeToggle.addEventListener('click', function () {
       Theme.toggle();
     });
 
     /* --------------------------------------------------------------------
        PASSWORD VISIBILITY TOGGLE
        -------------------------------------------------------------------- */
-    togglePass.addEventListener('click', () => {
+    togglePass.addEventListener('click', function () {
       const isPassword = passInput.type === 'password';
       passInput.type = isPassword ? 'text' : 'password';
       const isDark = document.body.classList.contains('dark-mode');
@@ -806,18 +820,24 @@
     /* --------------------------------------------------------------------
        MESSAGE HELPERS
        -------------------------------------------------------------------- */
-    function showError(message, duration = 4500) {
+    function showError(message, duration) {
+      duration = duration || 4500;
       errorBox.textContent = message;
       errorBox.style.display = 'block';
       successBox.style.display = 'none';
-      if (duration) setTimeout(() => { errorBox.style.display = 'none'; }, duration);
+      if (duration) {
+        setTimeout(function () { errorBox.style.display = 'none'; }, duration);
+      }
     }
 
-    function showSuccess(message, duration = 2500) {
+    function showSuccess(message, duration) {
+      duration = duration || 2500;
       successBox.textContent = message;
       successBox.style.display = 'block';
       errorBox.style.display = 'none';
-      if (duration) setTimeout(() => { successBox.style.display = 'none'; }, duration);
+      if (duration) {
+        setTimeout(function () { successBox.style.display = 'none'; }, duration);
+      }
     }
 
     function hideMessages() {
@@ -837,7 +857,7 @@
        REMEMBER EMAIL — pre-fill from storage
        -------------------------------------------------------------------- */
     (function loadRememberedEmail() {
-      const saved = Storage.get(APP.APP ? APP.APP.keys.rememberEmail : 'uphsdDirectorEmail');
+      const saved = Storage.get('uphsdDirectorEmail');
       if (saved) {
         emailInput.value = saved;
         rememberMe.checked = true;
@@ -847,7 +867,7 @@
     /* --------------------------------------------------------------------
        FORM SUBMISSION — real auth
        -------------------------------------------------------------------- */
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', async function (e) {
       e.preventDefault();
       hideMessages();
 
@@ -882,7 +902,7 @@
       setLoading(true);
 
       try {
-        const result = await window.APP.Auth.login(email, password);
+        const result = await Auth.login(email, password);
 
         if (!result.success) {
           setLoading(false);
@@ -893,11 +913,11 @@
         }
 
         // ---- Success ----
-        showSuccess(`Welcome, ${result.user.name}! Redirecting...`);
+        showSuccess('Welcome, ' + result.user.name + '! Redirecting...');
 
         // Redirect after a short delay
-        setTimeout(() => {
-          window.APP.Auth.redirectAfterLogin();
+        setTimeout(function () {
+          Auth.redirectAfterLogin();
         }, 900);
 
       } catch (err) {
@@ -910,7 +930,7 @@
     /* --------------------------------------------------------------------
        FORGOT PASSWORD (placeholder)
        -------------------------------------------------------------------- */
-    forgotLink.addEventListener('click', (e) => {
+    forgotLink.addEventListener('click', function (e) {
       e.preventDefault();
       hideMessages();
       showSuccess('Please contact the School Director\'s Office to reset your password.');
@@ -919,8 +939,8 @@
     /* --------------------------------------------------------------------
        CLEAR ERROR ON INPUT
        -------------------------------------------------------------------- */
-    [emailInput, passInput].forEach(input => {
-      input.addEventListener('input', () => {
+    [emailInput, passInput].forEach(function (input) {
+      input.addEventListener('input', function () {
         errorBox.style.display = 'none';
       });
     });
@@ -928,11 +948,15 @@
     /* --------------------------------------------------------------------
        ENTER KEY — allow submitting from anywhere in the form
        -------------------------------------------------------------------- */
-    [emailInput, passInput].forEach(input => {
-      input.addEventListener('keydown', (e) => {
+    [emailInput, passInput].forEach(function (input) {
+      input.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') {
           e.preventDefault();
-          form.requestSubmit();
+          if (typeof form.requestSubmit === 'function') {
+            form.requestSubmit();
+          } else {
+            loginBtn.click();
+          }
         }
       });
     });
@@ -940,10 +964,13 @@
     /* --------------------------------------------------------------------
        AUTO-FOCUS email field
        -------------------------------------------------------------------- */
-    window.addEventListener('DOMContentLoaded', () => {
-      if (!emailInput.value) emailInput.focus();
-      else passInput.focus();
-    });
+    if (!emailInput.value) {
+      emailInput.focus();
+    } else {
+      passInput.focus();
+    }
+
+    console.log('[Login] Page ready. Try logging in with one of the 3 accounts.');
 
   })();
   </script>
