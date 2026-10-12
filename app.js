@@ -5,18 +5,19 @@
    This file is loaded by every authenticated page and provides:
      1.  App namespace & configuration
      2.  Storage helpers (localStorage wrapper)
-     3.  Role & permission system (aligned with eDocumentFlow use case diagrams)
-     4.  Theme (dark mode) management
-     5.  Toast notifications
-     6.  Mobile sidebar toggle
-     7.  Sidebar active-link highlighting
-     8.  Topbar (user chip, notifications, theme toggle)
-     9.  Auth guard & logout
-     10. Utility helpers (dates, initials, debounce, escapeHtml)
-     11. Modal helpers
-     12. Confirmation dialog helper
-     13. Event bus (pub/sub for cross-module communication)
-     14. Auto-init on DOMContentLoaded
+     3.  Users table (hardcoded for now — will be replaced by backend)
+     4.  Role & permission system (aligned with eDocumentFlow use case diagrams)
+     5.  Authentication (login, logout, require login)
+     6.  Theme (dark mode) management
+     7.  Toast notifications
+     8.  Mobile sidebar toggle
+     9.  Sidebar active-link highlighting
+     10. Topbar (user chip, theme toggle)
+     11. Utility helpers (dates, initials, debounce, escapeHtml)
+     12. Modal helpers
+     13. Confirmation dialog helper
+     14. Event bus (pub/sub for cross-module communication)
+     15. Auto-init on DOMContentLoaded
 
    Usage in any page:
      <script src="app.js"></script>
@@ -30,7 +31,7 @@
      ========================================================================== */
   const APP = {
     name: 'UPHSD Molino — Director\'s Office',
-    version: '1.1.0',
+    version: '1.2.0',
     storagePrefix: 'uphsd_',
     keys: {
       role: 'uphsdRole',
@@ -95,7 +96,45 @@
   APP.Storage = Storage;
 
   /* ==========================================================================
-     3. ROLES & PERMISSIONS
+     3. USERS TABLE
+     ==========================================================================
+     Hardcoded credentials for development.
+     ⚠️ In production: replace with POST /api/auth/login on the backend.
+     ========================================================================== */
+  const USERS = [
+    {
+      email: 'renoreyel@perpetual.edu.ph',
+      password: 'sd123',
+      role: 'director',
+      name: 'Reno Reyel',
+      initials: 'RR',
+      dept: "Director's Office",
+      position: 'School Director'
+    },
+    {
+      email: 'ea@perpetual.edu.ph',
+      password: 'ea123',
+      role: 'ea',
+      name: 'EA',
+      initials: 'EA',
+      dept: "Director's Office",
+      position: 'Executive Assistant'
+    },
+    {
+      email: 'sec@perpetual.edu.ph',
+      password: 'sec123',
+      role: 'secretary',
+      name: 'Sec',
+      initials: 'SC',
+      dept: "Director's Office",
+      position: 'Secretary'
+    }
+  ];
+
+  APP.USERS = USERS;
+
+  /* ==========================================================================
+     4. ROLES & PERMISSIONS
      ==========================================================================
      Permissions per module (matching eDocumentFlow use case diagrams):
 
@@ -139,9 +178,6 @@
     secretary: {
       id: 'secretary',
       label: 'Secretary',
-      userName: 'Maria Cruz',
-      initials: 'MC',
-      email: 'maria.cruz@uphsd.edu.ph',
       permissions: [
         // Account Management
         'account:add', 'account:edit', 'account:delete', 'account:view',
@@ -160,9 +196,6 @@
     ea: {
       id: 'ea',
       label: 'Executive Assistant',
-      userName: 'Anna Reyes',
-      initials: 'AR',
-      email: 'anna.reyes@uphsd.edu.ph',
       permissions: [
         // Account Management
         'account:add', 'account:edit', 'account:delete', 'account:view',
@@ -181,9 +214,6 @@
     director: {
       id: 'director',
       label: 'School Director',
-      userName: 'Dr. Ramon Santos',
-      initials: 'RS',
-      email: 'ramon.santos@uphsd.edu.ph',
       permissions: [
         // Account Management (NO add/delete — only authorize)
         'account:edit', 'account:view', 'account:authorize',
@@ -238,9 +268,10 @@
   }
 
   const Role = {
-    /** Return the currently logged-in role object */
+    /** Return the currently logged-in user's role object */
     current() {
-      const id = Storage.get(APP.keys.role, 'secretary');
+      const user = Auth.currentUser();
+      const id = user ? user.role : Storage.get(APP.keys.role, 'secretary');
       return ROLES[id] || ROLES.secretary;
     },
 
@@ -286,7 +317,7 @@
       return (actions || []).every(a => this.can(a));
     },
 
-    /** Set role (used by dev switcher) */
+    /** Set role (used by dev switcher — kept for compatibility) */
     set(roleId) {
       if (!ROLES[roleId]) return false;
       Storage.set(APP.keys.role, roleId);
@@ -306,12 +337,13 @@
 
     /** Internal: update user chip in topbar */
     _renderUserChip() {
-      const user = this.current();
+      const user = Auth.currentUser();
+      if (!user) return;
       const nameEl = document.getElementById('userName');
       const roleEl = document.getElementById('userRoleLabel');
       const avEl   = document.getElementById('userAvatar');
-      if (nameEl) nameEl.textContent = user.userName;
-      if (roleEl) roleEl.textContent = user.label;
+      if (nameEl) nameEl.textContent = user.name;
+      if (roleEl) roleEl.textContent = user.position || ROLES[user.role]?.label || user.role;
       if (avEl)   avEl.textContent   = user.initials;
     }
   };
@@ -319,7 +351,109 @@
   APP.Role = Role;
 
   /* ==========================================================================
-     4. THEME (DARK MODE)
+     5. AUTHENTICATION
+     ==========================================================================
+     Real login system using the USERS table above.
+     In production, replace with an API call: POST /api/auth/login
+     ========================================================================== */
+  const Auth = {
+    /**
+     * Attempt to log in with email + password.
+     * @returns {Promise<{success: boolean, message?: string, user?: object}>}
+     */
+    async login(email, password) {
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 600));
+
+      if (!email || !password) {
+        return { success: false, message: 'Please enter your email and password.' };
+      }
+
+      const user = USERS.find(
+        u => u.email.toLowerCase() === email.toLowerCase().trim() &&
+             u.password === password
+      );
+
+      if (!user) {
+        return { success: false, message: 'Invalid email or password. Please try again.' };
+      }
+
+      // Save session (without password!)
+      const session = {
+        email: user.email,
+        role: user.role,
+        name: user.name,
+        initials: user.initials,
+        dept: user.dept,
+        position: user.position,
+        loggedInAt: new Date().toISOString()
+      };
+
+      Storage.set(APP.keys.loggedIn, true);
+      Storage.set(APP.keys.user, session);
+      Storage.set(APP.keys.role, user.role);
+
+      return { success: true, user: session };
+    },
+
+    /** Log out and redirect to login page */
+    logout() {
+      Storage.remove(APP.keys.loggedIn);
+      Storage.remove(APP.keys.user);
+      Storage.remove(APP.keys.authToken);
+      // Keep role key so login page can pre-fill email if remembered
+      window.location.href = APP.routes.login;
+    },
+
+    /** Get the currently logged-in user (or null) */
+    currentUser() {
+      return Storage.get(APP.keys.user, null);
+    },
+
+    /** Is a user currently logged in? */
+    isLoggedIn() {
+      return !!Storage.get(APP.keys.loggedIn) && !!this.currentUser();
+    },
+
+    /**
+     * Guard: require login. If not logged in, redirect to login page.
+     * @returns {boolean} true if logged in, false if redirecting
+     */
+    requireLogin() {
+      if (!this.isLoggedIn()) {
+        // Save the page they wanted to visit, so we can redirect after login
+        const attempted = window.location.pathname.split('/').pop();
+        if (attempted && attempted !== 'login.html' && attempted !== '') {
+          sessionStorage.setItem('uphsdRedirectAfterLogin', attempted);
+        }
+        window.location.href = APP.routes.login;
+        return false;
+      }
+      return true;
+    },
+
+    /** Redirect to dashboard after login (or to the originally attempted page) */
+    redirectAfterLogin() {
+      const attempted = sessionStorage.getItem('uphsdRedirectAfterLogin');
+      sessionStorage.removeItem('uphsdRedirectAfterLogin');
+      const target = attempted && attempted !== 'login.html'
+        ? attempted
+        : APP.routes.dashboard;
+      window.location.href = target;
+    },
+
+    /** If user is already logged in, redirect away from login page */
+    skipLoginIfLoggedIn() {
+      if (this.isLoggedIn()) {
+        this.redirectAfterLogin();
+      }
+    }
+  };
+
+  APP.Auth = Auth;
+
+  /* ==========================================================================
+     6. THEME (DARK MODE)
      ========================================================================== */
   const Theme = {
     _listeners: [],
@@ -380,7 +514,7 @@
   APP.Theme = Theme;
 
   /* ==========================================================================
-     5. TOAST NOTIFICATIONS
+     7. TOAST NOTIFICATIONS
      ========================================================================== */
   const Toast = {
     _icons: {
@@ -428,7 +562,7 @@
   APP.Toast = Toast;
 
   /* ==========================================================================
-     6. MOBILE SIDEBAR
+     8. MOBILE SIDEBAR
      ========================================================================== */
   const Sidebar = {
     init() {
@@ -475,7 +609,7 @@
   APP.Sidebar = Sidebar;
 
   /* ==========================================================================
-     7. SIDEBAR ACTIVE LINK HIGHLIGHTING
+     9. SIDEBAR ACTIVE LINK HIGHLIGHTING
      ========================================================================== */
   const Nav = {
     init() {
@@ -504,7 +638,7 @@
   APP.Nav = Nav;
 
   /* ==========================================================================
-     8. TOPBAR AUTO-WIRING
+     10. TOPBAR AUTO-WIRING
      ========================================================================== */
   const Topbar = {
     init() {
@@ -513,26 +647,21 @@
         themeBtn.addEventListener('click', () => Theme.toggle());
       }
 
-      const switcher = document.getElementById('roleSwitcher');
-      if (switcher) {
-        switcher.value = Role.id();
-        switcher.addEventListener('change', (e) => {
-          Role.set(e.target.value);
-          Toast.info('Role Switched', `Now viewing as ${Role.current().label}.`);
-        });
-      }
-
       const chip = document.getElementById('userChip');
       if (chip) {
         chip.addEventListener('click', () => {
-          if (confirm('Do you want to log out?')) {
-            APP.Auth.logout();
+          const user = Auth.currentUser();
+          const name = user ? user.name : 'this account';
+          if (confirm(`Log out of ${name}'s session?`)) {
+            Auth.logout();
           }
         });
       }
 
+      // Render user chip from logged-in user
       Role._renderUserChip();
 
+      // Set footer year
       document.querySelectorAll('[data-year]').forEach(el => {
         el.textContent = new Date().getFullYear();
       });
@@ -544,38 +673,7 @@
   APP.Topbar = Topbar;
 
   /* ==========================================================================
-     9. AUTH GUARD & LOGOUT
-     ========================================================================== */
-  const Auth = {
-    requireLogin() {
-      const loggedIn = Storage.get(APP.keys.loggedIn);
-      if (!loggedIn) {
-        window.location.href = APP.routes.login;
-        return false;
-      }
-      return true;
-    },
-
-    login(roleId = 'secretary') {
-      Storage.set(APP.keys.loggedIn, 'true');
-      Storage.set(APP.keys.role, roleId);
-    },
-
-    logout() {
-      Storage.remove(APP.keys.loggedIn);
-      Storage.remove(APP.keys.authToken);
-      window.location.href = APP.routes.login;
-    },
-
-    isLoggedIn() {
-      return !!Storage.get(APP.keys.loggedIn);
-    }
-  };
-
-  APP.Auth = Auth;
-
-  /* ==========================================================================
-     10. UTILITY HELPERS
+     11. UTILITY HELPERS
      ========================================================================== */
   const Utils = {
     escapeHtml(str) {
@@ -682,7 +780,7 @@
   APP.Utils = Utils;
 
   /* ==========================================================================
-     11. MODAL HELPERS
+     12. MODAL HELPERS
      ========================================================================== */
   const Modal = {
     open(id) {
@@ -721,7 +819,7 @@
   APP.Modal = Modal;
 
   /* ==========================================================================
-     12. CONFIRM DIALOG (Promise-based)
+     13. CONFIRM DIALOG (Promise-based)
      ========================================================================== */
   APP.confirm = function ({
     title = 'Are you sure?',
@@ -781,7 +879,7 @@
   };
 
   /* ==========================================================================
-     13. EVENT BUS (pub/sub)
+     14. EVENT BUS (pub/sub)
      ========================================================================== */
   const Bus = {
     _events: {},
@@ -804,10 +902,7 @@
   APP.Bus = Bus;
 
   /* ==========================================================================
-     14. SIDEBAR — Permission-aware hiding
-     ==========================================================================
-     Some nav items should be hidden based on role.
-     e.g., Accounts might be hidden from users with no account:* permissions.
+     15. SIDEBAR — Permission-aware hiding
      ========================================================================== */
   function applySidebarPermissions() {
     document.querySelectorAll('.nav-item[data-page]').forEach(item => {
@@ -820,7 +915,7 @@
         'approvals.html':     ['approval:submit', 'approval:review'],
         'reports.html':       ['report:view'],
         'notifications.html': ['notification:view'],
-        'settings.html':      [] // always visible
+        'settings.html':      []
       };
 
       const required = requiredMap[page];
@@ -834,7 +929,7 @@
   APP.applySidebarPermissions = applySidebarPermissions;
 
   /* ==========================================================================
-     15. AUTO-INIT
+     16. AUTO-INIT
      ========================================================================== */
   function init() {
     Theme.init();
@@ -857,9 +952,14 @@
       `%c${APP.name} · v${APP.version}`,
       'color:#D4AF37; background:#7B1113; padding:4px 10px; border-radius:4px; font-weight:700;'
     );
-    console.log('Logged in as:', Role.current().label);
-    console.log('Current module:', Role.currentModule() || '(dashboard)');
-    console.log('Permissions:', Role.current().permissions);
+    const user = Auth.currentUser();
+    if (user) {
+      console.log('Logged in as:', user.name, `(${user.role})`);
+      console.log('Current module:', Role.currentModule() || '(dashboard)');
+      console.log('Permissions:', Role.current().permissions);
+    } else {
+      console.log('Not logged in.');
+    }
   }
 
   init();
