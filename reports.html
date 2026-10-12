@@ -7,11 +7,6 @@
 <link rel="stylesheet" href="shared.css" />
 
 <style>
-  /* =====================================================================
-     REPORTS-PAGE-SPECIFIC STYLES
-     ===================================================================== */
-
-  /* ---------- Report filter bar ---------- */
   .report-filters {
     background: var(--bg-card);
     border: 1px solid var(--border-light);
@@ -68,7 +63,6 @@
     flex-wrap: wrap;
   }
 
-  /* ---------- Read-only notice ---------- */
   .view-only-notice {
     background: rgba(212,175,55,0.12);
     border: 1.5px solid var(--gold);
@@ -90,7 +84,6 @@
   }
   .view-only-notice strong { color: var(--text-primary); }
 
-  /* ---------- Report grid ---------- */
   .report-grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
@@ -154,7 +147,6 @@
     font-weight: 600;
   }
 
-  /* ---------- Big number stat (KPI) ---------- */
   .kpi-value {
     font-size: 2rem;
     font-weight: 700;
@@ -198,7 +190,6 @@
   body.dark-mode .kpi-trend.up { color: #4ade80; }
   body.dark-mode .kpi-trend.down { color: #ff8b96; }
 
-  /* ---------- Bar chart (vertical) ---------- */
   .bar-chart {
     display: flex;
     align-items: flex-end;
@@ -207,7 +198,6 @@
     padding: 20px 0 30px;
     position: relative;
   }
-
   .bar-chart .bar {
     flex: 1;
     background: linear-gradient(180deg, var(--maroon), var(--maroon-deep));
@@ -217,13 +207,11 @@
     transition: all 0.3s ease;
     cursor: pointer;
   }
-
   .bar-chart .bar:hover {
     background: linear-gradient(180deg, var(--gold), var(--gold-dark));
     transform: scaleY(1.03);
     transform-origin: bottom;
   }
-
   .bar-chart .bar .bar-value {
     position: absolute;
     top: -20px;
@@ -234,7 +222,6 @@
     color: var(--text-primary);
     white-space: nowrap;
   }
-
   .bar-chart .bar .bar-label {
     position: absolute;
     bottom: -24px;
@@ -246,19 +233,16 @@
     white-space: nowrap;
   }
 
-  /* ---------- Horizontal bar chart ---------- */
   .h-bar-chart {
     display: flex;
     flex-direction: column;
     gap: 12px;
   }
-
   .h-bar-row {
     display: flex;
     align-items: center;
     gap: 12px;
   }
-
   .h-bar-row .h-bar-label {
     flex: 0 0 120px;
     font-size: 0.78rem;
@@ -268,7 +252,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-
   .h-bar-row .h-bar-track {
     flex: 1;
     height: 22px;
@@ -277,7 +260,6 @@
     overflow: hidden;
     position: relative;
   }
-
   .h-bar-row .h-bar-fill {
     height: 100%;
     background: linear-gradient(90deg, var(--maroon), var(--maroon-deep));
@@ -286,15 +268,12 @@
     position: relative;
     min-width: 6px;
   }
-
   .h-bar-row .h-bar-fill.gold {
     background: linear-gradient(90deg, var(--gold), var(--gold-dark));
   }
-
   .h-bar-row .h-bar-fill.green {
     background: linear-gradient(90deg, #2ed573, #1e8a4d);
   }
-
   .h-bar-row .h-bar-value {
     flex: 0 0 50px;
     text-align: right;
@@ -303,30 +282,21 @@
     color: var(--text-primary);
   }
 
-  /* ---------- Donut chart ---------- */
   .donut-wrapper {
     display: flex;
     align-items: center;
     gap: 24px;
     flex-wrap: wrap;
   }
-
   .donut {
     width: 160px;
     height: 160px;
     border-radius: 50%;
     flex-shrink: 0;
     position: relative;
-    background: conic-gradient(
-      var(--maroon) 0deg var(--seg1),
-      var(--gold) var(--seg1) var(--seg2),
-      #4682dc var(--seg2) var(--seg3),
-      #2ed573 var(--seg3) var(--seg4),
-      #a89a8a var(--seg4) 360deg
-    );
+    background: var(--bg-input);
     box-shadow: 0 8px 24px rgba(0,0,0,0.08);
   }
-
   .donut::after {
     content: '';
     position: absolute;
@@ -335,7 +305,6 @@
     background: var(--bg-card);
     transition: background 0.4s ease;
   }
-
   .donut-center {
     position: absolute;
     inset: 0;
@@ -367,7 +336,6 @@
     flex-direction: column;
     gap: 10px;
   }
-
   .legend-item {
     display: flex;
     align-items: center;
@@ -390,7 +358,6 @@
     color: var(--text-secondary);
   }
 
-  /* ---------- Line chart (SVG) ---------- */
   .line-chart-wrap {
     position: relative;
     padding: 10px 0;
@@ -427,7 +394,6 @@
     opacity: 0.35;
   }
 
-  /* ---------- Report table ---------- */
   .report-table-wrap {
     overflow-x: auto;
     margin: 0 -22px -20px;
@@ -476,7 +442,6 @@
   .activity-dot.blue  { background: #4682dc; }
   .activity-dot.grey  { background: #a89a8a; }
 
-  /* ---------- Summary banner at top ---------- */
   .summary-banner {
     background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
     border-radius: var(--radius-xl);
@@ -565,7 +530,6 @@
     font-weight: 700;
   }
 
-  /* ---------- Print styles ---------- */
   @media print {
     .report-filters,
     .summary-badges,
@@ -583,13 +547,10 @@
 </head>
 <body>
 
-  <!-- ============================================================
-       SIDEBAR
-       ============================================================ -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <div class="brand-logo">
-        <img src="uphsd-logo.png" alt="Logo">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
         </svg>
       </div>
@@ -616,7 +577,7 @@
       <a class="nav-item" href="approvals.html" data-page="approvals.html">
         <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
         Approvals
-        <span class="nav-badge" id="approvalBadgeSide">5</span>
+        <span class="nav-badge" id="approvalBadgeSide">0</span>
       </a>
       <a class="nav-item" href="notifications.html" data-page="notifications.html">
         <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
@@ -648,12 +609,8 @@
 
   <div class="overlay-backdrop" id="overlayBackdrop"></div>
 
-  <!-- ============================================================
-       MAIN
-       ============================================================ -->
   <main class="main">
 
-    <!-- ========== TOP BAR ========== -->
     <header class="topbar">
       <button class="hamburger" id="hamburger" aria-label="Menu">
         <svg viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
@@ -664,8 +621,7 @@
         <p>Performance metrics and document insights</p>
       </div>
 
-      
-
+      <div class="topbar-actions">
         <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
           <svg id="themeIcon" viewBox="0 0 24 24">
             <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 7.06a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0z"/>
@@ -678,19 +634,17 @@
         </button>
 
         <div class="user-chip" id="userChip" title="Click to log out">
-          <div class="user-avatar" id="userAvatar">MC</div>
+          <div class="user-avatar" id="userAvatar">—</div>
           <div class="user-info">
-            <span class="name" id="userName">Maria Cruz</span>
-            <span class="role" id="userRoleLabel">Secretary</span>
+            <span class="name" id="userName">—</span>
+            <span class="role" id="userRoleLabel">—</span>
           </div>
         </div>
       </div>
     </header>
 
-       <!-- ========== CONTENT ========== -->
     <div class="content">
 
-      <!-- Director read-only notice -->
       <div class="view-only-notice" id="viewOnlyNotice" style="display:none;">
         <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
         <span>
@@ -698,7 +652,6 @@
         </span>
       </div>
 
-      <!-- SUMMARY BANNER -->
       <div class="summary-banner">
         <div class="summary-title">
           <div class="label">Reporting Period</div>
@@ -725,7 +678,6 @@
         </div>
       </div>
 
-      <!-- FILTERS -->
       <div class="report-filters">
         <div class="filter-field">
           <label for="fromDate">From Date</label>
@@ -765,7 +717,6 @@
         </div>
 
         <div class="filter-actions">
-          <!-- 🔄 CHANGED: Apply/Reset/Export hidden for Director -->
           <button class="btn btn-primary" id="btnApply" style="display:none;">
             <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
             Apply
@@ -778,7 +729,6 @@
             <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
             Export
           </button>
-          <!-- 🔄 CHANGED: Print button visible to all -->
           <button class="btn btn-ghost" id="btnPrint">
             <svg viewBox="0 0 24 24"><path d="M19 8H5a3 3 0 00-3 3v6h4v4h12v-4h4v-6a3 3 0 00-3-3zm-3 11H8v-5h8v5zm3-7a1 1 0 110-2 1 1 0 010 2zm-1-9H6v4h12V3z"/></svg>
             Print
@@ -786,10 +736,8 @@
         </div>
       </div>
 
-            <!-- REPORT GRID -->
       <div class="report-grid">
 
-        <!-- KPI: Total Documents -->
         <div class="report-card span-3">
           <div class="kpi-value" id="kpiDocs">—</div>
           <div class="kpi-label">Total Documents</div>
@@ -799,7 +747,6 @@
           </div>
         </div>
 
-        <!-- KPI: Approved -->
         <div class="report-card span-3">
           <div class="kpi-value" id="kpiApproved">—</div>
           <div class="kpi-label">Approved</div>
@@ -809,7 +756,6 @@
           </div>
         </div>
 
-        <!-- KPI: Pending -->
         <div class="report-card span-3">
           <div class="kpi-value" id="kpiPending">—</div>
           <div class="kpi-label">Pending</div>
@@ -819,7 +765,6 @@
           </div>
         </div>
 
-        <!-- KPI: Avg Review Time -->
         <div class="report-card span-3">
           <div class="kpi-value" id="kpiAvgTime">—</div>
           <div class="kpi-label">Avg. Review Time</div>
@@ -829,7 +774,6 @@
           </div>
         </div>
 
-        <!-- Documents per Month (bar chart) -->
         <div class="report-card span-8">
           <div class="report-card-head">
             <h2>
@@ -841,7 +785,6 @@
           <div class="bar-chart" id="barChart"></div>
         </div>
 
-        <!-- Documents by Status (donut) -->
         <div class="report-card span-4">
           <div class="report-card-head">
             <h2>
@@ -850,7 +793,7 @@
             </h2>
           </div>
           <div class="donut-wrapper">
-            <div class="donut" id="statusDonut" style="--seg1:0deg;--seg2:0deg;--seg3:0deg;--seg4:0deg;">
+            <div class="donut" id="statusDonut">
               <div class="donut-center">
                 <div class="donut-value" id="donutTotal">—</div>
                 <div class="donut-label">Total</div>
@@ -860,7 +803,6 @@
           </div>
         </div>
 
-        <!-- Top Submitters (horizontal bars) -->
         <div class="report-card span-6">
           <div class="report-card-head">
             <h2>
@@ -872,7 +814,6 @@
           <div class="h-bar-chart" id="submittersChart"></div>
         </div>
 
-        <!-- By Department (horizontal bars) -->
         <div class="report-card span-6">
           <div class="report-card-head">
             <h2>
@@ -884,7 +825,6 @@
           <div class="h-bar-chart" id="deptsChart"></div>
         </div>
 
-        <!-- Approval Trend (line chart) -->
         <div class="report-card span-12">
           <div class="report-card-head">
             <h2>
@@ -896,7 +836,6 @@
           <div class="line-chart-wrap" id="lineChart"></div>
         </div>
 
-        <!-- Recent Activity Log -->
         <div class="report-card span-12">
           <div class="report-card-head">
             <h2>
@@ -922,44 +861,48 @@
         </div>
 
       </div>
+
+    </div>
   </main>
 
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- ============================================================
-       PAGE SCRIPT
-       ============================================================ -->
   <script src="app.js"></script>
   <script>
   /* ==========================================================================
-     REPORTS — Page module (aligned with use case diagram)
-
-     Permissions (per diagram):
-       Secretary  → report:generate ✓, report:view ✓, report:print ✓
-       EA         → report:generate ✓, report:view ✓, report:print ✓
-       Director   → report:generate ✗, report:view ✓, report:print ✓
+     REPORTS — Page module (with auth guard)
      ========================================================================== */
   (function () {
     'use strict';
 
-    const { Role, Toast, Utils, Bus } = APP;
+    // ============================================================
+    // 🛡️ AUTH GUARD — must be FIRST
+    // ============================================================
+    if (!window.APP || !window.APP.Auth) {
+      console.error('[Reports] app.js not loaded!');
+      return;
+    }
+    if (!window.APP.Auth.requireLogin()) return;
 
-       /* --------------------------------------------------------------------
+    const { Role, Toast, Utils } = window.APP;
+
+    /* --------------------------------------------------------------------
        DATA — loaded from backend
        -------------------------------------------------------------------- */
-
-    let monthlyData    = [];  // Bar chart — documents per month
-    let statusData     = [];  // Donut chart — documents by status
-    let submittersData = [];  // Horizontal bars — top submitters
-    let deptsData      = [];  // Horizontal bars — by department
+    let monthlyData    = [];
+    let statusData     = [];
+    let submittersData = [];
+    let deptsData      = [];
     let trendData      = { labels: [], approved: [], rejected: [] };
-    let logData        = [];  // Activity log table
-    let summaryStats   = { docs: 0, approved: 0, pending: 0, rate: '0%' };
+    let logData        = [];
+    let summaryStats   = {
+      docs: 0, approved: 0, pending: 0, rate: '0%', avgTime: '0h',
+      trendDocs:     { dir: 'up',   text: '+0% vs last period' },
+      trendApproved: { dir: 'up',   text: '+0% vs last period' },
+      trendPending:  { dir: 'down', text: '0% vs last period' },
+      trendAvgTime:  { dir: 'up',   text: '0%' }
+    };
 
-    /**
-     * Load all report data from the backend.
-     * Replace with real endpoint, e.g. GET /api/reports?from=...&to=...
-     */
     async function loadReportData() {
       try {
         // TODO: Replace with real API call
@@ -978,24 +921,30 @@
         // deptsData      = data.deptsData      || [];
         // trendData      = data.trendData      || { labels: [], approved: [], rejected: [] };
         // logData        = data.logData        || [];
-        // summaryStats   = data.summary        || { docs: 0, approved: 0, pending: 0, rate: '0%' };
+        // summaryStats   = data.summary        || summaryStats;
 
-        // Empty for now — charts will show their fallback states
         monthlyData    = [];
         statusData     = [];
         submittersData = [];
         deptsData      = [];
         trendData      = { labels: [], approved: [], rejected: [] };
         logData        = [];
-        summaryStats   = { docs: 0, approved: 0, pending: 0, rate: '0%' };
+        summaryStats   = {
+          docs: 0, approved: 0, pending: 0, rate: '0%', avgTime: '0h',
+          trendDocs:     { dir: 'up',   text: '+0% vs last period' },
+          trendApproved: { dir: 'up',   text: '+0% vs last period' },
+          trendPending:  { dir: 'down', text: '0% vs last period' },
+          trendAvgTime:  { dir: 'up',   text: '0%' }
+        };
       } catch (err) {
         console.error('[Reports] Failed to load:', err);
-        if (window.APP && APP.Toast) {
-          APP.Toast.error('Load Failed', 'Could not load reports from the server.');
+        if (window.APP && window.APP.Toast) {
+          window.APP.Toast.error('Load Failed', 'Could not load reports from the server.');
         }
       }
 
       updateSummary();
+      updateChartMeta();
       rerenderAll();
     }
 
@@ -1005,10 +954,77 @@
       const pending  = document.getElementById('summaryPending');
       const rate     = document.getElementById('summaryRate');
 
-      if (docs)     docs.textContent     = Utils.number(summaryStats.docs || 0);
-      if (approved) approved.textContent = Utils.number(summaryStats.approved || 0);
-      if (pending)  pending.textContent  = Utils.number(summaryStats.pending || 0);
-      if (rate)     rate.textContent     = summaryStats.rate || '0%';
+      const s = summaryStats || {};
+
+      if (docs)     docs.textContent     = s.docs     !== undefined ? Utils.number(s.docs)     : '—';
+      if (approved) approved.textContent = s.approved !== undefined ? Utils.number(s.approved) : '—';
+      if (pending)  pending.textContent  = s.pending  !== undefined ? Utils.number(s.pending)  : '—';
+      if (rate)     rate.textContent     = s.rate     || '—';
+
+      updateKPIs(s);
+    }
+
+    function updateKPIs(stats) {
+      setKPI('kpiDocs', 'kpiDocsTrend',
+        stats.docs !== undefined ? Utils.number(stats.docs) : '—',
+        stats.trendDocs);
+
+      setKPI('kpiApproved', 'kpiApprovedTrend',
+        stats.approved !== undefined ? Utils.number(stats.approved) : '—',
+        stats.trendApproved);
+
+      setKPI('kpiPending', 'kpiPendingTrend',
+        stats.pending !== undefined ? Utils.number(stats.pending) : '—',
+        stats.trendPending);
+
+      setKPI('kpiAvgTime', 'kpiAvgTimeTrend',
+        stats.avgTime !== undefined ? stats.avgTime : '—',
+        stats.trendAvgTime);
+    }
+
+    function setKPI(valueId, trendId, value, trend) {
+      const valEl = document.getElementById(valueId);
+      if (valEl) valEl.textContent = value;
+
+      const trendEl = document.getElementById(trendId);
+      if (!trendEl) return;
+
+      if (!trend || !trend.text) {
+        trendEl.style.display = 'none';
+        return;
+      }
+
+      trendEl.style.display = 'inline-flex';
+      trendEl.classList.remove('up', 'down');
+      trendEl.classList.add(trend.dir === 'down' ? 'down' : 'up');
+
+      const icon = trendEl.querySelector('.trend-icon');
+      if (icon) {
+        icon.innerHTML = trend.dir === 'down'
+          ? '<path d="M7 10l5 5 5-5z"/>'
+          : '<path d="M7 14l5-5 5 5z"/>';
+      }
+
+      const text = trendEl.querySelector('.trend-text');
+      if (text) text.textContent = trend.text;
+    }
+
+    function updateChartMeta() {
+      const meta = document.getElementById('barChartMeta');
+      if (!meta) return;
+
+      if (!monthlyData || monthlyData.length === 0) {
+        meta.textContent = 'No data';
+        return;
+      }
+
+      if (monthlyData.length === 1) {
+        meta.textContent = monthlyData[0].month;
+      } else {
+        const first = monthlyData[0].month;
+        const last  = monthlyData[monthlyData.length - 1].month;
+        meta.textContent = first + ' – ' + last;
+      }
     }
 
     /* --------------------------------------------------------------------
@@ -1019,24 +1035,23 @@
       if (!chart) return;
 
       if (!monthlyData || monthlyData.length === 0) {
-        chart.innerHTML = `
-          <div style="text-align:center;padding:60px 20px;color:var(--text-muted);width:100%;font-size:0.85rem;">
-            No monthly data available yet
-          </div>
-        `;
+        chart.innerHTML =
+          '<div style="text-align:center;padding:60px 20px;color:var(--text-muted);width:100%;font-size:0.85rem;">' +
+            'No monthly data available yet' +
+          '</div>';
         return;
       }
 
-      const max = Math.max(...monthlyData.map(m => m.value), 1);
+      const max = Math.max.apply(null, monthlyData.map(function (m) { return m.value; }).concat([1]));
 
-      chart.innerHTML = monthlyData.map(m => {
+      chart.innerHTML = monthlyData.map(function (m) {
         const height = Math.max((m.value / max) * 100, 4);
-        return `
-          <div class="bar" style="height:${height}%;" title="${m.month}: ${m.value} documents">
-            <span class="bar-value">${m.value}</span>
-            <span class="bar-label">${m.month}</span>
-          </div>
-        `;
+        return (
+          '<div class="bar" style="height:' + height + '%;" title="' + m.month + ': ' + m.value + ' documents">' +
+            '<span class="bar-value">' + m.value + '</span>' +
+            '<span class="bar-label">' + m.month + '</span>' +
+          '</div>'
+        );
       }).join('');
     }
 
@@ -1048,206 +1063,221 @@
       const legend = document.getElementById('donutLegend');
       if (!donut || !legend) return;
 
-      const total = statusData.reduce((sum, s) => sum + s.value, 0);
+      const total = statusData.reduce(function (sum, s) { return sum + s.value; }, 0);
       const totalEl = document.getElementById('donutTotal');
       if (totalEl) totalEl.textContent = Utils.number(total);
 
       if (total === 0) {
-        donut.style.background = 'conic-gradient(var(--border-light) 0deg 360deg)';
-        legend.innerHTML = `
-          <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:0.85rem;">
-            No status data yet
-          </div>
-        `;
+        donut.style.background = 'conic-gradient(var(--bg-input) 0deg 360deg)';
+        legend.innerHTML =
+          '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:0.85rem;">' +
+            'No status data yet' +
+          '</div>';
         return;
       }
 
       let cumulative = 0;
-      const segments = statusData.map(s => {
+      const segments = statusData.map(function (s) {
         const start = cumulative;
         const deg = (s.value / total) * 360;
         cumulative += deg;
-        return { start, end: cumulative, color: s.color };
+        return { start: start, end: cumulative, color: s.color };
       });
 
-      const segmentsDeg = segments.map(s => `${s.color} ${s.start}deg ${s.end}deg`).join(', ');
-      donut.style.background = `conic-gradient(${segmentsDeg})`;
+      const segmentsDeg = segments.map(function (s) {
+        return s.color + ' ' + s.start + 'deg ' + s.end + 'deg';
+      }).join(', ');
+      donut.style.background = 'conic-gradient(' + segmentsDeg + ')';
 
-      legend.innerHTML = statusData.map(s => `
-        <div class="legend-item">
-          <span class="legend-dot" style="background:${s.color};"></span>
-          <span class="legend-name">${Utils.escapeHtml(s.label)}</span>
-          <span class="legend-val">${Utils.number(s.value)}</span>
-        </div>
-      `).join('');
-    }
-
-    /* --------------------------------------------------------------------
-       RENDER — Horizontal bar charts
-       -------------------------------------------------------------------- */
-    function renderHBars(containerId, data, options = {}) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-
-      if (!data || data.length === 0) {
-        container.innerHTML = `
-          <div style="text-align:center;padding:30px;color:var(--text-muted);font-size:0.85rem;">
-            No data available yet
-          </div>
-        `;
-        return;
-      }
-
-      const max = Math.max(...data.map(d => d.value), 1);
-      const valueSuffix = options.valueSuffix || '';
-
-      container.innerHTML = data.map(d => {
-        const widthPct = (d.value / max) * 100;
-        const fillClass = d.color === 'gold' ? 'gold' : d.color === 'green' ? 'green' : '';
-        return `
-          <div class="h-bar-row">
-            <div class="h-bar-label" title="${Utils.escapeHtml(d.name)}">${Utils.escapeHtml(d.name)}</div>
-            <div class="h-bar-track">
-              <div class="h-bar-fill ${fillClass}" style="width:${widthPct}%;"></div>
-            </div>
-            <div class="h-bar-value">${d.value}${valueSuffix}</div>
-          </div>
-        `;
+      legend.innerHTML = statusData.map(function (s) {
+        return (
+          '<div class="legend-item">' +
+            '<span class="legend-dot" style="background:' + s.color + ';"></span>' +
+            '<span class="legend-name">' + Utils.escapeHtml(s.label) + '</span>' +
+            '<span class="legend-val">' + Utils.number(s.value) + '</span>' +
+          '</div>'
+        );
       }).join('');
     }
 
     /* --------------------------------------------------------------------
-       RENDER — Line chart (SVG)
+       RENDER — Horizontal bars
        -------------------------------------------------------------------- */
+    function renderHBars(containerId, data, options) {
+      options = options || {};
+      const container = document.getElementById(containerId);
+      if (!container) return;
 
-     function renderLineChart() {
+      if (!data || data.length === 0) {
+        container.innerHTML =
+          '<div style="text-align:center;padding:30px;color:var(--text-muted);font-size:0.85rem;">' +
+            'No data available yet' +
+          '</div>';
+        return;
+      }
+
+      const max = Math.max.apply(null, data.map(function (d) { return d.value; }).concat([1]));
+      const valueSuffix = options.valueSuffix || '';
+
+      container.innerHTML = data.map(function (d) {
+        const widthPct = (d.value / max) * 100;
+        const fillClass = d.color === 'gold' ? 'gold' : d.color === 'green' ? 'green' : '';
+        return (
+          '<div class="h-bar-row">' +
+            '<div class="h-bar-label" title="' + Utils.escapeHtml(d.name) + '">' + Utils.escapeHtml(d.name) + '</div>' +
+            '<div class="h-bar-track">' +
+              '<div class="h-bar-fill ' + fillClass + '" style="width:' + widthPct + '%;"></div>' +
+            '</div>' +
+            '<div class="h-bar-value">' + d.value + valueSuffix + '</div>' +
+          '</div>'
+        );
+      }).join('');
+    }
+
+    /* --------------------------------------------------------------------
+       RENDER — Line chart
+       -------------------------------------------------------------------- */
+    function renderLineChart() {
       const wrap = document.getElementById('lineChart');
       if (!wrap) return;
 
-      if (!trendData || !trendData.labels || trendData.labels.length === 0) {
-        wrap.innerHTML = `
-          <div style="text-align:center;padding:80px 20px;color:var(--text-muted);font-size:0.85rem;">
-            No trend data available yet
-          </div>
-        `;
+      const hasData =
+        trendData &&
+        Array.isArray(trendData.labels) &&
+        trendData.labels.length > 0 &&
+        Array.isArray(trendData.approved) &&
+        Array.isArray(trendData.rejected);
+
+      if (!hasData) {
+        wrap.innerHTML =
+          '<div style="text-align:center;padding:80px 20px;color:var(--text-muted);font-size:0.85rem;">' +
+            'No trend data available yet' +
+          '</div>';
         return;
       }
-      const W = 800;
-      const H = 220;
-      const padTop = 20;
-      const padBottom = 30;
-      const padLeft = 40;
-      const padRight = 20;
 
+      if (trendData.labels.length === 1) {
+        wrap.innerHTML =
+          '<div style="text-align:center;padding:80px 20px;color:var(--text-muted);font-size:0.85rem;">' +
+            'Need at least 2 data points to display a trend' +
+          '</div>';
+        return;
+      }
+
+      const W = 800, H = 220;
+      const padTop = 20, padBottom = 30, padLeft = 40, padRight = 20;
       const chartW = W - padLeft - padRight;
       const chartH = H - padTop - padBottom;
 
-      const allValues = [...trendData.approved, ...trendData.rejected];
-      const maxVal = Math.max(...allValues);
-      const niceMax = Math.ceil(maxVal / 5) * 5;
+      const allValues = trendData.approved.concat(trendData.rejected);
+      const maxVal = allValues.length > 0 ? Math.max.apply(null, allValues) : 0;
+      const niceMax = Math.max(Math.ceil(maxVal / 5) * 5, 5);
 
       const stepX = chartW / (trendData.labels.length - 1);
 
-      const toPoint = (val, i) => ({
-        x: padLeft + i * stepX,
-        y: padTop + chartH - (val / niceMax) * chartH
-      });
+      const toPoint = function (val, i) {
+        return {
+          x: padLeft + i * stepX,
+          y: padTop + chartH - ((val || 0) / niceMax) * chartH
+        };
+      };
 
       const approvedPts = trendData.approved.map(toPoint);
       const rejectedPts = trendData.rejected.map(toPoint);
 
-      const approvedPath = approvedPts.map((p, i) =>
-        (i === 0 ? 'M' : 'L') + p.x + ' ' + p.y
-      ).join(' ');
-      const rejectedPath = rejectedPts.map((p, i) =>
-        (i === 0 ? 'M' : 'L') + p.x + ' ' + p.y
-      ).join(' ');
+      const approvedPath = approvedPts.map(function (p, i) {
+        return (i === 0 ? 'M' : 'L') + p.x + ' ' + p.y;
+      }).join(' ');
+      const rejectedPath = rejectedPts.map(function (p, i) {
+        return (i === 0 ? 'M' : 'L') + p.x + ' ' + p.y;
+      }).join(' ');
 
-      const areaPath = approvedPath +
-        ` L ${approvedPts[approvedPts.length - 1].x} ${padTop + chartH}` +
-        ` L ${approvedPts[0].x} ${padTop + chartH} Z`;
+      const areaPath = approvedPts.length > 0
+        ? approvedPath +
+          ' L ' + approvedPts[approvedPts.length - 1].x + ' ' + (padTop + chartH) +
+          ' L ' + approvedPts[0].x + ' ' + (padTop + chartH) + ' Z'
+        : '';
 
       const gridLines = [];
       const yTicks = 4;
       for (let i = 0; i <= yTicks; i++) {
         const val = (niceMax / yTicks) * i;
         const y = padTop + chartH - (val / niceMax) * chartH;
-        gridLines.push(`
-          <line class="chart-grid-line" x1="${padLeft}" y1="${y}" x2="${W - padRight}" y2="${y}" />
-          <text class="chart-axis-label" x="${padLeft - 8}" y="${y + 3}" text-anchor="end">${Math.round(val)}</text>
-        `);
+        gridLines.push(
+          '<line class="chart-grid-line" x1="' + padLeft + '" y1="' + y + '" x2="' + (W - padRight) + '" y2="' + y + '" />' +
+          '<text class="chart-axis-label" x="' + (padLeft - 8) + '" y="' + (y + 3) + '" text-anchor="end">' + Math.round(val) + '</text>'
+        );
       }
 
-      const xLabels = trendData.labels.map((label, i) => {
+      const xLabels = trendData.labels.map(function (label, i) {
         const x = padLeft + i * stepX;
-        return `<text class="chart-axis-label" x="${x}" y="${H - 10}" text-anchor="middle">${label}</text>`;
+        return '<text class="chart-axis-label" x="' + x + '" y="' + (H - 10) + '" text-anchor="middle">' + Utils.escapeHtml(label) + '</text>';
       }).join('');
 
-      const pointsHtml = approvedPts.map(p => `<circle class="chart-point" cx="${p.x}" cy="${p.y}" r="4" />`).join('');
+      const pointsHtml = approvedPts.map(function (p) {
+        return '<circle class="chart-point" cx="' + p.x + '" cy="' + p.y + '" r="4" />';
+      }).join('');
 
-      wrap.innerHTML = `
-        <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="gradientArea" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#7B1113" stop-opacity="0.5" />
-              <stop offset="100%" stop-color="#7B1113" stop-opacity="0" />
-            </linearGradient>
-          </defs>
-          ${gridLines.join('')}
-          <path class="chart-area" d="${areaPath}" />
-          <path class="chart-line" d="${approvedPath}" />
-          <path class="chart-line" d="${rejectedPath}" style="stroke:#D4AF37;stroke-dasharray:6 4;stroke-width:2;" />
-          ${pointsHtml}
-          ${xLabels}
-        </svg>
-        <div style="display:flex;gap:18px;justify-content:center;margin-top:10px;font-size:0.75rem;color:var(--text-secondary);">
-          <span style="display:flex;align-items:center;gap:6px;">
-            <span style="width:18px;height:2.5px;background:#7B1113;border-radius:2px;display:inline-block;"></span>
-            Approved
-          </span>
-          <span style="display:flex;align-items:center;gap:6px;">
-            <span style="width:18px;height:2.5px;background:#D4AF37;border-radius:2px;display:inline-block;border-top:2px dashed #D4AF37;"></span>
-            Rejected
-          </span>
-        </div>
-      `;
+      wrap.innerHTML =
+        '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none">' +
+          '<defs>' +
+            '<linearGradient id="gradientArea" x1="0" y1="0" x2="0" y2="1">' +
+              '<stop offset="0%" stop-color="#7B1113" stop-opacity="0.5" />' +
+              '<stop offset="100%" stop-color="#7B1113" stop-opacity="0" />' +
+            '</linearGradient>' +
+          '</defs>' +
+          gridLines.join('') +
+          (areaPath ? '<path class="chart-area" d="' + areaPath + '" />' : '') +
+          (approvedPath ? '<path class="chart-line" d="' + approvedPath + '" />' : '') +
+          (rejectedPath ? '<path class="chart-line" d="' + rejectedPath + '" style="stroke:#D4AF37;stroke-dasharray:6 4;stroke-width:2;" />' : '') +
+          pointsHtml +
+          xLabels +
+        '</svg>' +
+        '<div style="display:flex;gap:18px;justify-content:center;margin-top:10px;font-size:0.75rem;color:var(--text-secondary);">' +
+          '<span style="display:flex;align-items:center;gap:6px;">' +
+            '<span style="width:18px;height:2.5px;background:#7B1113;border-radius:2px;display:inline-block;"></span>' +
+            'Approved' +
+          '</span>' +
+          '<span style="display:flex;align-items:center;gap:6px;">' +
+            '<span style="width:18px;height:2.5px;background:#D4AF37;border-radius:2px;display:inline-block;"></span>' +
+            'Rejected' +
+          '</span>' +
+        '</div>';
     }
 
     /* --------------------------------------------------------------------
-       RENDER — Activity log table
+       RENDER — Activity log
        -------------------------------------------------------------------- */
     function renderLog() {
       const tbody = document.getElementById('logBody');
       if (!tbody) return;
 
       if (!logData || logData.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="5" style="text-align:center;padding:40px 20px;color:var(--text-muted);font-style:italic;">
-              No activity logged yet
-            </td>
-          </tr>
-        `;
+        tbody.innerHTML =
+          '<tr>' +
+            '<td colspan="5" style="text-align:center;padding:40px 20px;color:var(--text-muted);font-style:italic;">' +
+              'No activity logged yet' +
+            '</td>' +
+          '</tr>';
         const logCount = document.getElementById('logCount');
         if (logCount) logCount.textContent = 'No events';
         return;
       }
 
-      tbody.innerHTML = logData.map(row => `
-        <tr>
-          <td style="color:var(--text-muted);white-space:nowrap;">${Utils.escapeHtml(row.time)}</td>
-          <td>
-            <span class="activity-dot ${row.dot}"></span>
-            <strong>${Utils.escapeHtml(row.action)}</strong>
-          </td>
-          <td style="color:var(--text-secondary);">${Utils.escapeHtml(row.subject)}</td>
-          <td>${Utils.escapeHtml(row.user)}</td>
-          <td style="color:var(--text-muted);font-size:0.78rem;">${Utils.escapeHtml(row.dept)}</td>
-        </tr>
-      `).join('');
+      tbody.innerHTML = logData.map(function (row) {
+        return (
+          '<tr>' +
+            '<td style="color:var(--text-muted);white-space:nowrap;">' + Utils.escapeHtml(row.time) + '</td>' +
+            '<td><span class="activity-dot ' + row.dot + '"></span><strong>' + Utils.escapeHtml(row.action) + '</strong></td>' +
+            '<td style="color:var(--text-secondary);">' + Utils.escapeHtml(row.subject) + '</td>' +
+            '<td>' + Utils.escapeHtml(row.user) + '</td>' +
+            '<td style="color:var(--text-muted);font-size:0.78rem;">' + Utils.escapeHtml(row.dept) + '</td>' +
+          '</tr>'
+        );
+      }).join('');
 
       const logCount = document.getElementById('logCount');
-      if (logCount) logCount.textContent = `Latest ${logData.length} events`;
+      if (logCount) logCount.textContent = 'Latest ' + logData.length + ' events';
     }
 
     /* --------------------------------------------------------------------
@@ -1261,21 +1291,20 @@
       const from = new Date();
       from.setDate(today.getDate() - 30);
 
-      const fmt = (d) => d.toISOString().split('T')[0];
+      function fmt(d) { return d.toISOString().split('T')[0]; }
       if (fromInput && !fromInput.value) fromInput.value = fmt(from);
       if (toInput && !toInput.value)     toInput.value   = fmt(today);
     }
 
     /* --------------------------------------------------------------------
-       ACTIONS (role-aware)
+       ACTIONS
        -------------------------------------------------------------------- */
     const btnApply  = document.getElementById('btnApply');
     const btnReset  = document.getElementById('btnReset');
     const btnExport = document.getElementById('btnExport');
     const btnPrint  = document.getElementById('btnPrint');
 
-    // Apply — Secretary + EA only
-        btnApply.addEventListener('click', async () => {
+    btnApply.addEventListener('click', async function () {
       if (!Role.can('report:generate')) {
         Toast.error('Permission Denied', 'Only Secretary and Executive Assistant can apply new filters.');
         return;
@@ -1287,23 +1316,22 @@
       const type = document.getElementById('filterType').value;
 
       const parts = [];
-      if (from && to) parts.push(`${from} → ${to}`);
+      if (from && to) parts.push(from + ' → ' + to);
       if (dept) parts.push(dept);
       if (type) parts.push(type);
 
       const periodText = document.getElementById('periodText');
       if (periodText) {
         periodText.textContent = parts.length
-          ? `Filtered by: ${parts.join(' · ')}`
+          ? 'Filtered by: ' + parts.join(' · ')
           : 'Showing all data';
       }
 
       Toast.success('Filters Applied', 'Loading updated report...');
-      await refetchReports();
+      await loadReportData();
     });
 
-    // Reset — Secretary + EA only
-    btnReset.addEventListener('click', async () => {
+    btnReset.addEventListener('click', async function () {
       if (!Role.can('report:generate')) {
         Toast.error('Permission Denied', 'Only Secretary and Executive Assistant can reset filters.');
         return;
@@ -1314,11 +1342,10 @@
       setDefaultDates();
       document.getElementById('periodText').textContent = 'Showing data for the last 30 days';
       Toast.info('Filters Reset', 'Reloading default report...');
-      await refetchReports();
+      await loadReportData();
     });
 
-    // Export — Secretary + EA only
-    btnExport.addEventListener('click', () => {
+    btnExport.addEventListener('click', function () {
       if (!Role.can('report:generate')) {
         Toast.error('Permission Denied', 'Only Secretary and Executive Assistant can export reports.');
         return;
@@ -1326,20 +1353,19 @@
       Toast.info('Export Started', 'Preparing report export as CSV...');
     });
 
-    // Print — everyone (report:print)
-    btnPrint.addEventListener('click', () => {
+    btnPrint.addEventListener('click', function () {
       if (!Role.can('report:print')) {
         Toast.error('Permission Denied', 'You do not have permission to print reports.');
         return;
       }
       Toast.info('Preparing Print', 'Opening print dialog...');
-      setTimeout(() => window.print(), 500);
+      setTimeout(function () { window.print(); }, 500);
     });
 
     /* --------------------------------------------------------------------
        RERENDER
        -------------------------------------------------------------------- */
-        function rerenderAll() {
+    function rerenderAll() {
       renderBarChart();
       renderDonut();
       renderHBars('submittersChart', submittersData);
@@ -1348,54 +1374,38 @@
       renderLog();
     }
 
-    /**
-     * Reload from backend after filters are applied.
-     * In production, the filter changes should trigger a new fetch.
-     */
-    async function refetchReports() {
-      await loadReportData();
-    }
-
     /* --------------------------------------------------------------------
-       ROLE-AWARE UI (ALIGNED WITH DIAGRAM)
+       ROLE-AWARE UI
        -------------------------------------------------------------------- */
     function applyRole() {
+      const user = window.APP.Auth.currentUser();
+      const roleId = user ? user.role : 'secretary';
+
       const canGenerate = Role.can('report:generate');
       const canPrint    = Role.can('report:print');
 
-      // Apply / Reset / Export — Secretary + EA only
       if (btnApply)  btnApply.style.display  = canGenerate ? 'inline-flex' : 'none';
       if (btnReset)  btnReset.style.display  = canGenerate ? 'inline-flex' : 'none';
       if (btnExport) btnExport.style.display = canGenerate ? 'inline-flex' : 'none';
+      if (btnPrint)  btnPrint.style.display  = canPrint ? 'inline-flex' : 'none';
 
-      // Print — everyone with print permission
-      if (btnPrint) btnPrint.style.display = canPrint ? 'inline-flex' : 'none';
-
-      // Director read-only notice
       const notice = document.getElementById('viewOnlyNotice');
       if (notice) {
-        notice.style.display = (Role.id() === 'director') ? 'flex' : 'none';
+        notice.style.display = (roleId === 'director') ? 'flex' : 'none';
       }
 
-      // Update period text based on role
       const periodText = document.getElementById('periodText');
-      if (periodText && Role.id() === 'director') {
+      if (periodText && roleId === 'director') {
         periodText.textContent = 'View-only mode — read-only access to analytics';
       }
     }
 
-        /* --------------------------------------------------------------------
+    /* --------------------------------------------------------------------
        INIT
        -------------------------------------------------------------------- */
     setDefaultDates();
     applyRole();
     loadReportData();
-
-    // React to role change
-    Bus.on('role:changed', () => {
-      applyRole();
-      Toast.info('Role Switched', `Now viewing as ${Role.current().label}.`);
-    });
 
   })();
   </script>
