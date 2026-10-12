@@ -3,15 +3,14 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>UPHSD Molino — Office of the School Director | Admin Login</title>
+<title>Sign In — UPHSD Molino | Office of the School Director</title>
+<link rel="stylesheet" href="shared.css" />
+
 <style>
-  /* =========================================================
-     UPHSD MOLINO CAMPUS COLOR PALETTE
-     ---------------------------------------------------------
-     Maroon (Primary)   : #7B1113  /  #5A0C0E (deep)
-     Gold   (Accent)    : #D4AF37  /  #F4C430 (bright)
-     White              : #FFFFFF  /  #F9F5F0 (off-white)
-     ========================================================= */
+  /* =====================================================================
+     LOGIN PAGE — STANDALONE STYLES
+     (Does NOT use the shared dashboard layout — it's its own full screen)
+     ===================================================================== */
 
   * {
     margin: 0;
@@ -20,9 +19,8 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
 
-  /* =========================================================
-     BACKGROUND  ←  PUT YOUR SCHOOL IMAGE HERE
-     ========================================================= */
+  html, body { height: 100%; }
+
   body {
     min-height: 100vh;
     display: flex;
@@ -31,62 +29,139 @@
     padding: 20px;
     position: relative;
     overflow: hidden;
-
-    /* Fallback maroon gradient (shows while image loads or if it fails) */
     background: linear-gradient(135deg, #4a0a0c 0%, #7B1113 50%, #5A0C0E 100%);
+    transition: background 0.5s ease;
   }
 
-  /* --- Background image layer --- */
+  /* =========================================================
+     BACKGROUND IMAGE LAYER
+     ========================================================= */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
     z-index: 0;
-
-    /* 👇 REPLACE "school-bg.jpg" WITH YOUR ACTUAL IMAGE FILENAME 👇 */
+    /* 👇 REPLACE WITH YOUR SCHOOL IMAGE: url('school-bg.jpg') */
     background-image: url('school-bg.jpg');
-
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-
-    /* ---- BLUR AMOUNT ---- */
     filter: blur(6px) brightness(0.85);
-    transform: scale(1.08); /* prevents white edges from blur */
-    z-index: 0;
+    transform: scale(1.08);
+    transition: filter 0.5s ease;
   }
 
-  /* --- Maroon tint overlay (keeps white card readable) --- */
+  body.dark-mode::before {
+    filter: blur(6px) brightness(0.4);
+  }
+
   body::after {
     content: '';
     position: fixed;
     inset: 0;
     z-index: 1;
-    background:
-      linear-gradient(
-        135deg,
-        rgba(74, 10, 12, 0.85) 0%,
-        rgba(123, 17, 19, 0.75) 50%,
-        rgba(90, 12, 14, 0.85) 100%
-      );
+    background: linear-gradient(
+      135deg,
+      rgba(74, 10, 12, 0.88) 0%,
+      rgba(123, 17, 19, 0.78) 50%,
+      rgba(90, 12, 14, 0.88) 100%
+    );
     pointer-events: none;
+    transition: background 0.5s ease;
   }
 
-  /* ========== LOGIN CARD ========== */
+  body.dark-mode::after {
+    background: linear-gradient(
+      135deg,
+      rgba(10, 5, 5, 0.94) 0%,
+      rgba(30, 8, 10, 0.92) 50%,
+      rgba(15, 6, 7, 0.94) 100%
+    );
+  }
+
+  /* =========================================================
+     DARK MODE TOGGLE
+     ========================================================= */
+  .theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid #D4AF37;
+    background: rgba(123, 17, 19, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #D4AF37;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.35s ease;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+  }
+
+  .theme-toggle:hover {
+    transform: scale(1.1) rotate(15deg);
+    background: rgba(212, 175, 55, 0.95);
+    color: #7B1113;
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.55);
+  }
+
+  .theme-toggle svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+    position: absolute;
+    transition: opacity 0.3s ease, transform 0.4s ease;
+  }
+
+  .theme-toggle .icon-sun {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+  .theme-toggle .icon-moon {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.5);
+  }
+
+  body.dark-mode .theme-toggle .icon-sun {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.5);
+  }
+  body.dark-mode .theme-toggle .icon-moon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+
+  /* =========================================================
+     LOGIN CARD
+     ========================================================= */
   .login-container {
     position: relative;
     z-index: 2;
     width: 100%;
-    max-width: 550px;
+    max-width: 440px;
     background: #FFFFFF;
     border-radius: 20px;
     padding: 45px 40px;
     box-shadow:
       0 25px 50px rgba(0, 0, 0, 0.55),
-      0 0 0 0px rgba(212, 175, 55, 0.35);
+      0 0 0 4px rgba(212, 175, 55, 0.35);
     animation: fadeIn 0.7s ease;
     border-top: 6px solid #D4AF37;
+    transition: background 0.5s ease, box-shadow 0.5s ease;
+  }
+
+  body.dark-mode .login-container {
+    background: #1a1414;
+    box-shadow:
+      0 25px 50px rgba(0, 0, 0, 0.75),
+      0 0 0 4px rgba(212, 175, 55, 0.5);
   }
 
   @keyframes fadeIn {
@@ -95,7 +170,7 @@
   }
 
   /* =========================================================
-     LOGO AREA  ←  PUT YOUR SCHOOL LOGO HERE
+     LOGO AREA
      ========================================================= */
   .logo-area {
     text-align: center;
@@ -103,8 +178,8 @@
   }
 
   .logo-circle {
-    width: 180px;
-    height: 180px;
+    width: 110px;
+    height: 110px;
     margin: 0 auto 18px;
     border-radius: 50%;
     background: #FFFFFF;
@@ -112,6 +187,20 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    box-shadow:
+      0 10px 25px rgba(123, 17, 19, 0.25),
+      0 0 0 4px #D4AF37,
+      0 0 0 8px rgba(212, 175, 55, 0.2);
+    position: relative;
+    transition: background 0.5s ease, box-shadow 0.5s ease;
+  }
+
+  body.dark-mode .logo-circle {
+    background: #2a1f1f;
+    box-shadow:
+      0 10px 25px rgba(0, 0, 0, 0.5),
+      0 0 0 4px #D4AF37,
+      0 0 0 8px rgba(212, 175, 55, 0.3);
   }
 
   .logo-circle img {
@@ -129,6 +218,10 @@
     display: none;
   }
 
+  body.dark-mode .logo-circle .fallback-icon {
+    fill: #D4AF37;
+  }
+
   .logo-circle.img-failed img {
     display: none;
   }
@@ -143,6 +236,11 @@
     letter-spacing: 0.5px;
     line-height: 1.35;
     text-transform: uppercase;
+    transition: color 0.5s ease;
+  }
+
+  body.dark-mode .logo-area h1 {
+    color: #F4C430;
   }
 
   .logo-area .campus {
@@ -161,9 +259,17 @@
     text-transform: uppercase;
     border-radius: 20px;
     font-weight: 600;
+    transition: all 0.5s ease;
   }
 
-  /* ========== FORM ========== */
+  body.dark-mode .logo-area .subtitle {
+    background: #D4AF37;
+    color: #1a1414;
+  }
+
+  /* =========================================================
+     FORM
+     ========================================================= */
   .form-group {
     margin-bottom: 20px;
     position: relative;
@@ -175,6 +281,11 @@
     font-size: 0.85rem;
     margin-bottom: 8px;
     font-weight: 600;
+    transition: color 0.5s ease;
+  }
+
+  body.dark-mode .form-group label {
+    color: #e8d9b0;
   }
 
   .input-wrapper {
@@ -193,6 +304,12 @@
     transition: all 0.3s ease;
   }
 
+  body.dark-mode .input-wrapper input {
+    background: #2a1f1f;
+    border-color: #3d2a2a;
+    color: #f5ead5;
+  }
+
   .input-wrapper input::placeholder {
     color: #a89a8a;
   }
@@ -201,6 +318,12 @@
     border-color: #7B1113;
     background: #FFFFFF;
     box-shadow: 0 0 0 4px rgba(123, 17, 19, 0.12);
+  }
+
+  body.dark-mode .input-wrapper input:focus {
+    border-color: #D4AF37;
+    background: #332525;
+    box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.18);
   }
 
   .input-icon {
@@ -219,6 +342,10 @@
     fill: #7B1113;
   }
 
+  body.dark-mode .input-wrapper input:focus ~ .input-icon {
+    fill: #D4AF37;
+  }
+
   .toggle-password {
     position: absolute;
     right: 15px;
@@ -235,7 +362,13 @@
     fill: #7B1113;
   }
 
-  /* ========== OPTIONS ========== */
+  body.dark-mode .toggle-password:hover {
+    fill: #D4AF37;
+  }
+
+  /* =========================================================
+     OPTIONS ROW
+     ========================================================= */
   .options-row {
     display: flex;
     align-items: center;
@@ -252,7 +385,10 @@
     cursor: pointer;
     user-select: none;
     font-weight: 500;
+    transition: color 0.5s ease;
   }
+
+  body.dark-mode .remember { color: #e8d9b0; }
 
   .remember input {
     appearance: none;
@@ -266,9 +402,16 @@
     transition: all 0.25s ease;
   }
 
+  body.dark-mode .remember input { border-color: #D4AF37; }
+
   .remember input:checked {
     background: #7B1113;
     border-color: #7B1113;
+  }
+
+  body.dark-mode .remember input:checked {
+    background: #D4AF37;
+    border-color: #D4AF37;
   }
 
   .remember input:checked::after {
@@ -283,6 +426,10 @@
     transform: rotate(45deg);
   }
 
+  body.dark-mode .remember input:checked::after {
+    border-color: #1a1414;
+  }
+
   .forgot-link {
     color: #7B1113;
     text-decoration: none;
@@ -290,12 +437,18 @@
     transition: color 0.3s ease;
   }
 
+  body.dark-mode .forgot-link { color: #D4AF37; }
+
   .forgot-link:hover {
     color: #D4AF37;
     text-decoration: underline;
   }
 
-  /* ========== BUTTON ========== */
+  body.dark-mode .forgot-link:hover { color: #F4C430; }
+
+  /* =========================================================
+     BUTTON
+     ========================================================= */
   .btn-login {
     width: 100%;
     padding: 15px;
@@ -313,6 +466,12 @@
     position: relative;
     overflow: hidden;
     border-bottom: 3px solid #D4AF37;
+  }
+
+  body.dark-mode .btn-login {
+    background: linear-gradient(135deg, #D4AF37 0%, #b8942a 100%);
+    color: #1a1414;
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.35);
   }
 
   .btn-login::before {
@@ -336,6 +495,10 @@
     box-shadow: 0 12px 25px rgba(123, 17, 19, 0.5);
   }
 
+  body.dark-mode .btn-login:hover:not(:disabled) {
+    background: linear-gradient(135deg, #F4C430 0%, #D4AF37 100%);
+  }
+
   .btn-login:active:not(:disabled) {
     transform: translateY(0);
   }
@@ -343,6 +506,11 @@
   .btn-login:disabled {
     opacity: 0.75;
     cursor: not-allowed;
+  }
+
+  .btn-login .btn-text {
+    display: inline-block;
+    transition: opacity 0.2s ease;
   }
 
   .btn-login .spinner {
@@ -356,14 +524,21 @@
     margin: 0 auto;
   }
 
+  body.dark-mode .btn-login .spinner {
+    border: 2.5px solid rgba(26, 20, 20, 0.3);
+    border-top-color: #1a1414;
+  }
+
   .btn-login.loading .btn-text { display: none; }
-  .btn-login.loading .spinner { display: block; }
+  .btn-login.loading .spinner  { display: block; }
 
   @keyframes spin {
     to { transform: rotate(360deg); }
   }
 
-  /* ========== MESSAGES ========== */
+  /* =========================================================
+     MESSAGES
+     ========================================================= */
   .error-message,
   .success-message {
     display: none;
@@ -382,19 +557,33 @@
     color: #7B1113;
   }
 
+  body.dark-mode .error-message {
+    background: rgba(255, 71, 87, 0.12);
+    border-color: #ff6b7a;
+    color: #ff8b96;
+  }
+
   .success-message {
     background: rgba(212, 175, 55, 0.12);
     border: 1.5px solid #D4AF37;
     color: #8a6d1f;
   }
 
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-6px); }
-    75% { transform: translateX(6px); }
+  body.dark-mode .success-message {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: #D4AF37;
+    color: #F4C430;
   }
 
-  /* ========== FOOTER ========== */
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25%      { transform: translateX(-6px); }
+    75%      { transform: translateX(6px); }
+  }
+
+  /* =========================================================
+     FOOTER
+     ========================================================= */
   .footer-text {
     text-align: center;
     color: #8a7a6a;
@@ -403,6 +592,11 @@
     line-height: 1.6;
     border-top: 1px solid #eadfc9;
     padding-top: 18px;
+    transition: border-color 0.5s ease;
+  }
+
+  body.dark-mode .footer-text {
+    border-top-color: #3d2a2a;
   }
 
   .footer-text .gold {
@@ -410,7 +604,9 @@
     font-weight: 700;
   }
 
-  /* ========== RESPONSIVE ========== */
+  /* =========================================================
+     RESPONSIVE
+     ========================================================= */
   @media (max-width: 480px) {
     .login-container {
       padding: 35px 25px;
@@ -419,21 +615,47 @@
     .logo-area h1 { font-size: 0.95rem; }
     .logo-circle { width: 92px; height: 92px; }
     .logo-circle .fallback-icon { width: 45px; height: 45px; }
-    /* Reduce blur on mobile so image stays visible */
     body::before { filter: blur(4px) brightness(0.85); }
+    body.dark-mode::before { filter: blur(4px) brightness(0.4); }
+    .theme-toggle {
+      width: 42px;
+      height: 42px;
+      top: 14px;
+      right: 14px;
+    }
+    .theme-toggle svg { width: 20px; height: 20px; }
   }
 </style>
 </head>
 <body>
 
+  <!-- ============================================================
+       DARK MODE TOGGLE
+       ============================================================ -->
+  <button
+    class="theme-toggle"
+    id="themeToggle"
+    aria-label="Toggle dark mode"
+    title="Toggle dark mode"
+    type="button"
+  >
+    <svg class="icon-sun" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 7.06a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0z"/>
+    </svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M21.64 13a1 1 0 00-1.05-.14 8.05 8.05 0 01-3.37.73 8.15 8.15 0 01-8.14-8.1 8.59 8.59 0 01.25-2A1 1 0 008 2.36a10.14 10.14 0 1014 11.69 1 1 0 00-.36-1.05z"/>
+    </svg>
+  </button>
+
+  <!-- ============================================================
+       LOGIN CARD
+       ============================================================ -->
   <div class="login-container">
 
-    <!-- =================================================================
-         🎓 LOGO SLOT  🎓
-         ================================================================= -->
+    <!-- LOGO SLOT -->
     <div class="logo-area">
       <div class="logo-circle" id="logoCircle">
-        <!--  REPLACE "uphsd-logo.png" WITH YOUR ACTUAL LOGO FILENAME  -->
+        <!-- 👇 REPLACE "uphsd-logo.png" WITH YOUR ACTUAL LOGO FILENAME 👇 -->
         <img
           id="schoolLogo"
           src="uphsd-logo.png"
@@ -463,7 +685,7 @@
             type="email"
             id="email"
             name="email"
-            placeholder="director.office@uphsd.edu.ph"
+            placeholder="your.email@perpetual.edu.ph"
             autocomplete="username"
             required
           />
@@ -496,7 +718,7 @@
       <div class="options-row">
         <label class="remember">
           <input type="checkbox" id="rememberMe" />
-          Remember me
+          Remember my email
         </label>
         <a href="#" class="forgot-link" id="forgotLink">Forgot password?</a>
       </div>
@@ -513,160 +735,217 @@
     </p>
   </div>
 
-<script>
-  // ---- Element references ----
-  const form        = document.getElementById('loginForm');
-  const emailInput  = document.getElementById('email');
-  const passInput   = document.getElementById('password');
-  const togglePass  = document.getElementById('togglePassword');
-  const loginBtn    = document.getElementById('loginBtn');
-  const errorBox    = document.getElementById('errorBox');
-  const successBox  = document.getElementById('successBox');
-  const forgotLink  = document.getElementById('forgotLink');
-  const rememberMe  = document.getElementById('rememberMe');
-  const logoCircle  = document.getElementById('logoCircle');
-  const schoolLogo  = document.getElementById('schoolLogo');
+  <!-- ============================================================
+       PAGE SCRIPT
+       ============================================================ -->
+  <script src="app.js"></script>
+  <script>
+  /* ==========================================================================
+     LOGIN PAGE — Uses APP.Auth from app.js
+     ========================================================================== */
+  (function () {
+    'use strict';
 
-  document.getElementById('year').textContent = new Date().getFullYear();
+    const { Auth, Theme, Toast, Utils, Storage, APP } = window;
 
-  // ---- LOGO FALLBACK ----
-  schoolLogo.addEventListener('error', () => {
-    logoCircle.classList.add('img-failed');
-  });
-  schoolLogo.addEventListener('load', () => {
-    logoCircle.classList.remove('img-failed');
-  });
+    /* --------------------------------------------------------------------
+       Element references
+       -------------------------------------------------------------------- */
+    const form        = document.getElementById('loginForm');
+    const emailInput  = document.getElementById('email');
+    const passInput   = document.getElementById('password');
+    const togglePass  = document.getElementById('togglePassword');
+    const loginBtn    = document.getElementById('loginBtn');
+    const errorBox    = document.getElementById('errorBox');
+    const successBox  = document.getElementById('successBox');
+    const forgotLink  = document.getElementById('forgotLink');
+    const rememberMe  = document.getElementById('rememberMe');
+    const themeToggle = document.getElementById('themeToggle');
+    const logoCircle  = document.getElementById('logoCircle');
+    const schoolLogo  = document.getElementById('schoolLogo');
 
-  // ---- Show / hide password ----
-  togglePass.addEventListener('click', () => {
-    const isPassword = passInput.type === 'password';
-    passInput.type = isPassword ? 'text' : 'password';
-    togglePass.style.fill = isPassword ? '#7B1113' : '#a89a8a';
-  });
+    // Set current year
+    document.getElementById('year').textContent = new Date().getFullYear();
 
-  // ---- Helpers ----
-  function showMessage(box, message, duration = 4000) {
-    box.textContent = message;
-    box.style.display = 'block';
-    if (duration) setTimeout(() => { box.style.display = 'none'; }, duration);
-  }
+    /* --------------------------------------------------------------------
+       If already logged in → skip login page
+       -------------------------------------------------------------------- */
+    APP.Auth.skipLoginIfLoggedIn();
 
-  function hideMessages() {
-    errorBox.style.display = 'none';
-    successBox.style.display = 'none';
-  }
-
-  function isValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  }
-
-  function setLoading(isLoading) {
-    loginBtn.disabled = isLoading;
-    loginBtn.classList.toggle('loading', isLoading);
-  }
-
-  // ---- Load remembered email ----
-  window.addEventListener('DOMContentLoaded', () => {
-    const saved = localStorage.getItem('uphsdDirectorEmail');
-    if (saved) {
-      emailInput.value = saved;
-      rememberMe.checked = true;
-    }
-  });
-
-  // ---- Form submission ----
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    hideMessages();
-
-    const email    = emailInput.value.trim();
-    const password = passInput.value;
-
-    if (!email) {
-      showMessage(errorBox, 'Please enter your email address.');
-      emailInput.focus();
-      return;
-    }
-    if (!isValidEmail(email)) {
-      showMessage(errorBox, 'Please enter a valid email address.');
-      emailInput.focus();
-      return;
-    }
-    if (!password) {
-      showMessage(errorBox, 'Please enter your password.');
-      passInput.focus();
-      return;
-    }
-    if (password.length < 6) {
-      showMessage(errorBox, 'Password must be at least 6 characters.');
-      passInput.focus();
-      return;
+    /* --------------------------------------------------------------------
+       LOGO FALLBACK
+       -------------------------------------------------------------------- */
+    if (schoolLogo) {
+      schoolLogo.addEventListener('error', () => {
+        logoCircle.classList.add('img-failed');
+      });
+      schoolLogo.addEventListener('load', () => {
+        logoCircle.classList.remove('img-failed');
+      });
     }
 
-    if (rememberMe.checked) {
-      localStorage.setItem('uphsdDirectorEmail', email);
-    } else {
-      localStorage.removeItem('uphsdDirectorEmail');
-    }
-
-    const payload = {
-      email: email,
-      password: password,
-      remember: rememberMe.checked,
-      campus: 'UPHSD-MOLINO',
-      role: 'director-office-admin',
-      timestamp: new Date().toISOString()
-    };
-
-    setLoading(true);
-
-    /* ============================================================
-       BACKEND INTEGRATION POINT
-       ============================================================
-       fetch('/api/admin/login', {
-           method: 'POST',
-           headers: { 'Content-Type': 'application/json' },
-           body: JSON.stringify(payload)
-       })
-       .then(res => res.json())
-       .then(data => {
-           setLoading(false);
-           if (data.success) {
-               showMessage(successBox, 'Login successful. Redirecting...');
-               setTimeout(() => { window.location.href = '/dashboard'; }, 1200);
-           } else {
-               showMessage(errorBox, data.message || 'Invalid credentials.');
-           }
-       })
-       .catch(() => {
-           setLoading(false);
-           showMessage(errorBox, 'Server error. Please try again.');
-       });
-       ============================================================ */
-
-    // ----- MOCK RESPONSE (remove when backend is ready) -----
-    console.log('Login payload sent to backend:', payload);
-
-    setTimeout(() => {
-      setLoading(false);
-      showMessage(successBox, 'Login successful! Redirecting...');
-      // window.location.href = '/dashboard';
-    }, 1500);
-  });
-
-  // ---- Forgot password (placeholder) ----
-  forgotLink.addEventListener('click', (e) => {
-    e.preventDefault();
-    hideMessages();
-    showMessage(successBox, 'A password reset link will be sent to your registered email.');
-  });
-
-  // ---- Clear error when typing ----
-  [emailInput, passInput].forEach(input => {
-    input.addEventListener('input', () => {
-      errorBox.style.display = 'none';
+    /* --------------------------------------------------------------------
+       DARK MODE TOGGLE
+       -------------------------------------------------------------------- */
+    themeToggle.addEventListener('click', () => {
+      Theme.toggle();
     });
-  });
-</script>
+
+    /* --------------------------------------------------------------------
+       PASSWORD VISIBILITY TOGGLE
+       -------------------------------------------------------------------- */
+    togglePass.addEventListener('click', () => {
+      const isPassword = passInput.type === 'password';
+      passInput.type = isPassword ? 'text' : 'password';
+      const isDark = document.body.classList.contains('dark-mode');
+      togglePass.style.fill = isPassword
+        ? (isDark ? '#D4AF37' : '#7B1113')
+        : '#a89a8a';
+    });
+
+    /* --------------------------------------------------------------------
+       MESSAGE HELPERS
+       -------------------------------------------------------------------- */
+    function showError(message, duration = 4500) {
+      errorBox.textContent = message;
+      errorBox.style.display = 'block';
+      successBox.style.display = 'none';
+      if (duration) setTimeout(() => { errorBox.style.display = 'none'; }, duration);
+    }
+
+    function showSuccess(message, duration = 2500) {
+      successBox.textContent = message;
+      successBox.style.display = 'block';
+      errorBox.style.display = 'none';
+      if (duration) setTimeout(() => { successBox.style.display = 'none'; }, duration);
+    }
+
+    function hideMessages() {
+      errorBox.style.display = 'none';
+      successBox.style.display = 'none';
+    }
+
+    /* --------------------------------------------------------------------
+       LOADING STATE
+       -------------------------------------------------------------------- */
+    function setLoading(isLoading) {
+      loginBtn.disabled = isLoading;
+      loginBtn.classList.toggle('loading', isLoading);
+    }
+
+    /* --------------------------------------------------------------------
+       REMEMBER EMAIL — pre-fill from storage
+       -------------------------------------------------------------------- */
+    (function loadRememberedEmail() {
+      const saved = Storage.get(APP.APP ? APP.APP.keys.rememberEmail : 'uphsdDirectorEmail');
+      if (saved) {
+        emailInput.value = saved;
+        rememberMe.checked = true;
+      }
+    })();
+
+    /* --------------------------------------------------------------------
+       FORM SUBMISSION — real auth
+       -------------------------------------------------------------------- */
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideMessages();
+
+      const email    = emailInput.value.trim();
+      const password = passInput.value;
+
+      // ---- Client-side validation ----
+      if (!email) {
+        showError('Please enter your email address.');
+        emailInput.focus();
+        return;
+      }
+      if (!Utils.isValidEmail(email)) {
+        showError('Please enter a valid email address.');
+        emailInput.focus();
+        return;
+      }
+      if (!password) {
+        showError('Please enter your password.');
+        passInput.focus();
+        return;
+      }
+
+      // ---- Handle "Remember me" ----
+      if (rememberMe.checked) {
+        Storage.set('uphsdDirectorEmail', email);
+      } else {
+        Storage.remove('uphsdDirectorEmail');
+      }
+
+      // ---- Show loading ----
+      setLoading(true);
+
+      try {
+        const result = await window.APP.Auth.login(email, password);
+
+        if (!result.success) {
+          setLoading(false);
+          showError(result.message || 'Login failed. Please try again.');
+          passInput.value = '';
+          passInput.focus();
+          return;
+        }
+
+        // ---- Success ----
+        showSuccess(`Welcome, ${result.user.name}! Redirecting...`);
+
+        // Redirect after a short delay
+        setTimeout(() => {
+          window.APP.Auth.redirectAfterLogin();
+        }, 900);
+
+      } catch (err) {
+        console.error('[Login] Unexpected error:', err);
+        setLoading(false);
+        showError('An unexpected error occurred. Please try again.');
+      }
+    });
+
+    /* --------------------------------------------------------------------
+       FORGOT PASSWORD (placeholder)
+       -------------------------------------------------------------------- */
+    forgotLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      hideMessages();
+      showSuccess('Please contact the School Director\'s Office to reset your password.');
+    });
+
+    /* --------------------------------------------------------------------
+       CLEAR ERROR ON INPUT
+       -------------------------------------------------------------------- */
+    [emailInput, passInput].forEach(input => {
+      input.addEventListener('input', () => {
+        errorBox.style.display = 'none';
+      });
+    });
+
+    /* --------------------------------------------------------------------
+       ENTER KEY — allow submitting from anywhere in the form
+       -------------------------------------------------------------------- */
+    [emailInput, passInput].forEach(input => {
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          form.requestSubmit();
+        }
+      });
+    });
+
+    /* --------------------------------------------------------------------
+       AUTO-FOCUS email field
+       -------------------------------------------------------------------- */
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!emailInput.value) emailInput.focus();
+      else passInput.focus();
+    });
+
+  })();
+  </script>
 </body>
 </html>
