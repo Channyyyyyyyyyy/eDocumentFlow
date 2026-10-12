@@ -7,22 +7,16 @@
 <link rel="stylesheet" href="shared.css" />
 
 <style>
-  /* =====================================================================
-     SETTINGS-PAGE-SPECIFIC STYLES
-     ===================================================================== */
-
   .settings-layout {
     display: grid;
     grid-template-columns: 240px 1fr;
     gap: 22px;
     align-items: flex-start;
   }
-
   @media (max-width: 900px) {
     .settings-layout { grid-template-columns: 1fr; }
   }
 
-  /* ---------- Left sidebar nav ---------- */
   .settings-nav {
     background: var(--bg-card);
     border: 1px solid var(--border-light);
@@ -52,14 +46,12 @@
     position: relative;
     text-decoration: none;
   }
-
   .settings-nav-item svg {
     width: 18px;
     height: 18px;
     fill: currentColor;
     flex-shrink: 0;
   }
-
   .settings-nav-item:hover {
     background: var(--bg-hover);
     color: var(--maroon);
@@ -85,7 +77,6 @@
   }
   .settings-nav-item.active .nav-arrow { opacity: 1; }
 
-  /* External link badge */
   .settings-nav-item .nav-ext {
     margin-left: auto;
     font-size: 0.65rem;
@@ -102,7 +93,6 @@
     color: var(--gold);
   }
 
-  /* ---------- Content panels ---------- */
   .settings-panel {
     display: none;
     animation: fadeIn 0.35s ease;
@@ -139,20 +129,17 @@
     gap: 10px;
     margin-bottom: 6px;
   }
-
   .settings-card-header h2 svg {
     width: 18px;
     height: 18px;
     fill: var(--gold);
   }
-
   .settings-card-header p {
     font-size: 0.82rem;
     color: var(--text-muted);
     line-height: 1.5;
   }
 
-  /* ---------- Profile: avatar row ---------- */
   .avatar-row {
     display: flex;
     align-items: center;
@@ -160,7 +147,6 @@
     margin-bottom: 24px;
     flex-wrap: wrap;
   }
-
   .avatar-large {
     width: 96px;
     height: 96px;
@@ -180,16 +166,13 @@
     background: linear-gradient(135deg, var(--gold), var(--gold-dark));
     color: #1a1414;
   }
-
   .avatar-actions {
     display: flex;
     flex-direction: column;
     gap: 8px;
   }
-
   .avatar-actions .btn { padding: 9px 16px; font-size: 0.8rem; }
 
-  /* ---------- Notification info block (replaces toggles) ---------- */
   .notif-info-block {
     display: flex;
     align-items: center;
@@ -202,7 +185,6 @@
     border-radius: var(--radius-lg);
     margin-bottom: 16px;
   }
-
   .notif-info-block .notif-icon {
     width: 48px;
     height: 48px;
@@ -214,15 +196,12 @@
     justify-content: center;
     flex-shrink: 0;
   }
-  body.dark-mode .notif-info-block .notif-icon {
-    color: #1a1414;
-  }
+  body.dark-mode .notif-info-block .notif-icon { color: #1a1414; }
   .notif-info-block .notif-icon svg {
     width: 22px;
     height: 22px;
     fill: currentColor;
   }
-
   .notif-info-block .notif-info-text { flex: 1; min-width: 0; }
   .notif-info-block .notif-info-text h3 {
     font-size: 0.95rem;
@@ -235,7 +214,6 @@
     color: var(--text-secondary);
     line-height: 1.5;
   }
-
   .notif-info-block .notif-info-cta {
     display: inline-flex;
     align-items: center;
@@ -268,14 +246,12 @@
     fill: currentColor;
   }
 
-  /* Preview list of what's managed on the notifications page */
   .notif-preview-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 10px;
     margin-top: 14px;
   }
-
   .notif-preview-item {
     display: flex;
     align-items: center;
@@ -286,7 +262,6 @@
     font-size: 0.82rem;
     color: var(--text-secondary);
   }
-
   .notif-preview-item svg {
     width: 15px;
     height: 15px;
@@ -294,7 +269,6 @@
     flex-shrink: 0;
   }
 
-  /* ---------- Session list ---------- */
   .session-item {
     display: flex;
     align-items: center;
@@ -305,7 +279,6 @@
     margin-bottom: 10px;
     transition: all 0.2s ease;
   }
-
   .session-item.current {
     background: rgba(46,213,115,0.08);
     border: 1.5px solid rgba(46,213,115,0.3);
@@ -356,7 +329,6 @@
     margin-top: 3px;
   }
 
-  /* ---------- Theme preview cards ---------- */
   .theme-options {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -377,13 +349,11 @@
     background: var(--bg-card);
     font-family: inherit;
   }
-
   .theme-option:hover {
     border-color: var(--gold);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
   }
-
   .theme-option.selected {
     border-color: var(--maroon);
     box-shadow: 0 0 0 3px rgba(123,17,19,0.12);
@@ -402,7 +372,6 @@
     overflow: hidden;
     border: 1px solid var(--border-light);
   }
-
   .theme-preview .preview-sidebar { width: 30%; background: #7B1113; }
   .theme-preview .preview-main { flex: 1; background: #fff; position: relative; }
   .theme-preview .preview-main::after {
@@ -416,14 +385,12 @@
     border-radius: 4px;
     box-shadow: 0 18px 0 #e8ddd0, 0 34px 0 #e8ddd0;
   }
-
   .theme-option.dark .theme-preview .preview-sidebar { background: #15090a; }
   .theme-option.dark .theme-preview .preview-main { background: #1a1616; }
   .theme-option.dark .theme-preview .preview-main::after {
     background: #332727;
     box-shadow: 0 18px 0 #332727, 0 34px 0 #332727;
   }
-
   .theme-option.system .theme-preview {
     background: linear-gradient(90deg, #7B1113 0%, #7B1113 30%, #fff 30%, #fff 70%, #1a1616 70%, #1a1616 100%);
   }
@@ -442,14 +409,12 @@
     color: var(--text-muted);
   }
 
-  /* ---------- Password strength ---------- */
   .pw-strength {
     display: flex;
     gap: 5px;
     margin-top: 8px;
     margin-bottom: 6px;
   }
-
   .pw-strength .strength-bar {
     flex: 1;
     height: 4px;
@@ -457,7 +422,6 @@
     border-radius: 2px;
     transition: background 0.3s ease;
   }
-
   .pw-strength.weak   .strength-bar:nth-child(1) { background: #ff4757; }
   .pw-strength.fair   .strength-bar:nth-child(-n+2) { background: #ffa94d; }
   .pw-strength.good   .strength-bar:nth-child(-n+3) { background: var(--gold); }
@@ -474,7 +438,6 @@
   .pw-strength.good   ~ .pw-strength-label { color: #8a6d1f; }
   .pw-strength.strong ~ .pw-strength-label { color: #2ed573; }
 
-  /* ---------- Danger zone ---------- */
   .danger-zone {
     border: 1.5px solid rgba(255,71,87,0.35);
     background: rgba(255,71,87,0.04);
@@ -485,7 +448,6 @@
     background: rgba(255,107,122,0.06);
     border-color: rgba(255,107,122,0.4);
   }
-
   .danger-zone h3 {
     color: #d43a45;
     font-size: 0.95rem;
@@ -497,21 +459,18 @@
   }
   body.dark-mode .danger-zone h3 { color: #ff8b96; }
   .danger-zone h3 svg { width: 18px; height: 18px; fill: currentColor; }
-
   .danger-zone p {
     font-size: 0.82rem;
     color: var(--text-secondary);
     line-height: 1.5;
     margin-bottom: 16px;
   }
-
   .danger-actions {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
   }
 
-  /* ---------- Saving indicator ---------- */
   .save-indicator {
     position: fixed;
     bottom: 24px;
@@ -532,7 +491,6 @@
     transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .save-indicator.show { transform: translateX(-50%) translateY(0); }
-
   .save-indicator .save-spinner {
     width: 16px;
     height: 16px;
@@ -542,7 +500,6 @@
     animation: spin 0.7s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-
   .save-indicator.done {
     border-color: #2ed573;
   }
@@ -566,13 +523,10 @@
 </head>
 <body>
 
-  <!-- ============================================================
-       SIDEBAR
-       ============================================================ -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <div class="brand-logo">
-        <img src="uphsd-logo.png" alt="Logo">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
         </svg>
       </div>
@@ -599,7 +553,7 @@
       <a class="nav-item" href="approvals.html" data-page="approvals.html">
         <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
         Approvals
-        <span class="nav-badge" id="approvalBadgeSide">5</span>
+        <span class="nav-badge" id="approvalBadgeSide">0</span>
       </a>
       <a class="nav-item" href="notifications.html" data-page="notifications.html">
         <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
@@ -631,12 +585,8 @@
 
   <div class="overlay-backdrop" id="overlayBackdrop"></div>
 
-  <!-- ============================================================
-       MAIN
-       ============================================================ -->
   <main class="main">
 
-    <!-- ========== TOP BAR ========== -->
     <header class="topbar">
       <button class="hamburger" id="hamburger" aria-label="Menu">
         <svg viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
@@ -647,8 +597,7 @@
         <p>Manage your account preferences and system configuration</p>
       </div>
 
-      
-
+      <div class="topbar-actions">
         <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
           <svg id="themeIcon" viewBox="0 0 24 24">
             <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 7.06a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0z"/>
@@ -661,21 +610,19 @@
         </button>
 
         <div class="user-chip" id="userChip" title="Click to log out">
-          <div class="user-avatar" id="userAvatar">MC</div>
+          <div class="user-avatar" id="userAvatar">—</div>
           <div class="user-info">
-            <span class="name" id="userName">Maria Cruz</span>
-            <span class="role" id="userRoleLabel">Secretary</span>
+            <span class="name" id="userName">—</span>
+            <span class="role" id="userRoleLabel">—</span>
           </div>
         </div>
       </div>
     </header>
 
-    <!-- ========== CONTENT ========== -->
     <div class="content">
 
       <div class="settings-layout">
 
-        <!-- LEFT NAV -->
         <nav class="settings-nav">
           <button class="settings-nav-item active" data-panel="profile">
             <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
@@ -683,7 +630,6 @@
             <svg class="nav-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
           </button>
 
-          <!-- 🔄 CHANGED: Notifications now links to standalone page -->
           <a class="settings-nav-item" href="notifications.html">
             <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
             Notifications
@@ -702,14 +648,9 @@
           </button>
         </nav>
 
-        <!-- RIGHT: PANELS -->
         <div>
 
-          <!-- ==================================================
-               PANEL 1 — PROFILE
-               ================================================== -->
           <div class="settings-panel active" id="panel-profile">
-
             <div class="settings-card">
               <div class="settings-card-header">
                 <h2>
@@ -720,7 +661,7 @@
               </div>
 
               <div class="avatar-row">
-                <div class="avatar-large" id="profileAvatarLarge">MC</div>
+                <div class="avatar-large" id="profileAvatarLarge">—</div>
                 <div class="avatar-actions">
                   <button class="btn btn-primary" id="btnUploadAvatar">
                     <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
@@ -731,7 +672,7 @@
                 </div>
               </div>
 
-              <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                 <div class="form-group">
                   <label for="profileFirstName">First Name <span class="req">*</span></label>
                   <input type="text" id="profileFirstName" />
@@ -748,7 +689,7 @@
                 <div class="form-hint">This email is used for login and notifications.</div>
               </div>
 
-              <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                 <div class="form-group">
                   <label for="profileRole">Role</label>
                   <input type="text" id="profileRole" disabled style="opacity:0.7;cursor:not-allowed;" />
@@ -773,14 +714,9 @@
                 <button class="btn btn-ghost" id="btnCancelProfile">Cancel</button>
               </div>
             </div>
-
           </div>
 
-          <!-- ==================================================
-               PANEL 2 — NOTIFICATIONS (info + link)
-               ================================================== -->
           <div class="settings-panel" id="panel-notifications">
-
             <div class="settings-card">
               <div class="settings-card-header">
                 <h2>
@@ -803,46 +739,10 @@
                   Open Notifications
                 </a>
               </div>
-
-              <div style="font-size:0.78rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:20px 0 8px;">
-                What you can manage
-              </div>
-
-              <div class="notif-preview-list">
-                <div class="notif-preview-item">
-                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
-                  View all notifications
-                </div>
-                <div class="notif-preview-item">
-                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
-                  Filter by type (Documents, Approvals, Routing, Accounts)
-                </div>
-                <div class="notif-preview-item">
-                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
-                  Mark as read / Clear
-                </div>
-                <div class="notif-preview-item">
-                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
-                  Email notifier master switch
-                </div>
-                <div class="notif-preview-item">
-                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
-                  Per-event email toggles
-                </div>
-                <div class="notif-preview-item">
-                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
-                  Recent email delivery log
-                </div>
-              </div>
             </div>
-
           </div>
 
-          <!-- ==================================================
-               PANEL 3 — SECURITY
-               ================================================== -->
           <div class="settings-panel" id="panel-security">
-
             <div class="settings-card">
               <div class="settings-card-header">
                 <h2>
@@ -885,38 +785,6 @@
             <div class="settings-card">
               <div class="settings-card-header">
                 <h2>
-                  <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
-                  Two-Factor Authentication
-                </h2>
-                <p>Add an extra layer of security to your account.</p>
-              </div>
-
-              <div class="toggle-row" style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--border-light);">
-                <div class="toggle-info">
-                  <div class="toggle-title" style="font-size:0.85rem;font-weight:600;color:var(--text-primary);margin-bottom:3px;">Enable 2FA via Authenticator App</div>
-                  <div class="toggle-desc" style="font-size:0.74rem;color:var(--text-muted);">Use Google Authenticator, Authy, or similar.</div>
-                </div>
-                <label class="switch" style="position:relative;display:inline-block;width:42px;height:24px;flex-shrink:0;cursor:pointer;">
-                  <input type="checkbox" id="toggle2FA" style="opacity:0;width:0;height:0;position:absolute;" />
-                  <span class="slider" style="position:absolute;inset:0;background:var(--border-medium);border-radius:24px;transition:background 0.3s ease;cursor:pointer;"></span>
-                </label>
-              </div>
-
-              <div class="toggle-row" style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:12px 0;">
-                <div class="toggle-info">
-                  <div class="toggle-title" style="font-size:0.85rem;font-weight:600;color:var(--text-primary);margin-bottom:3px;">Enable 2FA via Email</div>
-                  <div class="toggle-desc" style="font-size:0.74rem;color:var(--text-muted);">Receive a 6-digit code on your email each login.</div>
-                </div>
-                <label class="switch" style="position:relative;display:inline-block;width:42px;height:24px;flex-shrink:0;cursor:pointer;">
-                  <input type="checkbox" checked style="opacity:0;width:0;height:0;position:absolute;" />
-                  <span class="slider" style="position:absolute;inset:0;background:var(--border-medium);border-radius:24px;transition:background 0.3s ease;cursor:pointer;"></span>
-                </label>
-              </div>
-            </div>
-
-            <div class="settings-card">
-              <div class="settings-card-header">
-                <h2>
                   <svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm-8 12a4 4 0 110-8 4 4 0 010 8z"/></svg>
                   Active Sessions
                 </h2>
@@ -929,48 +797,21 @@
                 </div>
                 <div class="session-info">
                   <div class="session-device">
-                    Chrome on Windows
+                    Current Browser
                     <span class="current-badge">This device</span>
                   </div>
-                  <div class="session-meta">Molino, Philippines · Active now · IP 192.168.1.24</div>
+                  <div class="session-meta">Molino, Philippines · Active now</div>
                 </div>
-              </div>
-
-              <div class="session-item">
-                <div class="session-icon">
-                  <svg viewBox="0 0 24 24"><path d="M17 1H7a2 2 0 00-2 2v18a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2zm-5 20a1 1 0 110-2 1 1 0 010 2zm5-3H7V4h10v14z"/></svg>
-                </div>
-                <div class="session-info">
-                  <div class="session-device">Safari on iPhone</div>
-                  <div class="session-meta">Molino, Philippines · 2 hours ago · IP 192.168.1.88</div>
-                </div>
-                <button class="btn btn-ghost" style="padding:6px 12px;font-size:0.74rem;" data-revoke-session>Revoke</button>
-              </div>
-
-              <div class="session-item">
-                <div class="session-icon">
-                  <svg viewBox="0 0 24 24"><path d="M21 2H3a2 2 0 00-2 2v12a2 2 0 002 2h7v2H8v2h8v-2h-2v-2h7a2 2 0 002-2V4a2 2 0 00-2-2zm0 14H3V4h18v12z"/></svg>
-                </div>
-                <div class="session-info">
-                  <div class="session-device">Edge on Windows</div>
-                  <div class="session-meta">Bacoor, Cavite · 3 days ago · IP 192.168.1.45</div>
-                </div>
-                <button class="btn btn-ghost" style="padding:6px 12px;font-size:0.74rem;" data-revoke-session>Revoke</button>
               </div>
 
               <button class="btn btn-danger" id="btnRevokeAll" style="margin-top:10px;">
                 <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
-                Sign Out All Other Sessions
+                Sign Out Other Sessions
               </button>
             </div>
-
           </div>
 
-          <!-- ==================================================
-               PANEL 4 — SYSTEM
-               ================================================== -->
           <div class="settings-panel" id="panel-system">
-
             <div class="settings-card">
               <div class="settings-card-header">
                 <h2>
@@ -1016,7 +857,7 @@
                 <p>Language, date format, and time zone.</p>
               </div>
 
-              <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                 <div class="form-group">
                   <label for="sysLanguage">Language</label>
                   <select id="sysLanguage">
@@ -1035,7 +876,7 @@
                 </div>
               </div>
 
-              <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                 <div class="form-group">
                   <label for="sysDateFormat">Date Format</label>
                   <select id="sysDateFormat">
@@ -1075,8 +916,7 @@
                 </h3>
                 <p>
                   Permanently remove your account and all associated data.
-                  This action is irreversible. Your documents will remain in the system
-                  but will no longer be linked to your account.
+                  This action is irreversible.
                 </p>
                 <div class="danger-actions">
                   <button class="btn btn-danger" id="btnDeleteAccount">
@@ -1085,12 +925,11 @@
                   </button>
                   <button class="btn btn-ghost" id="btnExportData">
                     <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                    Export My Data First
+                    Export My Data
                   </button>
                 </div>
               </div>
             </div>
-
           </div>
 
         </div>
@@ -1101,28 +940,30 @@
 
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- Saving indicator -->
   <div class="save-indicator" id="saveIndicator">
     <div class="save-spinner"></div>
     <span id="saveIndicatorText">Saving...</span>
   </div>
 
-  <!-- ============================================================
-       PAGE SCRIPT
-       ============================================================ -->
   <script src="app.js"></script>
   <script>
   /* ==========================================================================
-     SETTINGS — Page module (final, aligned with use case diagram)
+     SETTINGS — Page module (with auth guard)
      ========================================================================== */
   (function () {
     'use strict';
 
-    const { Role, Toast, Utils, Bus, Storage, Theme } = APP;
+    // ============================================================
+    // 🛡️ AUTH GUARD — must be FIRST
+    // ============================================================
+    if (!window.APP || !window.APP.Auth) {
+      console.error('[Settings] app.js not loaded!');
+      return;
+    }
+    if (!window.APP.Auth.requireLogin()) return;
 
-    /* --------------------------------------------------------------------
-       DOM SHORTCUTS
-       -------------------------------------------------------------------- */
+    const { Role, Toast, Utils, Storage, Theme } = window.APP;
+
     const $ = (id) => document.getElementById(id);
 
     /* --------------------------------------------------------------------
@@ -1161,20 +1002,22 @@
     }
 
     /* --------------------------------------------------------------------
-       PROFILE — Load & save
+       PROFILE — Load from logged-in user
        -------------------------------------------------------------------- */
     function loadProfile() {
-      const user = Role.current();
-      const parts = user.userName.split(' ');
+      const user = window.APP.Auth.currentUser();
+      if (!user) return;
+
+      const parts = user.name.split(' ');
       const first = parts[0] || '';
       const last  = parts.slice(1).join(' ') || '';
 
       $('profileFirstName').value = first;
       $('profileLastName').value  = last;
       $('profileEmail').value     = user.email;
-      $('profileRole').value      = user.label;
-      $('profileDept').value      = "Director's Office";
-      $('profilePhone').value     = '+63 917 555 0123';
+      $('profileRole').value      = user.position || user.role;
+      $('profileDept').value      = user.dept || '';
+      $('profilePhone').value     = '';
 
       $('profileAvatarLarge').textContent = user.initials;
     }
@@ -1216,7 +1059,8 @@
         danger: true
       });
       if (!ok) return;
-      $('profileAvatarLarge').textContent = Role.current().initials;
+      const user = window.APP.Auth.currentUser();
+      $('profileAvatarLarge').textContent = user ? user.initials : '—';
       Toast.success('Photo Removed', 'Your profile photo has been removed.');
     });
 
@@ -1306,43 +1150,8 @@
     });
 
     /* --------------------------------------------------------------------
-       SECURITY — 2FA toggle
-       -------------------------------------------------------------------- */
-    $('toggle2FA').addEventListener('change', async (e) => {
-      if (e.target.checked) {
-        const ok = await APP.confirm({
-          title: 'Enable two-factor authentication?',
-          message: 'You will need an authenticator app to complete setup.',
-          confirmText: 'Continue'
-        });
-        if (!ok) { e.target.checked = false; return; }
-        Toast.success('2FA Enabled', 'Scan the QR code in the next step to finish setup.');
-      } else {
-        Toast.info('2FA Disabled', 'Two-factor authentication has been turned off.');
-      }
-    });
-
-    /* --------------------------------------------------------------------
        SECURITY — Revoke sessions
        -------------------------------------------------------------------- */
-    document.querySelectorAll('[data-revoke-session]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const item = btn.closest('.session-item');
-        const device = item.querySelector('.session-device').textContent.trim();
-        const ok = await APP.confirm({
-          title: `Sign out of "${device}"?`,
-          message: 'The device will need to log in again.',
-          confirmText: 'Sign Out',
-          danger: true
-        });
-        if (!ok) return;
-        item.style.opacity = '0.4';
-        btn.textContent = 'Revoked';
-        btn.disabled = true;
-        Toast.success('Session Revoked', `Signed out of ${device}.`);
-      });
-    });
-
     $('btnRevokeAll').addEventListener('click', async () => {
       const ok = await APP.confirm({
         title: 'Sign out of all other sessions?',
@@ -1351,12 +1160,6 @@
         danger: true
       });
       if (!ok) return;
-
-      document.querySelectorAll('.session-item:not(.current)').forEach(item => {
-        item.style.opacity = '0.4';
-        const btn = item.querySelector('[data-revoke-session]');
-        if (btn) { btn.textContent = 'Revoked'; btn.disabled = true; }
-      });
       Toast.success('All Sessions Signed Out', 'Only this device remains signed in.');
     });
 
@@ -1364,7 +1167,7 @@
        SYSTEM — Theme selection
        -------------------------------------------------------------------- */
     function highlightCurrentTheme() {
-      const saved = Storage.get(APP.keys.theme);
+      const saved = Storage.get('uphsdTheme');
       let current = 'system';
       if (saved === 'light' || saved === 'dark') current = saved;
 
@@ -1380,14 +1183,14 @@
         opt.classList.add('selected');
 
         if (choice === 'system') {
-          Storage.remove(APP.keys.theme);
+          Storage.remove('uphsdTheme');
           const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
           Theme.apply(prefersDark ? 'dark' : 'light');
           Toast.info('Theme Set to System', 'Matching your device preference.');
         } else {
-          Storage.set(APP.keys.theme, choice);
+          Storage.set('uphsdTheme', choice);
           Theme.apply(choice);
-          Toast.info('Theme Changed', `Switched to ${choice} mode.`);
+          Toast.info('Theme Changed', 'Switched to ' + choice + ' mode.');
         }
       });
     });
@@ -1434,21 +1237,6 @@
       if (!reallySure) return;
 
       Toast.error('Account Deletion', 'In production, this would log you out and delete the account.');
-    });
-
-    /* --------------------------------------------------------------------
-       ROLE-AWARE
-       -------------------------------------------------------------------- */
-    function applyRole() {
-      loadProfile();
-    }
-
-    /* --------------------------------------------------------------------
-       REACT TO ROLE CHANGE
-       -------------------------------------------------------------------- */
-    Bus.on('role:changed', () => {
-      applyRole();
-      Toast.info('Role Switched', `Now viewing as ${Role.current().label}.`);
     });
 
     /* --------------------------------------------------------------------
