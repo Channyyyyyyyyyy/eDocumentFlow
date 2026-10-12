@@ -1,26 +1,23 @@
 /* ==========================================================================
    UPHSD MOLINO — DIRECTOR'S OFFICE E-DOCUMENT SYSTEM
-   Shared JavaScript (app.js)
+   Shared JavaScript (app.js) — v1.2.0
    --------------------------------------------------------------------------
-   This file is loaded by every authenticated page and provides:
-     1.  App namespace & configuration
-     2.  Storage helpers (localStorage wrapper)
-     3.  Users table (hardcoded for now — will be replaced by backend)
-     4.  Role & permission system (aligned with eDocumentFlow use case diagrams)
-     5.  Authentication (login, logout, require login)
-     6.  Theme (dark mode) management
-     7.  Toast notifications
-     8.  Mobile sidebar toggle
-     9.  Sidebar active-link highlighting
-     10. Topbar (user chip, theme toggle)
-     11. Utility helpers (dates, initials, debounce, escapeHtml)
-     12. Modal helpers
-     13. Confirmation dialog helper
-     14. Event bus (pub/sub for cross-module communication)
-     15. Auto-init on DOMContentLoaded
-
-   Usage in any page:
-     <script src="app.js"></script>
+   1.  App namespace & configuration
+   2.  Storage helpers (localStorage wrapper)
+   3.  Users table (hardcoded for now — replace with backend later)
+   4.  Roles & permissions (aligned with eDocumentFlow UML diagrams)
+   5.  Authentication (login, logout, requireLogin)
+   6.  Theme (dark mode) management
+   7.  Toast notifications
+   8.  Mobile sidebar toggle
+   9.  Sidebar active-link highlighting
+   10. Topbar (user chip, theme toggle)
+   11. Utility helpers
+   12. Modal helpers
+   13. Confirm dialog
+   14. Event bus
+   15. Sidebar permission hiding
+   16. Auto-init
    ========================================================================== */
 
 (function () {
@@ -64,7 +61,7 @@
       try {
         const val = localStorage.getItem(key);
         if (val === null) return fallback;
-        try { return JSON.parse(val); } catch { return val; }
+        try { return JSON.parse(val); } catch (e) { return val; }
       } catch (e) {
         console.warn('[Storage] get failed:', e);
         return fallback;
@@ -86,8 +83,7 @@
     clearAll() {
       try {
         Object.keys(localStorage)
-          .filter(k => k.startsWith(APP.storagePrefix) ||
-                       k.startsWith('uphsd'))
+          .filter(k => k.startsWith(APP.storagePrefix) || k.startsWith('uphsd'))
           .forEach(k => localStorage.removeItem(k));
       } catch (e) {}
     }
@@ -96,10 +92,7 @@
   APP.Storage = Storage;
 
   /* ==========================================================================
-     3. USERS TABLE
-     ==========================================================================
-     Hardcoded credentials for development.
-     ⚠️ In production: replace with POST /api/auth/login on the backend.
+     3. USERS TABLE (hardcoded — replace with backend later)
      ========================================================================== */
   const USERS = [
     {
@@ -135,61 +128,17 @@
 
   /* ==========================================================================
      4. ROLES & PERMISSIONS
-     ==========================================================================
-     Permissions per module (matching eDocumentFlow use case diagrams):
-
-     ┌─────────────────────┬──────────┬────────┬──────────┐
-     │ Action              │ Secretary│   EA   │ Director │
-     ├─────────────────────┼──────────┼────────┼──────────┤
-     │ ACCOUNT MANAGEMENT                                     │
-     │   account:add       │    ✅    │   ✅   │    ❌    │
-     │   account:edit      │    ✅    │   ✅   │    ✅    │
-     │   account:delete    │    ✅    │   ✅   │    ❌    │
-     │   account:view      │    ✅    │   ✅   │    ✅    │
-     │   account:authorize │    ❌    │   ❌   │    ✅    │
-     ├─────────────────────┼──────────┼────────┼──────────┤
-     │ DOCUMENT MANAGEMENT                                    │
-     │   document:add      │    ✅    │   ❌   │    ❌    │
-     │   document:edit     │    ✅    │   ✅   │    ✅    │
-     │   document:delete   │    ✅    │   ✅   │    ✅    │
-     │   document:view     │    ✅    │   ✅   │    ✅    │
-     ├─────────────────────┼──────────┼────────┼──────────┤
-     │ ROUTING & TRACKING                                     │
-     │   routing:route     │    ✅    │   ❌   │    ❌    │
-     │   routing:update    │    ✅    │   ✅   │    ❌    │
-     │   routing:track     │    ✅    │   ✅   │    ❌    │
-     │   routing:view      │    ✅    │   ✅   │    ✅    │
-     ├─────────────────────┼──────────┼────────┼──────────┤
-     │ APPROVAL                                               │
-     │   approval:submit   │    ✅    │   ✅   │    ❌    │
-     │   approval:review   │    ❌    │   ❌   │    ✅    │
-     ├─────────────────────┼──────────┼────────┼──────────┤
-     │ NOTIFICATIONS                                          │
-     │   notification:view │    ✅    │   ✅   │    ✅    │
-     │   notification:email│    ✅    │   ✅   │    ✅    │
-     ├─────────────────────┼──────────┼────────┼──────────┤
-     │ REPORTS & MONITORING                                   │
-     │   report:generate   │    ✅    │   ✅   │    ❌    │
-     │   report:view       │    ✅    │   ✅   │    ✅    │
-     │   report:print      │    ✅    │   ✅   │    ✅    │
-     └─────────────────────┴──────────┴────────┴──────────┘
      ========================================================================== */
   const ROLES = {
     secretary: {
       id: 'secretary',
       label: 'Secretary',
       permissions: [
-        // Account Management
         'account:add', 'account:edit', 'account:delete', 'account:view',
-        // Document Management
         'document:add', 'document:edit', 'document:delete', 'document:view',
-        // Routing & Tracking
         'routing:route', 'routing:update', 'routing:track', 'routing:view',
-        // Approval
         'approval:submit',
-        // Notifications
         'notification:view', 'notification:email',
-        // Reports
         'report:generate', 'report:view', 'report:print'
       ]
     },
@@ -197,17 +146,11 @@
       id: 'ea',
       label: 'Executive Assistant',
       permissions: [
-        // Account Management
         'account:add', 'account:edit', 'account:delete', 'account:view',
-        // Document Management (NO add)
         'document:edit', 'document:delete', 'document:view',
-        // Routing & Tracking (NO route)
         'routing:update', 'routing:track', 'routing:view',
-        // Approval
         'approval:submit',
-        // Notifications
         'notification:view', 'notification:email',
-        // Reports
         'report:generate', 'report:view', 'report:print'
       ]
     },
@@ -215,26 +158,16 @@
       id: 'director',
       label: 'School Director',
       permissions: [
-        // Account Management (NO add/delete — only authorize)
         'account:edit', 'account:view', 'account:authorize',
-        // Document Management (NO add)
         'document:edit', 'document:delete', 'document:view',
-        // Routing & Tracking (only view)
         'routing:view',
-        // Approval (only review)
         'approval:review',
-        // Notifications
         'notification:view', 'notification:email',
-        // Reports (NO generate)
         'report:view', 'report:print'
       ]
     }
   };
 
-  /* --------------------------------------------------------------------
-     Page → module map
-     Used for backward compatibility with legacy Role.can('add') style.
-     -------------------------------------------------------------------- */
   const PAGE_MODULE_MAP = {
     'accounts.html':      'account',
     'documents.html':     'document',
@@ -245,7 +178,6 @@
     'settings.html':      'notification'
   };
 
-  /* Alias map: legacy short actions → module-prefixed permissions */
   const LEGACY_ACTION_ALIASES = {
     'add':       ['account:add', 'document:add'],
     'edit':      ['account:edit', 'document:edit'],
@@ -268,56 +200,38 @@
   }
 
   const Role = {
-    /** Return the currently logged-in user's role object */
     current() {
       const user = Auth.currentUser();
       const id = user ? user.role : Storage.get(APP.keys.role, 'secretary');
       return ROLES[id] || ROLES.secretary;
     },
 
-    /** Return the current role id */
     id() {
       return this.current().id;
     },
 
-    /**
-     * Check if the current role has a permission.
-     * Supports both new format ('document:add') and
-     * legacy format ('add'), resolving the module from the current page.
-     */
     can(action) {
       if (!action) return false;
       const perms = this.current().permissions;
-
-      // 1. Exact match (new module-prefixed format)
       if (perms.includes(action)) return true;
 
-      // 2. Legacy short action — try to resolve
       if (!action.includes(':')) {
         const mod = currentModuleFromPage();
-
-        // 2a. Try with current page's module prefix
         if (mod && perms.includes(`${mod}:${action}`)) return true;
-
-        // 2b. Fall back to alias map
         const aliases = LEGACY_ACTION_ALIASES[action];
         if (aliases && aliases.some(p => perms.includes(p))) return true;
       }
-
       return false;
     },
 
-    /** Check if current role has ANY of the given permissions */
     canAny(actions) {
       return (actions || []).some(a => this.can(a));
     },
 
-    /** Check if current role has ALL of the given permissions */
     canAll(actions) {
       return (actions || []).every(a => this.can(a));
     },
 
-    /** Set role (used by dev switcher — kept for compatibility) */
     set(roleId) {
       if (!ROLES[roleId]) return false;
       Storage.set(APP.keys.role, roleId);
@@ -326,16 +240,10 @@
       return true;
     },
 
-    /** Get all roles */
     all() { return ROLES; },
-
-    /** Get role object by id */
     get(id) { return ROLES[id]; },
-
-    /** Get current module name based on the page */
     currentModule() { return currentModuleFromPage(); },
 
-    /** Internal: update user chip in topbar */
     _renderUserChip() {
       const user = Auth.currentUser();
       if (!user) return;
@@ -343,7 +251,7 @@
       const roleEl = document.getElementById('userRoleLabel');
       const avEl   = document.getElementById('userAvatar');
       if (nameEl) nameEl.textContent = user.name;
-      if (roleEl) roleEl.textContent = user.position || ROLES[user.role]?.label || user.role;
+      if (roleEl) roleEl.textContent = user.position || (ROLES[user.role] ? ROLES[user.role].label : user.role);
       if (avEl)   avEl.textContent   = user.initials;
     }
   };
@@ -352,17 +260,10 @@
 
   /* ==========================================================================
      5. AUTHENTICATION
-     ==========================================================================
-     Real login system using the USERS table above.
-     In production, replace with an API call: POST /api/auth/login
      ========================================================================== */
   const Auth = {
-    /**
-     * Attempt to log in with email + password.
-     * @returns {Promise<{success: boolean, message?: string, user?: object}>}
-     */
     async login(email, password) {
-      // Simulate network delay
+      // Simulate network latency
       await new Promise(resolve => setTimeout(resolve, 600));
 
       if (!email || !password) {
@@ -378,7 +279,6 @@
         return { success: false, message: 'Invalid email or password. Please try again.' };
       }
 
-      // Save session (without password!)
       const session = {
         email: user.email,
         role: user.role,
@@ -396,35 +296,28 @@
       return { success: true, user: session };
     },
 
-    /** Log out and redirect to login page */
     logout() {
       Storage.remove(APP.keys.loggedIn);
       Storage.remove(APP.keys.user);
       Storage.remove(APP.keys.authToken);
-      // Keep role key so login page can pre-fill email if remembered
       window.location.href = APP.routes.login;
     },
 
-    /** Get the currently logged-in user (or null) */
     currentUser() {
       return Storage.get(APP.keys.user, null);
     },
 
-    /** Is a user currently logged in? */
     isLoggedIn() {
       return !!Storage.get(APP.keys.loggedIn) && !!this.currentUser();
     },
 
-    /**
-     * Guard: require login. If not logged in, redirect to login page.
-     * @returns {boolean} true if logged in, false if redirecting
-     */
     requireLogin() {
       if (!this.isLoggedIn()) {
-        // Save the page they wanted to visit, so we can redirect after login
         const attempted = window.location.pathname.split('/').pop();
         if (attempted && attempted !== 'login.html' && attempted !== '') {
-          sessionStorage.setItem('uphsdRedirectAfterLogin', attempted);
+          try {
+            sessionStorage.setItem('uphsdRedirectAfterLogin', attempted);
+          } catch (e) {}
         }
         window.location.href = APP.routes.login;
         return false;
@@ -432,17 +325,20 @@
       return true;
     },
 
-    /** Redirect to dashboard after login (or to the originally attempted page) */
     redirectAfterLogin() {
-      const attempted = sessionStorage.getItem('uphsdRedirectAfterLogin');
-      sessionStorage.removeItem('uphsdRedirectAfterLogin');
+      let attempted = null;
+      try {
+        attempted = sessionStorage.getItem('uphsdRedirectAfterLogin');
+        sessionStorage.removeItem('uphsdRedirectAfterLogin');
+      } catch (e) {}
+
       const target = attempted && attempted !== 'login.html'
         ? attempted
         : APP.routes.dashboard;
+
       window.location.href = target;
     },
 
-    /** If user is already logged in, redirect away from login page */
     skipLoginIfLoggedIn() {
       if (this.isLoggedIn()) {
         this.redirectAfterLogin();
@@ -497,8 +393,8 @@
       const icon = document.getElementById('themeIcon');
       if (!icon) return;
       icon.innerHTML = isDark
-        ? `<path d="M21.64 13a1 1 0 00-1.05-.14 8.05 8.05 0 01-3.37.73 8.15 8.15 0 01-8.14-8.1 8.59 8.59 0 01.25-2A1 1 0 008 2.36a10.14 10.14 0 1014 11.69 1 1 0 00-.36-1.05z"/>`
-        : `<path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 7.06a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0z"/>`;
+        ? '<path d="M21.64 13a1 1 0 00-1.05-.14 8.05 8.05 0 01-3.37.73 8.15 8.15 0 01-8.14-8.1 8.59 8.59 0 01.25-2A1 1 0 008 2.36a10.14 10.14 0 1014 11.69 1 1 0 00-.36-1.05z"/>'
+        : '<path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 7.06a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0z"/>';
     },
 
     watchSystem() {
@@ -518,13 +414,18 @@
      ========================================================================== */
   const Toast = {
     _icons: {
-      success: `<svg viewBox="0 0 24 24" fill="#2ed573"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>`,
-      gold:    `<svg viewBox="0 0 24 24" fill="#D4AF37"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3z"/></svg>`,
-      error:   `<svg viewBox="0 0 24 24" fill="#ff4757"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>`,
-      info:    `<svg viewBox="0 0 24 24" fill="#4682dc"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`
+      success: '<svg viewBox="0 0 24 24" fill="#2ed573"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>',
+      gold:    '<svg viewBox="0 0 24 24" fill="#D4AF37"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3z"/></svg>',
+      error:   '<svg viewBox="0 0 24 24" fill="#ff4757"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>',
+      info:    '<svg viewBox="0 0 24 24" fill="#4682dc"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>'
     },
 
-    show(type = 'info', title = '', message = '', duration = 3800) {
+    show(type, title, message, duration) {
+      type = type || 'info';
+      title = title || '';
+      message = message || '';
+      duration = duration || 3800;
+
       let container = document.getElementById('toastContainer');
       if (!container) {
         container = document.createElement('div');
@@ -537,19 +438,18 @@
       toast.className = 'toast ' + type;
       toast.setAttribute('role', 'status');
 
-      toast.innerHTML = `
-        <div class="toast-icon">${this._icons[type] || this._icons.info}</div>
-        <div class="toast-text">
-          <h4>${Utils.escapeHtml(title)}</h4>
-          <p>${Utils.escapeHtml(message)}</p>
-        </div>
-      `;
+      toast.innerHTML = 
+        '<div class="toast-icon">' + (this._icons[type] || this._icons.info) + '</div>' +
+        '<div class="toast-text">' +
+          '<h4>' + Utils.escapeHtml(title) + '</h4>' +
+          '<p>' + Utils.escapeHtml(message) + '</p>' +
+        '</div>';
 
       container.appendChild(toast);
 
-      setTimeout(() => {
+      setTimeout(function () {
         toast.classList.add('fade-out');
-        setTimeout(() => toast.remove(), 300);
+        setTimeout(function () { toast.remove(); }, 300);
       }, duration);
     },
 
@@ -571,21 +471,22 @@
       const backdrop = document.getElementById('overlayBackdrop');
       if (!hamburger || !sidebar) return;
 
-      hamburger.addEventListener('click', () => this.open());
-      if (backdrop) backdrop.addEventListener('click', () => this.close());
+      const self = this;
+      hamburger.addEventListener('click', function () { self.open(); });
+      if (backdrop) backdrop.addEventListener('click', function () { self.close(); });
 
-      sidebar.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', () => {
-          if (window.innerWidth <= 900) this.close();
+      sidebar.querySelectorAll('.nav-item').forEach(function (item) {
+        item.addEventListener('click', function () {
+          if (window.innerWidth <= 900) self.close();
         });
       });
 
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') this.close();
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') self.close();
       });
 
-      window.addEventListener('resize', () => {
-        if (window.innerWidth > 900) this.close();
+      window.addEventListener('resize', function () {
+        if (window.innerWidth > 900) self.close();
       });
     },
 
@@ -614,7 +515,7 @@
   const Nav = {
     init() {
       const currentPage = this._currentPage();
-      document.querySelectorAll('.nav-item').forEach(item => {
+      document.querySelectorAll('.nav-item').forEach(function (item) {
         const href = item.getAttribute('href');
         const dataPage = item.getAttribute('data-page');
         const match = (href && href === currentPage) ||
@@ -644,25 +545,23 @@
     init() {
       const themeBtn = document.getElementById('themeToggle');
       if (themeBtn) {
-        themeBtn.addEventListener('click', () => Theme.toggle());
+        themeBtn.addEventListener('click', function () { Theme.toggle(); });
       }
 
       const chip = document.getElementById('userChip');
       if (chip) {
-        chip.addEventListener('click', () => {
+        chip.addEventListener('click', function () {
           const user = Auth.currentUser();
           const name = user ? user.name : 'this account';
-          if (confirm(`Log out of ${name}'s session?`)) {
+          if (confirm('Log out of ' + name + '\'s session?')) {
             Auth.logout();
           }
         });
       }
 
-      // Render user chip from logged-in user
       Role._renderUserChip();
 
-      // Set footer year
-      document.querySelectorAll('[data-year]').forEach(el => {
+      document.querySelectorAll('[data-year]').forEach(function (el) {
         el.textContent = new Date().getFullYear();
       });
       const yearEl = document.getElementById('year');
@@ -676,7 +575,7 @@
      11. UTILITY HELPERS
      ========================================================================== */
   const Utils = {
-    escapeHtml(str) {
+    escapeHtml: function (str) {
       if (str == null) return '';
       return String(str)
         .replace(/&/g, '&amp;')
@@ -686,94 +585,103 @@
         .replace(/'/g, '&#039;');
     },
 
-    getInitials(name) {
+    getInitials: function (name) {
       if (!name) return '?';
       return name.trim().split(/\s+/)
-        .map(w => w[0]).slice(0, 2).join('').toUpperCase();
+        .map(function (w) { return w[0]; })
+        .slice(0, 2).join('').toUpperCase();
     },
 
-    formatDate(date, opts = {}) {
+    formatDate: function (date, opts) {
+      opts = opts || {};
       const d = date instanceof Date ? date : new Date(date);
       if (isNaN(d)) return '—';
-      return d.toLocaleDateString('en-US', {
-        year: 'numeric', month: 'short', day: 'numeric', ...opts
-      });
+      const base = { year: 'numeric', month: 'short', day: 'numeric' };
+      const merged = Object.assign(base, opts);
+      return d.toLocaleDateString('en-US', merged);
     },
 
-    formatDateTime(date) {
+    formatDateTime: function (date) {
       const d = date instanceof Date ? date : new Date(date);
       if (isNaN(d)) return '—';
       return this.formatDate(d) + ' · ' +
         d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     },
 
-    timeAgo(date) {
+    timeAgo: function (date) {
       const d = date instanceof Date ? date : new Date(date);
       if (isNaN(d)) return '—';
       const seconds = Math.floor((Date.now() - d.getTime()) / 1000);
       if (seconds < 60) return 'just now';
       const mins = Math.floor(seconds / 60);
-      if (mins < 60) return `${mins} min ago`;
+      if (mins < 60) return mins + ' min ago';
       const hrs = Math.floor(mins / 60);
-      if (hrs < 24) return `${hrs} hour${hrs > 1 ? 's' : ''} ago`;
+      if (hrs < 24) return hrs + ' hour' + (hrs > 1 ? 's' : '') + ' ago';
       const days = Math.floor(hrs / 24);
-      if (days < 30) return `${days} day${days > 1 ? 's' : ''} ago`;
+      if (days < 30) return days + ' day' + (days > 1 ? 's' : '') + ' ago';
       return this.formatDate(d);
     },
 
-    debounce(fn, wait = 300) {
+    debounce: function (fn, wait) {
+      wait = wait || 300;
       let timeout;
-      return function (...args) {
+      return function () {
+        const args = arguments;
+        const ctx = this;
         clearTimeout(timeout);
-        timeout = setTimeout(() => fn.apply(this, args), wait);
+        timeout = setTimeout(function () { fn.apply(ctx, args); }, wait);
       };
     },
 
-    throttle(fn, limit = 200) {
+    throttle: function (fn, limit) {
+      limit = limit || 200;
       let inThrottle;
-      return function (...args) {
+      return function () {
+        const args = arguments;
+        const ctx = this;
         if (!inThrottle) {
-          fn.apply(this, args);
+          fn.apply(ctx, args);
           inThrottle = true;
-          setTimeout(() => (inThrottle = false), limit);
+          setTimeout(function () { inThrottle = false; }, limit);
         }
       };
     },
 
-    uid(prefix = 'id') {
-      return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    uid: function (prefix) {
+      prefix = prefix || 'id';
+      return prefix + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
     },
 
-    isValidEmail(email) {
+    isValidEmail: function (email) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     },
 
-    capitalize(str) {
+    capitalize: function (str) {
       if (!str) return '';
       return str.charAt(0).toUpperCase() + str.slice(1);
     },
 
-    number(n) {
+    number: function (n) {
       return Number(n || 0).toLocaleString('en-US');
     },
 
-    truncate(str, len = 40) {
+    truncate: function (str, len) {
+      len = len || 40;
       if (!str) return '';
       return str.length > len ? str.slice(0, len - 1) + '…' : str;
     },
 
-    clone(obj) {
+    clone: function (obj) {
       try { return JSON.parse(JSON.stringify(obj)); }
-      catch { return obj; }
+      catch (e) { return obj; }
     },
 
-    qs(name) {
+    qs: function (name) {
       return new URLSearchParams(window.location.search).get(name);
     },
 
-    cssVar(name) {
-      return getComputedStyle(document.documentElement)
-        .getPropertyValue(name).trim();
+    cssVar: function (name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
     }
   };
 
@@ -783,35 +691,36 @@
      12. MODAL HELPERS
      ========================================================================== */
   const Modal = {
-    open(id) {
+    open: function (id) {
       const el = document.getElementById(id);
       if (!el) return;
       el.classList.add('show');
       document.body.style.overflow = 'hidden';
 
-      el.addEventListener('click', (e) => {
-        if (e.target === el) this.close(id);
+      el.addEventListener('click', function (e) {
+        if (e.target === el) Modal.close(id);
       });
 
-      const escHandler = (e) => {
+      const escHandler = function (e) {
         if (e.key === 'Escape') {
-          this.close(id);
+          Modal.close(id);
           document.removeEventListener('keydown', escHandler);
         }
       };
       document.addEventListener('keydown', escHandler);
     },
 
-    close(id) {
+    close: function (id) {
       const el = document.getElementById(id);
       if (!el) return;
       el.classList.remove('show');
       document.body.style.overflow = '';
     },
 
-    closeAll() {
-      document.querySelectorAll('.modal-backdrop.show')
-        .forEach(el => el.classList.remove('show'));
+    closeAll: function () {
+      document.querySelectorAll('.modal-backdrop.show').forEach(function (el) {
+        el.classList.remove('show');
+      });
       document.body.style.overflow = '';
     }
   };
@@ -819,54 +728,52 @@
   APP.Modal = Modal;
 
   /* ==========================================================================
-     13. CONFIRM DIALOG (Promise-based)
+     13. CONFIRM DIALOG
      ========================================================================== */
-  APP.confirm = function ({
-    title = 'Are you sure?',
-    message = '',
-    confirmText = 'Confirm',
-    cancelText = 'Cancel',
-    danger = false
-  } = {}) {
-    return new Promise((resolve) => {
+  APP.confirm = function (opts) {
+    opts = opts || {};
+    const title = opts.title || 'Are you sure?';
+    const message = opts.message || '';
+    const confirmText = opts.confirmText || 'Confirm';
+    const cancelText = opts.cancelText || 'Cancel';
+    const danger = opts.danger || false;
+
+    return new Promise(function (resolve) {
       const id = 'appConfirmModal_' + Date.now();
       const backdrop = document.createElement('div');
       backdrop.className = 'modal-backdrop';
       backdrop.id = id;
 
-      backdrop.innerHTML = `
-        <div class="modal" style="max-width:420px;">
-          <div class="modal-header">
-            <div style="flex:1;">
-              <h2>${Utils.escapeHtml(title)}</h2>
-              ${message ? `<p>${Utils.escapeHtml(message)}</p>` : ''}
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-ghost" data-role="cancel">${Utils.escapeHtml(cancelText)}</button>
-            <button class="btn ${danger ? 'btn-danger' : 'btn-primary'}" data-role="confirm">${Utils.escapeHtml(confirmText)}</button>
-          </div>
-        </div>
-      `;
+      backdrop.innerHTML = 
+        '<div class="modal" style="max-width:420px;">' +
+          '<div class="modal-header">' +
+            '<div style="flex:1;">' +
+              '<h2>' + Utils.escapeHtml(title) + '</h2>' +
+              (message ? '<p>' + Utils.escapeHtml(message) + '</p>' : '') +
+            '</div>' +
+          '</div>' +
+          '<div class="modal-footer">' +
+            '<button class="btn btn-ghost" data-role="cancel">' + Utils.escapeHtml(cancelText) + '</button>' +
+            '<button class="btn ' + (danger ? 'btn-danger' : 'btn-primary') + '" data-role="confirm">' + Utils.escapeHtml(confirmText) + '</button>' +
+          '</div>' +
+        '</div>';
 
       document.body.appendChild(backdrop);
-      requestAnimationFrame(() => backdrop.classList.add('show'));
+      requestAnimationFrame(function () { backdrop.classList.add('show'); });
       document.body.style.overflow = 'hidden';
 
-      const cleanup = (result) => {
+      function cleanup(result) {
         backdrop.classList.remove('show');
-        setTimeout(() => {
+        setTimeout(function () {
           backdrop.remove();
           document.body.style.overflow = '';
         }, 200);
         resolve(result);
-      };
+      }
 
-      backdrop.querySelector('[data-role="confirm"]')
-        .addEventListener('click', () => cleanup(true));
-      backdrop.querySelector('[data-role="cancel"]')
-        .addEventListener('click', () => cleanup(false));
-      backdrop.addEventListener('click', (e) => {
+      backdrop.querySelector('[data-role="confirm"]').addEventListener('click', function () { cleanup(true); });
+      backdrop.querySelector('[data-role="cancel"]').addEventListener('click', function () { cleanup(false); });
+      backdrop.addEventListener('click', function (e) {
         if (e.target === backdrop) cleanup(false);
       });
       document.addEventListener('keydown', function esc(e) {
@@ -879,22 +786,24 @@
   };
 
   /* ==========================================================================
-     14. EVENT BUS (pub/sub)
+     14. EVENT BUS
      ========================================================================== */
   const Bus = {
     _events: {},
-    on(event, handler) {
+    on: function (event, handler) {
       if (!this._events[event]) this._events[event] = [];
       this._events[event].push(handler);
-      return () => this.off(event, handler);
+      const self = this;
+      return function () { self.off(event, handler); };
     },
-    off(event, handler) {
+    off: function (event, handler) {
       if (!this._events[event]) return;
-      this._events[event] = this._events[event].filter(h => h !== handler);
+      this._events[event] = this._events[event].filter(function (h) { return h !== handler; });
     },
-    emit(event, ...args) {
-      (this._events[event] || []).forEach(fn => {
-        try { fn(...args); } catch (e) { console.warn('[Bus]', e); }
+    emit: function (event) {
+      const args = Array.prototype.slice.call(arguments, 1);
+      (this._events[event] || []).forEach(function (fn) {
+        try { fn.apply(null, args); } catch (e) { console.warn('[Bus]', e); }
       });
     }
   };
@@ -902,12 +811,11 @@
   APP.Bus = Bus;
 
   /* ==========================================================================
-     15. SIDEBAR — Permission-aware hiding
+     15. SIDEBAR PERMISSION HIDING
      ========================================================================== */
   function applySidebarPermissions() {
-    document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+    document.querySelectorAll('.nav-item[data-page]').forEach(function (item) {
       const page = item.getAttribute('data-page');
-
       const requiredMap = {
         'accounts.html':      ['account:view'],
         'documents.html':     ['document:view'],
@@ -917,10 +825,9 @@
         'notifications.html': ['notification:view'],
         'settings.html':      []
       };
-
       const required = requiredMap[page];
       if (required && required.length > 0) {
-        const allowed = required.some(p => Role.can(p));
+        const allowed = required.some(function (p) { return Role.can(p); });
         item.style.display = allowed ? '' : 'none';
       }
     });
@@ -949,12 +856,12 @@
     applySidebarPermissions();
 
     console.log(
-      `%c${APP.name} · v${APP.version}`,
+      '%c' + APP.name + ' · v' + APP.version,
       'color:#D4AF37; background:#7B1113; padding:4px 10px; border-radius:4px; font-weight:700;'
     );
     const user = Auth.currentUser();
     if (user) {
-      console.log('Logged in as:', user.name, `(${user.role})`);
+      console.log('Logged in as:', user.name, '(' + user.role + ')');
       console.log('Current module:', Role.currentModule() || '(dashboard)');
       console.log('Permissions:', Role.current().permissions);
     } else {
