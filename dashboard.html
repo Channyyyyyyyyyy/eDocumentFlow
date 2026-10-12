@@ -351,6 +351,7 @@
     flex-shrink: 0;
     margin-top: 1px;
     appearance: none;
+    -webkit-appearance: none;
     position: relative;
     transition: all 0.2s ease;
   }
@@ -542,7 +543,7 @@
     <div class="sidebar-brand">
       <div class="brand-logo">
         <!-- 👇 REPLACE WITH YOUR LOGO -->
-        <img src="uphsd-logo.png" alt="Logo">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
         </svg>
       </div>
@@ -569,7 +570,7 @@
       <a class="nav-item" href="approvals.html" data-page="approvals.html">
         <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
         Approvals
-        <span class="nav-badge" id="approvalBadgeSide">5</span>
+        <span class="nav-badge" id="approvalBadgeSide">0</span>
       </a>
       <a class="nav-item" href="notifications.html" data-page="notifications.html">
         <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
@@ -617,7 +618,7 @@
         <p>Welcome back — here's what's happening today</p>
       </div>
 
-      
+      <div class="topbar-actions">
 
         <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
           <svg id="themeIcon" viewBox="0 0 24 24">
@@ -631,10 +632,10 @@
         </button>
 
         <div class="user-chip" id="userChip" title="Click to log out">
-          <div class="user-avatar" id="userAvatar">MC</div>
+          <div class="user-avatar" id="userAvatar">—</div>
           <div class="user-info">
-            <span class="name" id="userName">Maria Cruz</span>
-            <span class="role" id="userRoleLabel">Secretary</span>
+            <span class="name" id="userName">—</span>
+            <span class="role" id="userRoleLabel">—</span>
           </div>
         </div>
       </div>
@@ -646,14 +647,13 @@
       <!-- WELCOME BANNER -->
       <div class="welcome-banner">
         <div class="welcome-content">
-          <div class="welcome-avatar" id="welcomeAvatar">MC</div>
+          <div class="welcome-avatar" id="welcomeAvatar">—</div>
           <div class="welcome-text">
             <div class="greeting" id="greetingText">Good day 👋</div>
-            <h1>Welcome back, <span id="welcomeName">Maria Cruz</span></h1>
-            <p id="welcomeSubtitle">You have <strong>5 pending items</strong> that need your attention today.</p>
+            <h1>Welcome back, <span id="welcomeName">—</span></h1>
+            <p id="welcomeSubtitle">Loading...</p>
           </div>
           <div class="welcome-actions">
-            <!-- 🔄 CHANGED: These buttons are shown/hidden by role -->
             <a class="btn" id="welcomeUploadBtn" href="documents.html" style="display:none;">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
               Upload Document
@@ -673,7 +673,7 @@
             <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
           </div>
           <div class="stat-info">
-            <div class="stat-value" id="statDocuments">247</div>
+            <div class="stat-value" id="statDocuments">0</div>
             <div class="stat-label">Total Documents</div>
           </div>
         </div>
@@ -683,7 +683,7 @@
             <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
           </div>
           <div class="stat-info">
-            <div class="stat-value" id="statPending">5</div>
+            <div class="stat-value" id="statPending">0</div>
             <div class="stat-label">Pending Approvals</div>
           </div>
         </div>
@@ -693,7 +693,7 @@
             <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
           </div>
           <div class="stat-info">
-            <div class="stat-value" id="statAccounts">24</div>
+            <div class="stat-value" id="statAccounts">0</div>
             <div class="stat-label">Active Accounts</div>
           </div>
         </div>
@@ -703,7 +703,7 @@
             <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
           </div>
           <div class="stat-info">
-            <div class="stat-value" id="statThisWeek">18</div>
+            <div class="stat-value" id="statThisWeek">0</div>
             <div class="stat-label">This Week</div>
           </div>
         </div>
@@ -755,7 +755,6 @@
             </div>
             <div class="quick-actions">
 
-              <!-- Upload Document — shown only to Secretary -->
               <a class="quick-action" href="documents.html" id="qaUploadDoc" style="display:none;">
                 <div class="qa-icon">
                   <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
@@ -767,7 +766,6 @@
                 <svg class="qa-arrow" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
               </a>
 
-              <!-- Create Account — shown to Secretary + EA -->
               <a class="quick-action" href="accounts.html" id="qaNewAccount" style="display:none;">
                 <div class="qa-icon">
                   <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
@@ -779,7 +777,6 @@
                 <svg class="qa-arrow" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
               </a>
 
-              <!-- 🔄 NEW: Route Document — shown only to Secretary -->
               <a class="quick-action" href="routing.html" id="qaRouteDoc" style="display:none;">
                 <div class="qa-icon">
                   <svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
@@ -791,19 +788,17 @@
                 <svg class="qa-arrow" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
               </a>
 
-              <!-- Review Approvals — shown to everyone (message varies) -->
               <a class="quick-action" href="approvals.html" id="qaApprovals">
                 <div class="qa-icon">
                   <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
                 </div>
                 <div class="qa-text">
-                  <div class="qa-title" id="qaApprovalsTitle">Review Approvals</div>
-                  <div class="qa-desc" id="qaApprovalsDesc">5 items waiting</div>
+                  <div class="qa-title" id="qaApprovalsTitle">View Approvals</div>
+                  <div class="qa-desc" id="qaApprovalsDesc">Track submitted requests</div>
                 </div>
                 <svg class="qa-arrow" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
               </a>
 
-              <!-- Generate Report — shown to Secretary + EA -->
               <a class="quick-action" href="reports.html" id="qaReports" style="display:none;">
                 <div class="qa-icon">
                   <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
@@ -815,7 +810,6 @@
                 <svg class="qa-arrow" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
               </a>
 
-              <!-- 🔄 NEW: View Reports — shown to Director (read-only) -->
               <a class="quick-action" href="reports.html" id="qaViewReports" style="display:none;">
                 <div class="qa-icon">
                   <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
@@ -856,37 +850,29 @@
   <script src="app.js"></script>
   <script>
   /* ==========================================================================
-     DASHBOARD — Page module (aligned with use case diagram)
+     DASHBOARD — Page module (with auth guard)
      ========================================================================== */
   (function () {
     'use strict';
 
-    const { Role, Toast, Utils, Bus } = APP;
+    // ============================================================
+    // 🛡️ AUTH GUARD — must be FIRST
+    // ============================================================
+    if (!window.APP || !window.APP.Auth) {
+      console.error('[Dashboard] app.js not loaded!');
+      return;
+    }
+    if (!window.APP.Auth.requireLogin()) return;
 
-    
-        /* --------------------------------------------------------------------
+    const { Role, Toast, Utils, Bus } = window.APP;
+
+    /* --------------------------------------------------------------------
        DATA — loaded from backend
        -------------------------------------------------------------------- */
-
-    // Activity feed
     let activity = [];
-
-    // Tasks (per role)
     let tasks = [];
-
-    // Mini chart — monthly documents
     let monthlyData = [];
 
-    /**
-     * Load dashboard data from the backend.
-     * Replace the empty assignments with real fetch() calls when ready:
-     *
-     *   const res = await fetch('/api/dashboard');
-     *   const data = await res.json();
-     *   activity = data.activity;
-     *   tasks = data.tasks;
-     *   monthlyData = data.monthlyData;
-     */
     async function loadDashboardData() {
       try {
         // TODO: Replace with real API call
@@ -901,8 +887,8 @@
         monthlyData = [];
       } catch (err) {
         console.error('[Dashboard] Failed to load:', err);
-        if (window.APP && APP.Toast) {
-          APP.Toast.error('Load Failed', 'Could not load dashboard data.');
+        if (window.APP && window.APP.Toast) {
+          window.APP.Toast.error('Load Failed', 'Could not load dashboard data.');
         }
         activity = [];
         tasks = [];
@@ -915,16 +901,9 @@
       updateStatCards();
     }
 
-    /**
-     * Load stats for the 4 KPI cards.
-     * Replace with real endpoint, e.g. GET /api/dashboard/stats
-     */
     async function loadStatCards() {
       try {
         // TODO: Replace with real API call
-        // const res = await fetch('/api/dashboard/stats');
-        // const stats = await res.json();
-
         const stats = {
           totalDocuments: 0,
           pendingApprovals: 0,
@@ -932,13 +911,22 @@
           thisWeek: 0
         };
 
-        document.getElementById('statDocuments').textContent = stats.totalDocuments;
-        document.getElementById('statPending').textContent   = stats.pendingApprovals;
-        document.getElementById('statAccounts').textContent  = stats.activeAccounts;
-        document.getElementById('statThisWeek').textContent  = stats.thisWeek;
+        const docsEl     = document.getElementById('statDocuments');
+        const pendingEl  = document.getElementById('statPending');
+        const accountsEl = document.getElementById('statAccounts');
+        const weekEl     = document.getElementById('statThisWeek');
+
+        if (docsEl)     docsEl.textContent     = Utils.number(stats.totalDocuments);
+        if (pendingEl)  pendingEl.textContent  = Utils.number(stats.pendingApprovals);
+        if (accountsEl) accountsEl.textContent = Utils.number(stats.activeAccounts);
+        if (weekEl)     weekEl.textContent     = Utils.number(stats.thisWeek);
       } catch (err) {
         console.error('[Stats] Failed to load:', err);
       }
+    }
+
+    function updateStatCards() {
+      // Hook for reactive updates after actions
     }
 
     /* --------------------------------------------------------------------
@@ -956,7 +944,7 @@
     /* --------------------------------------------------------------------
        RENDER — Activity feed
        -------------------------------------------------------------------- */
-        function renderActivity() {
+    function renderActivity() {
       const feed = document.getElementById('activityFeed');
       if (!feed) return;
 
@@ -973,27 +961,29 @@
         return;
       }
 
-      feed.innerHTML = activity.slice(0, 6).map(a => `
-        <div class="activity-item">
-          <div class="activity-icon ${a.color}">
-            <svg viewBox="0 0 24 24">${ACTIVITY_ICONS[a.icon] || ACTIVITY_ICONS.view}</svg>
-          </div>
-          <div class="activity-body">
-            <div class="activity-title">
-              ${a.title} — <em>${Utils.escapeHtml(a.subject)}</em>
+      feed.innerHTML = activity.slice(0, 6).map(function (a) {
+        return `
+          <div class="activity-item">
+            <div class="activity-icon ${a.color}">
+              <svg viewBox="0 0 24 24">${ACTIVITY_ICONS[a.icon] || ACTIVITY_ICONS.view}</svg>
             </div>
-            <div class="activity-meta">
-              <span>${Utils.timeAgo(a.time)}</span>
+            <div class="activity-body">
+              <div class="activity-title">
+                ${a.title} — <em>${Utils.escapeHtml(a.subject)}</em>
+              </div>
+              <div class="activity-meta">
+                <span>${Utils.timeAgo(a.time)}</span>
+              </div>
             </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     /* --------------------------------------------------------------------
        RENDER — Tasks (role-aware)
        -------------------------------------------------------------------- */
-       function renderTasks() {
+    function renderTasks() {
       const list = document.getElementById('tasksList');
       if (!list) return;
 
@@ -1011,32 +1001,34 @@
         return;
       }
 
-      list.innerHTML = tasks.map(t => `
-        <div class="task-item ${t.urgent ? 'urgent' : ''} ${t.done ? 'done' : ''}" data-id="${t.id}">
-          <input type="checkbox" class="task-check" ${t.done ? 'checked' : ''} data-id="${t.id}" />
-          <div class="task-body">
-            <div class="task-title">${Utils.escapeHtml(t.title)}</div>
-            <div class="task-meta">
-              <span class="task-tag ${t.urgent ? 'urgent' : ''}">${Utils.escapeHtml(t.tag)}</span>
-              <span>${t.done ? 'Completed' : 'Due · ' + Utils.escapeHtml(t.due)}</span>
+      list.innerHTML = tasks.map(function (t) {
+        return `
+          <div class="task-item ${t.urgent ? 'urgent' : ''} ${t.done ? 'done' : ''}" data-id="${t.id}">
+            <input type="checkbox" class="task-check" ${t.done ? 'checked' : ''} data-id="${t.id}" />
+            <div class="task-body">
+              <div class="task-title">${Utils.escapeHtml(t.title)}</div>
+              <div class="task-meta">
+                <span class="task-tag ${t.urgent ? 'urgent' : ''}">${Utils.escapeHtml(t.tag)}</span>
+                <span>${t.done ? 'Completed' : 'Due · ' + Utils.escapeHtml(t.due)}</span>
+              </div>
             </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
 
-      list.querySelectorAll('.task-check').forEach(cb => {
-        cb.addEventListener('change', (e) => {
+      list.querySelectorAll('.task-check').forEach(function (cb) {
+        cb.addEventListener('change', function (e) {
           const id = parseInt(e.target.dataset.id);
-          const task = tasks.find(t => t.id === id);
+          const task = tasks.find(function (t) { return t.id === id; });
           if (!task) return;
           task.done = e.target.checked;
           e.target.closest('.task-item').classList.toggle('done', task.done);
           updateTaskCounter();
 
           if (task.done) {
-            Toast.success('Task Completed', `"${task.title}" marked as done.`);
+            Toast.success('Task Completed', '"' + task.title + '" marked as done.');
           } else {
-            Toast.info('Task Reopened', `"${task.title}" is back on your list.`);
+            Toast.info('Task Reopened', '"' + task.title + '" is back on your list.');
           }
         });
       });
@@ -1044,21 +1036,21 @@
       updateTaskCounter();
     }
 
-      function updateTaskCounter() {
+    function updateTaskCounter() {
       const counter = document.getElementById('taskCounter');
       if (!counter) return;
       if (!tasks || tasks.length === 0) {
         counter.textContent = '0 tasks';
         return;
       }
-      const done = tasks.filter(t => t.done).length;
-      counter.textContent = `${done} of ${tasks.length} done`;
+      const done = tasks.filter(function (t) { return t.done; }).length;
+      counter.textContent = done + ' of ' + tasks.length + ' done';
     }
 
     /* --------------------------------------------------------------------
        RENDER — Mini bar chart
        -------------------------------------------------------------------- */
-        function renderChart() {
+    function renderChart() {
       const chart = document.getElementById('miniChart');
       if (!chart) return;
 
@@ -1071,9 +1063,9 @@
         return;
       }
 
-      const max = Math.max(...monthlyData.map(m => m.value), 1);
+      const max = Math.max.apply(null, monthlyData.map(function (m) { return m.value; }).concat([1]));
 
-      chart.innerHTML = monthlyData.map(m => {
+      chart.innerHTML = monthlyData.map(function (m) {
         const height = Math.max((m.value / max) * 100, 4);
         return `
           <div class="bar" style="height:${height}%;" title="${m.month}: ${m.value} documents">
@@ -1085,26 +1077,26 @@
     }
 
     /* --------------------------------------------------------------------
-       PERSONALIZE — Welcome banner
+       PERSONALIZE — Welcome banner (uses real logged-in user)
        -------------------------------------------------------------------- */
     function personalizeWelcome() {
-      const user = Role.current();
+      const user = window.APP.Auth.currentUser();
+      if (!user) return;
 
       const avatarEl = document.getElementById('welcomeAvatar');
       const nameEl   = document.getElementById('welcomeName');
       const subEl    = document.getElementById('welcomeSubtitle');
 
       if (avatarEl) avatarEl.textContent = user.initials;
-      if (nameEl)   nameEl.textContent   = user.userName;
+      if (nameEl)   nameEl.textContent   = user.name;
 
       if (subEl) {
-        const pending = 5;
         const greetings = {
-          secretary: `You have <strong>${pending} pending items</strong> to process today.`,
-          ea:        `You have <strong>${pending} pending items</strong> waiting for your review.`,
-          director:  `You have <strong>${pending} items</strong> awaiting your authorization.`
+          secretary: 'You can upload, route, and manage documents for the office.',
+          ea:        'You can edit, route, and manage documents for the office.',
+          director:  'Review pending approvals and monitor documents across the office.'
         };
-        subEl.innerHTML = greetings[user.id] || greetings.secretary;
+        subEl.textContent = greetings[user.role] || 'Welcome to the Director\'s Office portal.';
       }
 
       // Time-aware greeting
@@ -1118,28 +1110,24 @@
     }
 
     /* --------------------------------------------------------------------
-       ROLE-AWARE — Show/hide quick actions + welcome buttons
+       ROLE-AWARE UI (based on real logged-in user's role)
        -------------------------------------------------------------------- */
     function applyRole() {
-      const roleId = Role.id();
+      const user = window.APP.Auth.currentUser();
+      const roleId = user ? user.role : 'secretary';
 
       // --- Welcome banner buttons ---
       const welcomeUpload = document.getElementById('welcomeUploadBtn');
-      const welcomeApprovals = document.getElementById('welcomeApprovalsBtn');
       const welcomeApprovalsLabel = document.getElementById('welcomeApprovalsLabel');
 
-      // Upload Document — only Secretary
       if (welcomeUpload) {
         welcomeUpload.style.display = Role.can('document:add') ? 'inline-flex' : 'none';
       }
 
-      // Approvals button — always visible, but label varies
-      if (welcomeApprovals && welcomeApprovalsLabel) {
-        if (Role.can('approval:review')) {
-          welcomeApprovalsLabel.textContent = 'Review Approvals';
-        } else {
-          welcomeApprovalsLabel.textContent = 'View Approvals';
-        }
+      if (welcomeApprovalsLabel) {
+        welcomeApprovalsLabel.textContent = Role.can('approval:review')
+          ? 'Review Approvals'
+          : 'View Approvals';
       }
 
       // --- Quick actions ---
@@ -1152,90 +1140,40 @@
       const qaReports      = document.getElementById('qaReports');
       const qaViewReports  = document.getElementById('qaViewReports');
 
-      // Upload Document — Secretary only
       if (qaUploadDoc) {
         qaUploadDoc.style.display = Role.can('document:add') ? 'flex' : 'none';
       }
-
-      // Create Account — Secretary + EA
       if (qaNewAccount) {
         qaNewAccount.style.display = Role.can('account:add') ? 'flex' : 'none';
       }
-
-      // Route Document — Secretary only
       if (qaRouteDoc) {
         qaRouteDoc.style.display = Role.can('routing:route') ? 'flex' : 'none';
       }
-
-      // Review Approvals — always visible, but message varies
       if (qaApprovals && qaApprovalsTitle && qaApprovalsDesc) {
         if (Role.can('approval:review')) {
           qaApprovalsTitle.textContent = 'Review Approvals';
-          qaApprovalsDesc.textContent  = '5 items need your authorization';
+          qaApprovalsDesc.textContent  = 'Items need your authorization';
         } else {
           qaApprovalsTitle.textContent = 'View Approvals';
           qaApprovalsDesc.textContent  = 'Track your submitted requests';
         }
       }
-
-      // Generate Report — Secretary + EA only
       if (qaReports) {
         qaReports.style.display = Role.can('report:generate') ? 'flex' : 'none';
       }
-
-      // View Reports — Director only
       if (qaViewReports) {
         qaViewReports.style.display = (roleId === 'director') ? 'flex' : 'none';
       }
 
-
       personalizeWelcome();
     }
 
-        /**
-     * Refresh the 4 KPI stat cards with current values.
-     * In production, these values come from the backend.
-     */
-    function updateStatCards() {
-      // The loadStatCards() function already updates these directly.
-      // This is a hook for reactive updates after actions.
-    }
-
     /* --------------------------------------------------------------------
-       COUNTER ANIMATION
-       -------------------------------------------------------------------- */
-    function animateCounters() {
-      document.querySelectorAll('.stat-value').forEach(el => {
-        const target = parseInt(el.textContent.replace(/,/g, '')) || 0;
-        if (target === 0) return;
-
-        let current = 0;
-        const step = Math.max(1, Math.ceil(target / 30));
-        el.textContent = '0';
-
-        const timer = setInterval(() => {
-          current += step;
-          if (current >= target) {
-            current = target;
-            clearInterval(timer);
-          }
-          el.textContent = Utils.number(current);
-        }, 20);
-      });
-    }
-
-        /* --------------------------------------------------------------------
        INIT
        -------------------------------------------------------------------- */
     applyRole();
     loadDashboardData();
     loadStatCards();
-
-    // React to role change
-    Bus.on('role:changed', () => {
-      applyRole();
-      Toast.info('Role Switched', `Now viewing as ${Role.current().label}.`);
-    });
 
   })();
   </script>
