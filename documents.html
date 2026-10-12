@@ -11,7 +11,6 @@
      DOCUMENTS-PAGE-SPECIFIC STYLES
      ===================================================================== */
 
-  /* ---------- Tabs with counts ---------- */
   .doc-tabs {
     display: flex;
     gap: 4px;
@@ -77,7 +76,6 @@
     color: #1a1414;
   }
 
-  /* ---------- Document title cell ---------- */
   .doc-cell {
     display: flex;
     align-items: center;
@@ -136,7 +134,6 @@
     display: inline-block;
   }
 
-  /* ---------- Type tag ---------- */
   .type-tag {
     display: inline-block;
     padding: 4px 10px;
@@ -153,7 +150,6 @@
     color: #7ea8ee;
   }
 
-  /* ---------- Priority indicator ---------- */
   .priority {
     display: inline-flex;
     align-items: center;
@@ -174,7 +170,6 @@
   .priority.low    { color: #1e8a4d; }
   .priority.low::before { background: #2ed573; }
 
-  /* ---------- Upload drop zone (in modal) ---------- */
   .upload-dropzone {
     border: 2px dashed var(--border-medium);
     border-radius: var(--radius-lg);
@@ -227,7 +222,6 @@
   }
   body.dark-mode .upload-dropzone .browse-link { color: var(--gold); }
 
-  /* Selected file preview */
   .file-preview {
     display: none;
     align-items: center;
@@ -287,7 +281,6 @@
   }
   .file-preview .remove-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
-  /* ---------- Info grid in view modal ---------- */
   .info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -314,7 +307,6 @@
     word-break: break-word;
   }
 
-  /* ---------- Read-only notice ---------- */
   .view-only-notice {
     background: rgba(212,175,55,0.12);
     border: 1.5px solid var(--gold);
@@ -339,14 +331,10 @@
 </head>
 <body>
 
-  <!-- ============================================================
-       SIDEBAR
-       ============================================================ -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <div class="brand-logo">
-        <!-- 👇 REPLACE WITH YOUR LOGO -->
-        <img src="uphsd-logo.png" alt="Logo">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
         </svg>
       </div>
@@ -366,17 +354,15 @@
         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
         Documents
       </a>
-      <!-- 🔄 NEW: Routing & Tracking -->
       <a class="nav-item" href="routing.html" data-page="routing.html">
         <svg viewBox="0 0 24 24"><path d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"/></svg>
-        Routing & Tracking
+        Routing &amp; Tracking
       </a>
       <a class="nav-item" href="approvals.html" data-page="approvals.html">
         <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
         Approvals
-        <span class="nav-badge" id="approvalBadgeSide">5</span>
+        <span class="nav-badge" id="approvalBadgeSide">0</span>
       </a>
-      <!-- 🔄 NEW: Notifications -->
       <a class="nav-item" href="notifications.html" data-page="notifications.html">
         <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
         Notifications
@@ -407,12 +393,8 @@
 
   <div class="overlay-backdrop" id="overlayBackdrop"></div>
 
-  <!-- ============================================================
-       MAIN
-       ============================================================ -->
   <main class="main">
 
-    <!-- ========== TOP BAR ========== -->
     <header class="topbar">
       <button class="hamburger" id="hamburger" aria-label="Menu">
         <svg viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
@@ -423,8 +405,7 @@
         <p>Manage, review, and track all office documents</p>
       </div>
 
-      
-
+      <div class="topbar-actions">
         <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
           <svg id="themeIcon" viewBox="0 0 24 24">
             <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 7.06a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0z"/>
@@ -437,19 +418,17 @@
         </button>
 
         <div class="user-chip" id="userChip" title="Click to log out">
-          <div class="user-avatar" id="userAvatar">MC</div>
+          <div class="user-avatar" id="userAvatar">—</div>
           <div class="user-info">
-            <span class="name" id="userName">Maria Cruz</span>
-            <span class="role" id="userRoleLabel">Secretary</span>
+            <span class="name" id="userName">—</span>
+            <span class="role" id="userRoleLabel">—</span>
           </div>
         </div>
       </div>
     </header>
 
-    <!-- ========== CONTENT ========== -->
     <div class="content">
 
-      <!-- 🔄 NEW: Read-only notice (shown only to Director) -->
       <div class="view-only-notice" id="viewOnlyNotice" style="display:none;">
         <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
         <span>
@@ -457,7 +436,6 @@
         </span>
       </div>
 
-      <!-- 🔄 NEW: Read-only notice for Executive Assistant -->
       <div class="view-only-notice" id="eaNotice" style="display:none;">
         <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
         <span>
@@ -465,7 +443,6 @@
         </span>
       </div>
 
-      <!-- STATS -->
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon maroon">
@@ -508,7 +485,6 @@
         </div>
       </div>
 
-      <!-- TABS -->
       <div class="doc-tabs" id="docTabs">
         <button class="doc-tab active" data-tab="all">
           All Documents <span class="tab-count" data-count="all">0</span>
@@ -530,14 +506,12 @@
         </button>
       </div>
 
-      <!-- BULK BAR -->
       <div class="bulk-bar" id="bulkBar">
         <span class="bulk-count" id="bulkCount">0 selected</span>
         <div class="bulk-actions" id="bulkActions"></div>
         <button class="btn btn-ghost" style="background:transparent;color:inherit;border-color:rgba(255,255,255,0.3);" onclick="Documents.clearSelection()">Clear</button>
       </div>
 
-      <!-- TOOLBAR -->
       <div class="toolbar">
         <div class="search-box">
           <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
@@ -572,14 +546,12 @@
           <option value="low">Low</option>
         </select>
 
-        <!-- 🔄 CHANGED: Upload button — hidden by default, shown only to Secretary -->
         <button class="btn btn-primary" id="btnUpload" style="margin-left:auto;display:none;">
           <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
           Upload Document
         </button>
       </div>
 
-      <!-- TABLE -->
       <div class="table-card">
         <div class="table-header-row">
           <h2 id="tableTitle">All Documents</h2>
@@ -650,7 +622,6 @@
         </button>
       </div>
       <div class="modal-body">
-
         <div class="upload-dropzone" id="dropzone">
           <div class="drop-icon">
             <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
@@ -679,7 +650,7 @@
           <input type="text" id="docName" placeholder="e.g., Budget Proposal FY 2025-2026" />
         </div>
 
-        <div class="form-row">
+        <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
           <div class="form-group">
             <label for="docType">Document Type <span class="req">*</span></label>
             <select id="docType">
@@ -805,30 +776,27 @@
   <script src="app.js"></script>
   <script>
   /* ==========================================================================
-     DOCUMENTS — Page module (aligned with use case diagram)
-
-     Permissions (per diagram):
-       Secretary  → document:add ✓, document:edit ✓, document:delete ✓, document:view ✓
-       EA         → document:add ✗, document:edit ✓, document:delete ✓, document:view ✓
-       Director   → document:add ✗, document:edit ✓, document:delete ✓, document:view ✓
+     DOCUMENTS — Page module (with auth guard)
      ========================================================================== */
   (function () {
     'use strict';
 
-    const { Role, Toast, Utils, Modal, Bus } = APP;
+    // ============================================================
+    // 🛡️ AUTH GUARD — must be FIRST
+    // ============================================================
+    if (!window.APP || !window.APP.Auth) {
+      console.error('[Documents] app.js not loaded!');
+      return;
+    }
+    if (!window.APP.Auth.requireLogin()) return;
 
-       /* --------------------------------------------------------------------
+    const { Role, Toast, Utils, Modal } = window.APP;
+
+    /* --------------------------------------------------------------------
        DATA — loaded from backend
        -------------------------------------------------------------------- */
     let documents = [];
 
-    /**
-     * Load documents from the backend.
-     * Replace the mock with a real fetch() when your API is ready:
-     *
-     *   const res = await fetch('/api/documents');
-     *   documents = await res.json();
-     */
     async function loadDocuments() {
       try {
         // TODO: Replace with real API call
@@ -838,19 +806,20 @@
         documents = [];
       } catch (err) {
         console.error('[Documents] Failed to load:', err);
-        if (window.APP && APP.Toast) {
-          APP.Toast.error('Load Failed', 'Could not load documents from the server.');
+        if (window.APP && window.APP.Toast) {
+          window.APP.Toast.error('Load Failed', 'Could not load documents from the server.');
         }
         documents = [];
       }
       renderDocs();
       updateStats();
     }
+
     /* --------------------------------------------------------------------
        STATE
        -------------------------------------------------------------------- */
     let currentTab = 'all';
-    let filteredDocs = [...documents];
+    let filteredDocs = [];
     const selectedIds = new Set();
     let currentViewDoc = null;
 
@@ -933,7 +902,7 @@
         archived: documents.filter(d => d.status === 'archived').length
       };
       Object.entries(counts).forEach(([k, v]) => {
-        const el = document.querySelector(`[data-count="${k}"]`);
+        const el = document.querySelector('[data-count="' + k + '"]');
         if (el) el.textContent = v;
       });
 
@@ -942,43 +911,34 @@
     }
 
     /* --------------------------------------------------------------------
-       RENDER — Action buttons per row (ALIGNED WITH DIAGRAM)
-       --------------------------------------------------------------------
-       Secretary:  Add ✓  Edit ✓  Delete ✓  View ✓
-       EA:         Add ✗  Edit ✓  Delete ✓  View ✓
-       Director:   Add ✗  Edit ✓  Delete ✓  View ✓
+       RENDER — Action buttons per row
        -------------------------------------------------------------------- */
     function renderActions(doc) {
       const btns = [];
 
-      // VIEW — everyone
       if (Role.can('document:view')) {
-        btns.push(`
-          <button class="action-btn view" data-action="view" data-id="${doc.id}" title="View details">
-            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
-          </button>
-        `);
+        btns.push(
+          '<button class="action-btn view" data-action="view" data-id="' + doc.id + '" title="View details">' +
+            '<svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>' +
+          '</button>'
+        );
       }
 
-      // EDIT — everyone
       if (Role.can('document:edit')) {
-        btns.push(`
-          <button class="action-btn edit" data-action="edit" data-id="${doc.id}" title="Edit">
-            <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-          </button>
-        `);
+        btns.push(
+          '<button class="action-btn edit" data-action="edit" data-id="' + doc.id + '" title="Edit">' +
+            '<svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>' +
+          '</button>'
+        );
       }
 
-      // DELETE — everyone
       if (Role.can('document:delete')) {
-        btns.push(`
-          <button class="action-btn delete" data-action="delete" data-id="${doc.id}" title="Delete">
-            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-          </button>
-        `);
+        btns.push(
+          '<button class="action-btn delete" data-action="delete" data-id="' + doc.id + '" title="Delete">' +
+            '<svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>' +
+          '</button>'
+        );
       }
-
-      // ⚠️ NO AUTHORIZE button — Director authorizes via Approvals page, not here
 
       return btns.join('');
     }
@@ -1005,7 +965,7 @@
         return true;
       });
 
-      els.resultCount.textContent = `Showing ${filteredDocs.length} of ${documents.length} documents`;
+      els.resultCount.textContent = 'Showing ' + filteredDocs.length + ' of ' + documents.length + ' documents';
       updateStats();
 
       const tabLabels = {
@@ -1029,39 +989,39 @@
       els.tbody.innerHTML = filteredDocs.map(d => {
         const isSelected = selectedIds.has(d.id);
         const extClass = fileExtClass(d.ext);
-        return `
-          <tr class="${isSelected ? 'selected' : ''}" data-id="${d.id}">
-            <td class="center">
-              <label class="checkbox-wrap">
-                <input type="checkbox" class="row-checkbox" data-id="${d.id}" ${isSelected ? 'checked' : ''}/>
-              </label>
-            </td>
-            <td>
-              <div class="doc-cell">
-                <div class="doc-icon ${extClass}">${Utils.escapeHtml(d.ext)}</div>
-                <div class="doc-info">
-                  <div class="doc-name" title="${Utils.escapeHtml(d.name)}">${Utils.escapeHtml(d.name)}</div>
-                  <div class="doc-meta">
-                    <span>${Utils.escapeHtml(d.id)}</span>
-                    <span class="dot-sep"></span>
-                    <span>${Utils.escapeHtml(d.size)}</span>
-                  </div>
-                </div>
-              </div>
-            </td>
-            <td><span class="type-tag">${Utils.escapeHtml(d.type)}</span></td>
-            <td>${Utils.escapeHtml(d.dept)}</td>
-            <td><span class="priority ${d.priority}">${Utils.capitalize(d.priority)}</span></td>
-            <td><span class="status-badge ${d.status}">${statusLabel(d.status)}</span></td>
-            <td>
-              <div style="font-size:0.82rem;font-weight:500;">${Utils.escapeHtml(d.submittedBy)}</div>
-              <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px;">${Utils.escapeHtml(d.date)}</div>
-            </td>
-            <td>
-              <div class="actions">${renderActions(d)}</div>
-            </td>
-          </tr>
-        `;
+        return (
+          '<tr class="' + (isSelected ? 'selected' : '') + '" data-id="' + d.id + '">' +
+            '<td class="center">' +
+              '<label class="checkbox-wrap">' +
+                '<input type="checkbox" class="row-checkbox" data-id="' + d.id + '" ' + (isSelected ? 'checked' : '') + '/>' +
+              '</label>' +
+            '</td>' +
+            '<td>' +
+              '<div class="doc-cell">' +
+                '<div class="doc-icon ' + extClass + '">' + Utils.escapeHtml(d.ext) + '</div>' +
+                '<div class="doc-info">' +
+                  '<div class="doc-name" title="' + Utils.escapeHtml(d.name) + '">' + Utils.escapeHtml(d.name) + '</div>' +
+                  '<div class="doc-meta">' +
+                    '<span>' + Utils.escapeHtml(d.id) + '</span>' +
+                    '<span class="dot-sep"></span>' +
+                    '<span>' + Utils.escapeHtml(d.size) + '</span>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+            '</td>' +
+            '<td><span class="type-tag">' + Utils.escapeHtml(d.type) + '</span></td>' +
+            '<td>' + Utils.escapeHtml(d.dept) + '</td>' +
+            '<td><span class="priority ' + d.priority + '">' + Utils.capitalize(d.priority) + '</span></td>' +
+            '<td><span class="status-badge ' + d.status + '">' + statusLabel(d.status) + '</span></td>' +
+            '<td>' +
+              '<div style="font-size:0.82rem;font-weight:500;">' + Utils.escapeHtml(d.submittedBy) + '</div>' +
+              '<div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px;">' + Utils.escapeHtml(d.date) + '</div>' +
+            '</td>' +
+            '<td>' +
+              '<div class="actions">' + renderActions(d) + '</div>' +
+            '</td>' +
+          '</tr>'
+        );
       }).join('');
 
       els.tbody.querySelectorAll('.row-checkbox').forEach(cb => {
@@ -1084,11 +1044,11 @@
 
       updateBulkBar();
       updateSelectAllState();
-      els.pageInfo.textContent = `Page 1 of 1 · ${filteredDocs.length} records`;
+      els.pageInfo.textContent = 'Page 1 of 1 · ' + filteredDocs.length + ' records';
     }
 
     /* --------------------------------------------------------------------
-       ACTION HANDLER (aligned — no authorize/reject/submit here)
+       ACTION HANDLER
        -------------------------------------------------------------------- */
     function handleAction(action, id) {
       const doc = documents.find(d => d.id === id);
@@ -1099,19 +1059,17 @@
           openViewModal(doc);
           break;
         case 'edit':
-          Toast.info('Edit Document', `Editing "${doc.name}" — functionality coming soon.`);
+          Toast.info('Edit Document', 'Editing "' + doc.name + '" — functionality coming soon.');
           break;
         case 'delete':
           deleteDoc(doc);
           break;
-        // NOTE: 'authorize', 'reject', 'submit', 'archive' removed
-        // Director handles approvals via Approvals page
       }
     }
 
     async function deleteDoc(doc) {
       const ok = await APP.confirm({
-        title: `Delete "${doc.name}"?`,
+        title: 'Delete "' + doc.name + '"?',
         message: 'This action cannot be undone.',
         confirmText: 'Delete',
         danger: true
@@ -1120,7 +1078,7 @@
 
       const idx = documents.findIndex(d => d.id === doc.id);
       if (idx !== -1) documents.splice(idx, 1);
-      Toast.success('Document Deleted', `"${doc.name}" has been removed.`);
+      Toast.success('Document Deleted', '"' + doc.name + '" has been removed.');
       renderDocs();
     }
 
@@ -1135,10 +1093,10 @@
       $('viewDocId').textContent = doc.id;
       $('viewDocType').textContent = doc.type;
       $('viewDocDept').textContent = doc.dept;
-      $('viewDocPriority').innerHTML = `<span class="priority ${doc.priority}">${Utils.capitalize(doc.priority)}</span>`;
+      $('viewDocPriority').innerHTML = '<span class="priority ' + doc.priority + '">' + Utils.capitalize(doc.priority) + '</span>';
       $('viewDocSubmitter').textContent = doc.submittedBy;
       $('viewDocDate').textContent = doc.date;
-      $('viewDocStatus').innerHTML = `<span class="status-badge ${doc.status}">${statusLabel(doc.status)}</span>`;
+      $('viewDocStatus').innerHTML = '<span class="status-badge ' + doc.status + '">' + statusLabel(doc.status) + '</span>';
       $('viewDocSize').textContent = doc.size;
       $('viewDocNotes').textContent = doc.notes || 'No notes provided.';
 
@@ -1147,12 +1105,12 @@
 
     $('btnDownload').addEventListener('click', () => {
       if (currentViewDoc) {
-        Toast.info('Download Started', `Downloading "${currentViewDoc.name}"...`);
+        Toast.info('Download Started', 'Downloading "' + currentViewDoc.name + '"...');
       }
     });
 
     /* --------------------------------------------------------------------
-       BULK ACTIONS (aligned — no bulk authorize for documents)
+       BULK ACTIONS
        -------------------------------------------------------------------- */
     function updateBulkBar() {
       if (selectedIds.size === 0) {
@@ -1161,22 +1119,19 @@
       }
 
       els.bulkBar.classList.add('show');
-      els.bulkCount.textContent = `${selectedIds.size} selected`;
+      els.bulkCount.textContent = selectedIds.size + ' selected';
 
       const btns = [];
 
-      // Only "Delete" — no authorize for documents
       if (Role.can('document:delete')) {
-        btns.push(`<button class="btn danger" onclick="Documents.bulkDelete()">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-          Delete
-        </button>`);
+        btns.push('<button class="btn danger" onclick="Documents.bulkDelete()">' +
+          '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>' +
+          'Delete</button>');
       }
 
-      btns.push(`<button class="btn" onclick="Documents.bulkExport()">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-        Export
-      </button>`);
+      btns.push('<button class="btn" onclick="Documents.bulkExport()">' +
+        '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>' +
+        'Export</button>');
 
       els.bulkActions.innerHTML = btns.join('');
     }
@@ -1188,7 +1143,7 @@
 
     async function bulkDelete() {
       const ok = await APP.confirm({
-        title: `Delete ${selectedIds.size} document(s)?`,
+        title: 'Delete ' + selectedIds.size + ' document(s)?',
         message: 'This action cannot be undone.',
         confirmText: 'Delete All',
         danger: true
@@ -1199,13 +1154,13 @@
         const idx = documents.findIndex(d => d.id === id);
         if (idx !== -1) documents.splice(idx, 1);
       });
-      Toast.success('Documents Deleted', `${selectedIds.size} document(s) removed.`);
+      Toast.success('Documents Deleted', selectedIds.size + ' document(s) removed.');
       selectedIds.clear();
       renderDocs();
     }
 
     function bulkExport() {
-      Toast.info('Export Started', `Preparing CSV export for ${selectedIds.size} document(s)...`);
+      Toast.info('Export Started', 'Preparing CSV export for ' + selectedIds.size + ' document(s)...');
     }
 
     /* --------------------------------------------------------------------
@@ -1303,7 +1258,6 @@
     });
 
     els.btnUpload.addEventListener('click', () => {
-      // Extra safety: only Secretary can open this
       if (!Role.can('document:add')) {
         Toast.error('Permission Denied', 'Only the Secretary can upload new documents.');
         return;
@@ -1320,7 +1274,6 @@
     });
 
     $('btnSubmitUpload').addEventListener('click', () => {
-      // Extra safety check
       if (!Role.can('document:add')) {
         Toast.error('Permission Denied', 'Only the Secretary can upload new documents.');
         Modal.close('uploadModal');
@@ -1350,9 +1303,7 @@
         return;
       }
 
-      // TODO: send to backend instead of local array
-      // POST /api/documents with FormData
-      const newId = `DOC-${new Date().getFullYear()}-${String(documents.length + 1).padStart(3, '0')}`;
+      const newId = 'DOC-' + new Date().getFullYear() + '-' + String(documents.length + 1).padStart(3, '0');
       const now = new Date();
       const dateStr = Utils.formatDate(now) + ' ' +
         now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -1365,14 +1316,14 @@
         dept: dept,
         priority: priority,
         status: 'pending',
-        submittedBy: Role.current().userName,
+        submittedBy: window.APP.Auth.currentUser().name,
         date: dateStr,
         size: selectedFile ? formatSize(selectedFile.size) : '—',
         notes: notes
       });
 
       Modal.close('uploadModal');
-      Toast.gold('Document Uploaded', `"${name}" is now pending authorization.`);
+      Toast.gold('Document Uploaded', '"' + name + '" is now pending authorization.');
       currentTab = 'pending';
       document.querySelectorAll('.doc-tab').forEach(t => {
         t.classList.toggle('active', t.dataset.tab === 'pending');
@@ -1381,30 +1332,26 @@
     });
 
     /* --------------------------------------------------------------------
-       ROLE-AWARE UI (ALIGNED WITH DIAGRAM)
+       ROLE-AWARE UI
        -------------------------------------------------------------------- */
     function applyRole() {
-      const canAdd = Role.can('document:add');
-      const canEdit = Role.can('document:edit');
-      const canDelete = Role.can('document:delete');
+      const user = window.APP.Auth.currentUser();
+      const roleId = user ? user.role : 'secretary';
 
-      // Upload button: only Secretary
+      const canAdd = Role.can('document:add');
+
       els.btnUpload.style.display = canAdd ? 'inline-flex' : 'none';
       if (els.btnEmptyUpload) {
         els.btnEmptyUpload.style.display = canAdd ? 'inline-flex' : 'none';
       }
 
-      // Notices
       if (els.noticeDirector) {
-        els.noticeDirector.style.display =
-          Role.id() === 'director' ? 'flex' : 'none';
+        els.noticeDirector.style.display = (roleId === 'director') ? 'flex' : 'none';
       }
       if (els.noticeEA) {
-        els.noticeEA.style.display =
-          Role.id() === 'ea' ? 'flex' : 'none';
+        els.noticeEA.style.display = (roleId === 'ea') ? 'flex' : 'none';
       }
 
-      // Empty state copy varies by role
       if (els.emptyCopy) {
         els.emptyCopy.textContent = canAdd
           ? 'Try adjusting your search or filters. Or upload a new document to get started.'
@@ -1422,15 +1369,6 @@
       bulkDelete,
       bulkExport
     };
-
-    /* --------------------------------------------------------------------
-       REACT TO ROLE CHANGE
-       -------------------------------------------------------------------- */
-    Bus.on('role:changed', () => {
-      selectedIds.clear();
-      applyRole();
-      Toast.info('Role Switched', `Now viewing as ${Role.current().label}.`);
-    });
 
     /* --------------------------------------------------------------------
        INIT
