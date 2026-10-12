@@ -7,11 +7,6 @@
 <link rel="stylesheet" href="shared.css" />
 
 <style>
-  /* =====================================================================
-     NOTIFICATIONS — PAGE-SPECIFIC STYLES
-     ===================================================================== */
-
-  /* ---------- Two-column layout ---------- */
   .notif-layout {
     display: grid;
     grid-template-columns: 1fr 340px;
@@ -22,7 +17,6 @@
     .notif-layout { grid-template-columns: 1fr; }
   }
 
-  /* ---------- Toolbar ---------- */
   .notif-toolbar {
     background: var(--bg-card);
     border: 1px solid var(--border-light);
@@ -100,7 +94,6 @@
     color: #1a1414;
   }
 
-  /* ---------- Notification list ---------- */
   .notif-list {
     display: flex;
     flex-direction: column;
@@ -240,7 +233,6 @@
   }
   .notif-actions button svg { width: 14px; height: 14px; fill: currentColor; }
 
-  /* ---------- Empty state ---------- */
   .notif-empty {
     text-align: center;
     padding: 60px 20px;
@@ -277,7 +269,6 @@
     line-height: 1.55;
   }
 
-  /* ---------- Right sidebar (Email Notifier) ---------- */
   .notif-side {
     display: flex;
     flex-direction: column;
@@ -319,7 +310,6 @@
     fill: var(--gold);
   }
 
-  /* Email notifier master switch */
   .notif-master {
     display: flex;
     align-items: center;
@@ -362,7 +352,6 @@
     margin-top: 3px;
   }
 
-  /* ---------- Toggle switch (reused from settings) ---------- */
   .toggle-row {
     display: flex;
     align-items: flex-start;
@@ -395,14 +384,12 @@
     flex-shrink: 0;
     cursor: pointer;
   }
-
   .switch input {
     opacity: 0;
     width: 0;
     height: 0;
     position: absolute;
   }
-
   .switch .slider {
     position: absolute;
     inset: 0;
@@ -411,7 +398,6 @@
     transition: background 0.3s ease;
     cursor: pointer;
   }
-
   .switch .slider::before {
     content: '';
     position: absolute;
@@ -424,19 +410,16 @@
     transition: transform 0.3s ease;
     box-shadow: 0 2px 4px rgba(0,0,0,0.15);
   }
-
   .switch input:checked + .slider {
     background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
   }
   body.dark-mode .switch input:checked + .slider {
     background: linear-gradient(135deg, var(--gold), var(--gold-dark));
   }
-
   .switch input:checked + .slider::before {
     transform: translateX(18px);
   }
 
-  /* ---------- Email log table ---------- */
   .email-log-table {
     width: 100%;
     border-collapse: collapse;
@@ -479,7 +462,6 @@
   body.dark-mode .email-status.sent   { color: #4ade80; }
   body.dark-mode .email-status.opened { color: #7ea8ee; }
 
-  /* ---------- Actions bar in list ---------- */
   .notif-list-actions {
     display: flex;
     gap: 8px;
@@ -517,13 +499,10 @@
 </head>
 <body>
 
-  <!-- ============================================================
-       SIDEBAR
-       ============================================================ -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <div class="brand-logo">
-        <img src="uphsd-logo.png" alt="Logo">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
         </svg>
       </div>
@@ -550,12 +529,12 @@
       <a class="nav-item" href="approvals.html" data-page="approvals.html">
         <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
         Approvals
-        <span class="nav-badge" id="approvalBadgeSide">5</span>
+        <span class="nav-badge" id="approvalBadgeSide">0</span>
       </a>
       <a class="nav-item active" href="notifications.html" data-page="notifications.html">
         <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
         Notifications
-        <span class="nav-badge" id="notifBadgeSide">3</span>
+        <span class="nav-badge" id="notifBadgeSide">0</span>
       </a>
     </div>
 
@@ -583,12 +562,8 @@
 
   <div class="overlay-backdrop" id="overlayBackdrop"></div>
 
-  <!-- ============================================================
-       MAIN
-       ============================================================ -->
   <main class="main">
 
-    <!-- ========== TOP BAR ========== -->
     <header class="topbar">
       <button class="hamburger" id="hamburger" aria-label="Menu">
         <svg viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
@@ -599,8 +574,7 @@
         <p>View your notifications and manage email delivery</p>
       </div>
 
-    
-
+      <div class="topbar-actions">
         <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
           <svg id="themeIcon" viewBox="0 0 24 24">
             <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 7.06a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0z"/>
@@ -613,24 +587,21 @@
         </button>
 
         <div class="user-chip" id="userChip" title="Click to log out">
-          <div class="user-avatar" id="userAvatar">MC</div>
+          <div class="user-avatar" id="userAvatar">—</div>
           <div class="user-info">
-            <span class="name" id="userName">Maria Cruz</span>
-            <span class="role" id="userRoleLabel">Secretary</span>
+            <span class="name" id="userName">—</span>
+            <span class="role" id="userRoleLabel">—</span>
           </div>
         </div>
       </div>
     </header>
 
-    <!-- ========== CONTENT ========== -->
     <div class="content">
 
       <div class="notif-layout">
 
-        <!-- LEFT: Notification list -->
         <div>
 
-          <!-- Tabs -->
           <div class="notif-toolbar">
             <div class="notif-tabs" id="notifTabs">
               <button class="notif-tab active" data-tab="all">
@@ -657,7 +628,6 @@
             </div>
           </div>
 
-          <!-- Quick actions -->
           <div class="notif-list-actions">
             <button class="btn-link" id="btnMarkAllRead">
               <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
@@ -669,10 +639,8 @@
             </button>
           </div>
 
-          <!-- List -->
           <div class="notif-list" id="notifList"></div>
 
-          <!-- Empty -->
           <div class="notif-empty" id="notifEmpty" style="display:none;">
             <div class="empty-icon">
               <svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
@@ -683,10 +651,8 @@
 
         </div>
 
-        <!-- RIGHT: Email Notifier settings -->
         <aside class="notif-side">
 
-          <!-- Master switch -->
           <div class="notif-card">
             <div class="notif-card-head">
               <h3>
@@ -767,7 +733,6 @@
             </div>
           </div>
 
-          <!-- Recent email log -->
           <div class="notif-card">
             <div class="notif-card-head">
               <h3>
@@ -783,8 +748,7 @@
                   <th style="text-align:right;">Status</th>
                 </tr>
               </thead>
-                            <tbody id="emailLogBody">
-                <!-- Populated by JS — loaded from backend -->
+              <tbody id="emailLogBody">
                 <tr>
                   <td colspan="2" style="text-align:center;color:var(--text-muted);font-style:italic;padding:20px 6px;">
                     No recent emails
@@ -803,26 +767,26 @@
 
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- ============================================================
-       PAGE SCRIPT
-       ============================================================ -->
   <script src="app.js"></script>
   <script>
   /* ==========================================================================
-     NOTIFICATIONS — Page module (aligned with use case diagram)
-
-     Permissions (per diagram):
-       Secretary  → notification:view ✓, notification:email ✓
-       EA         → notification:view ✓, notification:email ✓
-       Director   → notification:view ✓, notification:email ✓
-       (All roles have the same notification permissions)
+     NOTIFICATIONS — Page module (with auth guard)
      ========================================================================== */
   (function () {
     'use strict';
 
-    const { Role, Toast, Utils, Bus } = APP;
+    // ============================================================
+    // 🛡️ AUTH GUARD — must be FIRST
+    // ============================================================
+    if (!window.APP || !window.APP.Auth) {
+      console.error('[Notifications] app.js not loaded!');
+      return;
+    }
+    if (!window.APP.Auth.requireLogin()) return;
 
-        /* --------------------------------------------------------------------
+    const { Role, Toast, Utils, Storage } = window.APP;
+
+    /* --------------------------------------------------------------------
        DATA — loaded from backend
        -------------------------------------------------------------------- */
     let notifications = [];
@@ -836,11 +800,49 @@
         notifications = [];
       } catch (err) {
         console.error('[Notifications] Failed to load:', err);
-        Toast.error('Load Failed', 'Could not load notifications.');
+        if (window.APP && window.APP.Toast) {
+          window.APP.Toast.error('Load Failed', 'Could not load notifications.');
+        }
         notifications = [];
       }
       renderNotifications();
       updateCounts();
+    }
+
+    async function loadEmailLog() {
+      const tbody = document.getElementById('emailLogBody');
+      if (!tbody) return;
+
+      try {
+        // TODO: Replace with real API call
+        // const res = await fetch('/api/notifications/email-log');
+        // const emails = await res.json();
+
+        const emails = [];
+
+        if (emails.length === 0) {
+          tbody.innerHTML =
+            '<tr>' +
+              '<td colspan="2" style="text-align:center;color:var(--text-muted);font-style:italic;padding:20px 6px;">' +
+                'No recent emails' +
+              '</td>' +
+            '</tr>';
+          return;
+        }
+
+        tbody.innerHTML = emails.map(function (e) {
+          return (
+            '<tr>' +
+              '<td>' + Utils.escapeHtml(e.subject) + '</td>' +
+              '<td style="text-align:right;">' +
+                '<span class="email-status ' + e.status + '">' + Utils.capitalize(e.status) + '</span>' +
+              '</td>' +
+            '</tr>'
+          );
+        }).join('');
+      } catch (err) {
+        console.error('[Email Log] Failed to load:', err);
+      }
     }
 
     /* --------------------------------------------------------------------
@@ -891,11 +893,10 @@
       };
 
       Object.entries(counts).forEach(([k, v]) => {
-        const el = document.querySelector(`[data-count="${k}"]`);
+        const el = document.querySelector('[data-count="' + k + '"]');
         if (el) el.textContent = v;
       });
 
-      // Sidebar badge shows unread count
       if (els.badge) {
         els.badge.textContent = unread;
         els.badge.classList.toggle('hidden', unread === 0);
@@ -925,58 +926,52 @@
 
       els.list.innerHTML = filteredNotifs.map(n => {
         const icon = TYPE_ICONS[n.type] || TYPE_ICONS.system;
-        return `
-          <div class="notif-item ${n.read ? '' : 'unread'}" data-id="${n.id}">
-            <div class="notif-icon ${n.type}">
-              <svg viewBox="0 0 24 24">${icon}</svg>
-            </div>
-            <div class="notif-body">
-              <div class="notif-title">${Utils.escapeHtml(n.title)}</div>
-              <div class="notif-message">${Utils.escapeHtml(n.message)}</div>
-              <div class="notif-meta">
-                <span>${Utils.timeAgo(n.time)}</span>
-                ${n.actor ? `<span class="meta-badge">${Utils.escapeHtml(n.actor)}</span>` : ''}
-                ${n.type ? `<span class="meta-badge" style="text-transform:capitalize;">${n.type}</span>` : ''}
-              </div>
-            </div>
-            <div class="notif-actions">
-              ${!n.read ? `
-                <button data-action="read" data-id="${n.id}" title="Mark as read">
-                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
-                </button>
-              ` : ''}
-              <button data-action="delete" data-id="${n.id}" title="Delete">
-                <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-              </button>
-            </div>
-          </div>
-        `;
+        return (
+          '<div class="notif-item ' + (n.read ? '' : 'unread') + '" data-id="' + n.id + '">' +
+            '<div class="notif-icon ' + n.type + '">' +
+              '<svg viewBox="0 0 24 24">' + icon + '</svg>' +
+            '</div>' +
+            '<div class="notif-body">' +
+              '<div class="notif-title">' + Utils.escapeHtml(n.title) + '</div>' +
+              '<div class="notif-message">' + Utils.escapeHtml(n.message) + '</div>' +
+              '<div class="notif-meta">' +
+                '<span>' + Utils.timeAgo(n.time) + '</span>' +
+                (n.actor ? '<span class="meta-badge">' + Utils.escapeHtml(n.actor) + '</span>' : '') +
+                (n.type ? '<span class="meta-badge" style="text-transform:capitalize;">' + n.type + '</span>' : '') +
+              '</div>' +
+            '</div>' +
+            '<div class="notif-actions">' +
+              (!n.read
+                ? '<button data-action="read" data-id="' + n.id + '" title="Mark as read">' +
+                    '<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>' +
+                  '</button>'
+                : '') +
+              '<button data-action="delete" data-id="' + n.id + '" title="Delete">' +
+                '<svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>' +
+              '</button>' +
+            '</div>' +
+          '</div>'
+        );
       }).join('');
 
-      // Row action buttons
       els.list.querySelectorAll('[data-action]').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
-          const action = btn.dataset.action;
-          const id = btn.dataset.id;
-          handleAction(action, id);
+          handleAction(btn.dataset.action, btn.dataset.id);
         });
       });
 
-      // Clicking anywhere else on the item opens the linked page
       els.list.querySelectorAll('.notif-item').forEach(item => {
         item.addEventListener('click', () => {
           const id = item.dataset.id;
           const notif = notifications.find(n => n.id === id);
           if (!notif) return;
 
-          // Mark as read first
           notif.read = true;
           updateCounts();
 
-          // Navigate if link exists
           if (notif.link) {
-            Toast.info('Opening', `Navigating to ${notif.link}...`);
+            Toast.info('Opening', 'Navigating to ' + notif.link + '...');
             setTimeout(() => window.location.href = notif.link, 400);
           } else {
             renderNotifications();
@@ -995,14 +990,14 @@
       switch (action) {
         case 'read':
           notif.read = true;
-          Toast.success('Marked as Read', `"${notif.title}" marked as read.`);
+          Toast.success('Marked as Read', '"' + notif.title + '" marked as read.');
           renderNotifications();
           break;
 
         case 'delete':
           const idx = notifications.findIndex(n => n.id === id);
           if (idx !== -1) notifications.splice(idx, 1);
-          Toast.info('Notification Deleted', `Removed "${notif.title}".`);
+          Toast.info('Notification Deleted', 'Removed "' + notif.title + '".');
           renderNotifications();
           break;
       }
@@ -1014,13 +1009,13 @@
     function updateEmptyCopy() {
       if (currentTab === 'unread') {
         els.emptyTitle.textContent = 'No unread notifications';
-        els.emptyDesc.textContent = 'You\'re all caught up! Every notification has been read.';
+        els.emptyDesc.textContent = "You're all caught up! Every notification has been read.";
       } else if (currentTab === 'all') {
         els.emptyTitle.textContent = 'No notifications';
         els.emptyDesc.textContent = 'New notifications will appear here as events happen.';
       } else {
-        els.emptyTitle.textContent = `No ${currentTab} notifications`;
-        els.emptyDesc.textContent = `You have no notifications in this category right now.`;
+        els.emptyTitle.textContent = 'No ' + currentTab + ' notifications';
+        els.emptyDesc.textContent = 'You have no notifications in this category right now.';
       }
     }
 
@@ -1046,7 +1041,7 @@
         return;
       }
       notifications.forEach(n => n.read = true);
-      Toast.success('All Marked as Read', `${unreadCount} notification(s) marked as read.`);
+      Toast.success('All Marked as Read', unreadCount + ' notification(s) marked as read.');
       renderNotifications();
     });
 
@@ -1061,7 +1056,7 @@
       }
 
       const ok = await APP.confirm({
-        title: `Clear ${readCount} read notification(s)?`,
+        title: 'Clear ' + readCount + ' read notification(s)?',
         message: 'This will remove them permanently.',
         confirmText: 'Clear',
         danger: true
@@ -1071,7 +1066,7 @@
       for (let i = notifications.length - 1; i >= 0; i--) {
         if (notifications[i].read) notifications.splice(i, 1);
       }
-      Toast.success('Cleared', `${readCount} read notification(s) removed.`);
+      Toast.success('Cleared', readCount + ' read notification(s) removed.');
       renderNotifications();
     });
 
@@ -1081,15 +1076,12 @@
     const NOTIF_PREFS_KEY = 'uphsdNotifPrefs';
 
     function loadEmailPrefs() {
-      const saved = Storage ? null : null; // Storage is APP.Storage
-      const prefs = APP.Storage.get(NOTIF_PREFS_KEY, {});
+      const prefs = Storage.get(NOTIF_PREFS_KEY, {});
 
-      // Master switch
       if (prefs.master !== undefined) {
         els.masterSwitch.checked = !!prefs.master;
       }
 
-      // Individual toggles
       document.querySelectorAll('.email-toggle').forEach(el => {
         if (prefs[el.dataset.notif] !== undefined) {
           el.checked = !!prefs[el.dataset.notif];
@@ -1099,41 +1091,6 @@
       updateTogglesDisabled();
     }
 
-        async function loadEmailLog() {
-      const tbody = document.getElementById('emailLogBody');
-      if (!tbody) return;
-
-      try {
-        // TODO: Replace with real API call
-        // const res = await fetch('/api/notifications/email-log');
-        // const emails = await res.json();
-
-        const emails = [];
-
-        if (emails.length === 0) {
-          tbody.innerHTML = `
-            <tr>
-              <td colspan="2" style="text-align:center;color:var(--text-muted);font-style:italic;padding:20px 6px;">
-                No recent emails
-              </td>
-            </tr>
-          `;
-          return;
-        }
-
-        tbody.innerHTML = emails.map(e => `
-          <tr>
-            <td>${Utils.escapeHtml(e.subject)}</td>
-            <td style="text-align:right;">
-              <span class="email-status ${e.status}">${Utils.capitalize(e.status)}</span>
-            </td>
-          </tr>
-        `).join('');
-      } catch (err) {
-        console.error('[Email Log] Failed to load:', err);
-      }
-    }
-
     function saveEmailPrefs() {
       const prefs = {
         master: els.masterSwitch.checked
@@ -1141,7 +1098,7 @@
       document.querySelectorAll('.email-toggle').forEach(el => {
         prefs[el.dataset.notif] = el.checked;
       });
-      APP.Storage.set(NOTIF_PREFS_KEY, prefs);
+      Storage.set(NOTIF_PREFS_KEY, prefs);
     }
 
     function updateTogglesDisabled() {
@@ -1154,14 +1111,14 @@
       updateTogglesDisabled();
       saveEmailPrefs();
       const state = els.masterSwitch.checked ? 'enabled' : 'disabled';
-      Toast.info('Email Notifications', `Email notifications are now ${state}.`);
+      Toast.info('Email Notifications', 'Email notifications are now ' + state + '.');
     });
 
     document.querySelectorAll('.email-toggle').forEach(el => {
       el.addEventListener('change', () => {
         saveEmailPrefs();
         const state = el.checked ? 'enabled' : 'disabled';
-        Toast.success('Preference Saved', `Email updates ${state}.`);
+        Toast.success('Preference Saved', 'Email updates ' + state + '.');
       });
     });
 
@@ -1171,14 +1128,6 @@
     loadNotifications();
     loadEmailPrefs();
     loadEmailLog();
-
-    // React to role change
-    Bus.on('role:changed', () => {
-      // Notifications are shared across all roles, but we can refresh the list
-      // to give feedback that the role switch happened.
-      renderNotifications();
-      Toast.info('Role Switched', `Now viewing as ${Role.current().label}.`);
-    });
 
   })();
   </script>
