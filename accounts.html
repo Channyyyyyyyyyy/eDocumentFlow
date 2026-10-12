@@ -6,7 +6,6 @@
 <title>Account Management — UPHSD Molino | Office of the School Director</title>
 <link rel="stylesheet" href="shared.css" />
 <style>
-  /* Page-specific tweaks */
   .view-only-notice {
     background: rgba(212,175,55,0.12);
     border: 1.5px solid var(--gold);
@@ -31,13 +30,10 @@
 </head>
 <body>
 
-  <!-- ============================================================
-       SIDEBAR
-       ============================================================ -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <div class="brand-logo">
-        <img src="uphsd-logo.png" alt="Logo">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
         </svg>
       </div>
@@ -96,12 +92,8 @@
 
   <div class="overlay-backdrop" id="overlayBackdrop"></div>
 
-  <!-- ============================================================
-       MAIN
-       ============================================================ -->
   <main class="main">
 
-    <!-- ========== TOP BAR ========== -->
     <header class="topbar">
       <button class="hamburger" id="hamburger" aria-label="Menu">
         <svg viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
@@ -112,8 +104,7 @@
         <p>Manage user accounts and authorization requests</p>
       </div>
 
-      
-
+      <div class="topbar-actions">
         <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
           <svg id="themeIcon" viewBox="0 0 24 24">
             <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 7.06a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0z"/>
@@ -126,19 +117,17 @@
         </button>
 
         <div class="user-chip" id="userChip" title="Click to log out">
-          <div class="user-avatar" id="userAvatar">MC</div>
+          <div class="user-avatar" id="userAvatar">—</div>
           <div class="user-info">
-            <span class="name" id="userName">Maria Cruz</span>
-            <span class="role" id="userRoleLabel">Secretary</span>
+            <span class="name" id="userName">—</span>
+            <span class="role" id="userRoleLabel">—</span>
           </div>
         </div>
       </div>
     </header>
 
-    <!-- ========== CONTENT ========== -->
     <div class="content">
 
-      <!-- Director read-only notice -->
       <div class="view-only-notice" id="viewOnlyNotice" style="display:none;">
         <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
         <span>
@@ -146,7 +135,6 @@
         </span>
       </div>
 
-      <!-- STATS -->
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon maroon">
@@ -189,7 +177,6 @@
         </div>
       </div>
 
-      <!-- APPROVAL BANNER (Director only) -->
       <div class="approval-banner" id="approvalBanner" style="display:none;">
         <div class="banner-icon">
           <svg viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
@@ -201,14 +188,12 @@
         <button class="banner-cta" onclick="Accounts.filterPending()">Review Now →</button>
       </div>
 
-      <!-- BULK BAR -->
       <div class="bulk-bar" id="bulkBar">
         <span class="bulk-count" id="bulkCount">0 selected</span>
         <div class="bulk-actions" id="bulkActions"></div>
         <button class="btn btn-ghost" style="background:transparent;color:inherit;border-color:rgba(255,255,255,0.3);" onclick="Accounts.clearSelection()">Clear</button>
       </div>
 
-      <!-- TOOLBAR -->
       <div class="toolbar">
         <div class="search-box">
           <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
@@ -249,7 +234,6 @@
         </button>
       </div>
 
-      <!-- TABLE -->
       <div class="table-card">
         <div class="table-header-row">
           <h2>User Accounts</h2>
@@ -304,25 +288,26 @@
 
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- ============================================================
-       PAGE SCRIPT
-       ============================================================ -->
   <script src="app.js"></script>
   <script>
   /* ==========================================================================
-     ACCOUNT MANAGEMENT — Page module (aligned with use case diagram)
-
-     Permissions (per diagram):
-       Secretary  → account:add ✓, account:edit ✓, account:delete ✓, account:view ✓, account:authorize ✗
-       EA         → account:add ✓, account:edit ✓, account:delete ✓, account:view ✓, account:authorize ✗
-       Director   → account:add ✗, account:edit ✓, account:delete ✗, account:view ✓, account:authorize ✓
+     ACCOUNT MANAGEMENT — Page module (with auth guard)
      ========================================================================== */
   (function () {
     'use strict';
 
-    const { Role, Toast, Utils, Bus } = APP;
+    // ============================================================
+    // 🛡️ AUTH GUARD — must be FIRST
+    // ============================================================
+    if (!window.APP || !window.APP.Auth) {
+      console.error('[Accounts] app.js not loaded!');
+      return;
+    }
+    if (!window.APP.Auth.requireLogin()) return;
 
-        /* --------------------------------------------------------------------
+    const { Role, Toast, Utils } = window.APP;
+
+    /* --------------------------------------------------------------------
        DATA — loaded from backend
        -------------------------------------------------------------------- */
     let accounts = [];
@@ -336,14 +321,16 @@
         accounts = [];
       } catch (err) {
         console.error('[Accounts] Failed to load:', err);
-        Toast.error('Load Failed', 'Could not load accounts from the server.');
+        if (window.APP && window.APP.Toast) {
+          window.APP.Toast.error('Load Failed', 'Could not load accounts from the server.');
+        }
         accounts = [];
       }
       renderAccounts();
       updateStats();
     }
 
-       /* --------------------------------------------------------------------
+    /* --------------------------------------------------------------------
        STATE
        -------------------------------------------------------------------- */
     let filteredAccounts = [];
@@ -415,50 +402,42 @@
     }
 
     /* --------------------------------------------------------------------
-       RENDER — Action buttons per row (ALIGNED WITH DIAGRAM)
-       --------------------------------------------------------------------
-       Secretary  → Add ✓ Edit ✓ Delete ✓ View ✓ Authorize ✗
-       EA         → Add ✓ Edit ✓ Delete ✓ View ✓ Authorize ✗
-       Director   → Add ✗ Edit ✓ Delete ✗ View ✓ Authorize ✓
+       RENDER — Action buttons per row
        -------------------------------------------------------------------- */
     function renderActions(account) {
       const buttons = [];
 
-      // VIEW — everyone
       if (Role.can('account:view')) {
-        buttons.push(`
-          <button class="action-btn view" data-action="view" data-id="${account.id}" title="View">
-            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
-          </button>
-        `);
+        buttons.push(
+          '<button class="action-btn view" data-action="view" data-id="' + account.id + '" title="View">' +
+            '<svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>' +
+          '</button>'
+        );
       }
 
-      // EDIT — everyone
       if (Role.can('account:edit')) {
-        buttons.push(`
-          <button class="action-btn edit" data-action="edit" data-id="${account.id}" title="Edit">
-            <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-          </button>
-        `);
+        buttons.push(
+          '<button class="action-btn edit" data-action="edit" data-id="' + account.id + '" title="Edit">' +
+            '<svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>' +
+          '</button>'
+        );
       }
 
-      // DELETE — Secretary + EA only
       if (Role.can('account:delete')) {
-        buttons.push(`
-          <button class="action-btn delete" data-action="delete" data-id="${account.id}" title="Delete">
-            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-          </button>
-        `);
+        buttons.push(
+          '<button class="action-btn delete" data-action="delete" data-id="' + account.id + '" title="Delete">' +
+            '<svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>' +
+          '</button>'
+        );
       }
 
-      // AUTHORIZE — Director only, pending rows only
       if (Role.can('account:authorize') && account.status === 'pending') {
-        buttons.push(`
-          <button class="action-btn authorize" data-action="authorize" data-id="${account.id}" title="Authorize">
-            <svg viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-            Authorize
-          </button>
-        `);
+        buttons.push(
+          '<button class="action-btn authorize" data-action="authorize" data-id="' + account.id + '" title="Authorize">' +
+            '<svg viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>' +
+            'Authorize' +
+          '</button>'
+        );
       }
 
       return buttons.join('');
@@ -483,7 +462,7 @@
         return matchesSearch && matchesRole && matchesDept && matchesStatus;
       });
 
-      els.resultCount.textContent = `Showing ${filteredAccounts.length} of ${accounts.length} accounts`;
+      els.resultCount.textContent = 'Showing ' + filteredAccounts.length + ' of ' + accounts.length + ' accounts';
       updateStats();
 
       if (filteredAccounts.length === 0) {
@@ -500,39 +479,39 @@
 
       els.tbody.innerHTML = filteredAccounts.map(a => {
         const isSelected = selectedIds.has(a.id);
-        return `
-          <tr class="${isSelected ? 'selected' : ''}" data-id="${a.id}">
-            <td class="center">
-              <label class="checkbox-wrap">
-                <input type="checkbox" class="row-checkbox" data-id="${a.id}" ${isSelected ? 'checked' : ''}/>
-              </label>
-            </td>
-            <td>
-              <div class="user-cell">
-                <div class="avatar ${a.role === 'Director' ? 'gold' : ''}">${a.initials}</div>
-                <div class="meta">
-                  <div class="name">${Utils.escapeHtml(a.name)}</div>
-                  <div class="email">${Utils.escapeHtml(a.email)}</div>
-                </div>
-              </div>
-            </td>
-            <td><span class="role-tag">${Utils.escapeHtml(a.role)}</span></td>
-            <td>${Utils.escapeHtml(a.dept)}</td>
-            <td>
-              <span class="status-badge ${a.status}">${statusLabel(a.status)}</span>
-              ${a.status === 'pending' && a.pendingType
-                ? `<div class="pending-action">${pendingLabel(a.pendingType)}${a.requestedBy ? ' · ' + Utils.escapeHtml(a.requestedBy) : ''}</div>`
-                : ''}
-            </td>
-            <td>${Utils.escapeHtml(a.lastLogin)}</td>
-            <td>
-              <div class="actions">${renderActions(a)}</div>
-            </td>
-          </tr>
-        `;
+        const initials = a.initials || Utils.getInitials(a.name);
+        return (
+          '<tr class="' + (isSelected ? 'selected' : '') + '" data-id="' + a.id + '">' +
+            '<td class="center">' +
+              '<label class="checkbox-wrap">' +
+                '<input type="checkbox" class="row-checkbox" data-id="' + a.id + '" ' + (isSelected ? 'checked' : '') + '/>' +
+              '</label>' +
+            '</td>' +
+            '<td>' +
+              '<div class="user-cell">' +
+                '<div class="avatar ' + (a.role === 'Director' ? 'gold' : '') + '">' + initials + '</div>' +
+                '<div class="meta">' +
+                  '<div class="name">' + Utils.escapeHtml(a.name) + '</div>' +
+                  '<div class="email">' + Utils.escapeHtml(a.email) + '</div>' +
+                '</div>' +
+              '</div>' +
+            '</td>' +
+            '<td><span class="role-tag">' + Utils.escapeHtml(a.role) + '</span></td>' +
+            '<td>' + Utils.escapeHtml(a.dept) + '</td>' +
+            '<td>' +
+              '<span class="status-badge ' + a.status + '">' + statusLabel(a.status) + '</span>' +
+              (a.status === 'pending' && a.pendingType
+                ? '<div class="pending-action">' + pendingLabel(a.pendingType) + (a.requestedBy ? ' · ' + Utils.escapeHtml(a.requestedBy) : '') + '</div>'
+                : '') +
+            '</td>' +
+            '<td>' + Utils.escapeHtml(a.lastLogin || '—') + '</td>' +
+            '<td>' +
+              '<div class="actions">' + renderActions(a) + '</div>' +
+            '</td>' +
+          '</tr>'
+        );
       }).join('');
 
-      // Row checkbox listeners
       els.tbody.querySelectorAll('.row-checkbox').forEach(cb => {
         cb.addEventListener('change', (e) => {
           const id = parseInt(e.target.dataset.id);
@@ -544,7 +523,6 @@
         });
       });
 
-      // Action button listeners
       els.tbody.querySelectorAll('[data-action]').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -556,7 +534,7 @@
 
       updateBulkBar();
       updateSelectAllState();
-      els.pageInfo.textContent = `Page 1 of 1 · ${filteredAccounts.length} records`;
+      els.pageInfo.textContent = 'Page 1 of 1 · ' + filteredAccounts.length + ' records';
     }
 
     /* --------------------------------------------------------------------
@@ -568,11 +546,11 @@
 
       switch (action) {
         case 'view':
-          Toast.info('View Account', `Opening details for ${account.name}...`);
+          Toast.info('View Account', 'Opening details for ' + account.name + '...');
           break;
 
         case 'edit':
-          Toast.gold('Edit Account', `Editing ${account.name}... Changes will require Director authorization.`);
+          Toast.gold('Edit Account', 'Editing ' + account.name + '... Changes will require Director authorization.');
           break;
 
         case 'delete':
@@ -587,7 +565,7 @@
 
     async function requestDelete(account) {
       const ok = await APP.confirm({
-        title: `Request deletion of "${account.name}"?`,
+        title: 'Request deletion of "' + account.name + '"?',
         message: 'This will be sent to the School Director for authorization.',
         confirmText: 'Request Delete',
         danger: true
@@ -596,8 +574,8 @@
 
       account.status = 'pending';
       account.pendingType = 'delete';
-      account.requestedBy = Role.current().userName;
-      Toast.gold('Deletion Request Sent', `Request to delete ${account.name} is now pending Director approval.`);
+      account.requestedBy = window.APP.Auth.currentUser().name;
+      Toast.gold('Deletion Request Sent', 'Request to delete ' + account.name + ' is now pending Director approval.');
       renderAccounts();
     }
 
@@ -609,14 +587,14 @@
       }[account.pendingType] || 'request';
 
       const ok = await APP.confirm({
-        title: `Authorize the ${verb} of "${account.name}"?`,
+        title: 'Authorize the ' + verb + ' of "' + account.name + '"?',
         message: 'This action will be final.',
         confirmText: 'Authorize'
       });
       if (!ok) return;
 
       applyAuthorization(account);
-      Toast.success('Authorization Granted', `${account.name}'s ${verb} has been authorized.`);
+      Toast.success('Authorization Granted', account.name + "'s " + verb + ' has been authorized.');
       renderAccounts();
     }
 
@@ -644,30 +622,25 @@
       }
 
       els.bulkBar.classList.add('show');
-      els.bulkCount.textContent = `${selectedIds.size} selected`;
+      els.bulkCount.textContent = selectedIds.size + ' selected';
 
       const btns = [];
 
-      // Delete request — Secretary + EA
       if (Role.can('account:delete')) {
-        btns.push(`<button class="btn danger" onclick="Accounts.bulkDelete()">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-          Request Delete
-        </button>`);
+        btns.push('<button class="btn danger" onclick="Accounts.bulkDelete()">' +
+          '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>' +
+          'Request Delete</button>');
       }
 
-      // Authorize all — Director only
       if (Role.can('account:authorize')) {
-        btns.push(`<button class="btn" onclick="Accounts.bulkAuthorize()">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-          Authorize All
-        </button>`);
+        btns.push('<button class="btn" onclick="Accounts.bulkAuthorize()">' +
+          '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>' +
+          'Authorize All</button>');
       }
 
-      btns.push(`<button class="btn" onclick="Accounts.bulkExport()">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-        Export
-      </button>`);
+      btns.push('<button class="btn" onclick="Accounts.bulkExport()">' +
+        '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>' +
+        'Export</button>');
 
       els.bulkActions.innerHTML = btns.join('');
     }
@@ -680,7 +653,7 @@
     async function bulkDelete() {
       if (selectedIds.size === 0) return;
       const ok = await APP.confirm({
-        title: `Send deletion request for ${selectedIds.size} account(s)?`,
+        title: 'Send deletion request for ' + selectedIds.size + ' account(s)?',
         message: 'These will go to the School Director for authorization.',
         confirmText: 'Request Delete',
         danger: true
@@ -692,10 +665,10 @@
         if (a) {
           a.status = 'pending';
           a.pendingType = 'delete';
-          a.requestedBy = Role.current().userName;
+          a.requestedBy = window.APP.Auth.currentUser().name;
         }
       });
-      Toast.gold('Bulk Deletion Requested', `${selectedIds.size} account(s) are now pending Director authorization.`);
+      Toast.gold('Bulk Deletion Requested', selectedIds.size + ' account(s) are now pending Director authorization.');
       selectedIds.clear();
       renderAccounts();
     }
@@ -713,7 +686,7 @@
       }
 
       const ok = await APP.confirm({
-        title: `Authorize ${pendingIds.length} pending request(s)?`,
+        title: 'Authorize ' + pendingIds.length + ' pending request(s)?',
         message: 'These actions will be final.',
         confirmText: 'Authorize All'
       });
@@ -723,13 +696,13 @@
         const a = accounts.find(x => x.id === id);
         if (a) applyAuthorization(a);
       });
-      Toast.success('Bulk Authorization Complete', `${pendingIds.length} request(s) authorized.`);
+      Toast.success('Bulk Authorization Complete', pendingIds.length + ' request(s) authorized.');
       selectedIds.clear();
       renderAccounts();
     }
 
     function bulkExport() {
-      Toast.info('Export Started', `Preparing CSV export for ${selectedIds.size} account(s)...`);
+      Toast.info('Export Started', 'Preparing CSV export for ' + selectedIds.size + ' account(s)...');
     }
 
     /* --------------------------------------------------------------------
@@ -750,33 +723,31 @@
     });
 
     /* --------------------------------------------------------------------
-       ROLE — Apply permissions to page (ALIGNED WITH DIAGRAM)
+       ROLE — Apply permissions to page
        -------------------------------------------------------------------- */
     function applyRole() {
-      const canAdd    = Role.can('account:add');
-      const canAuth   = Role.can('account:authorize');
+      const user = window.APP.Auth.currentUser();
+      const roleId = user ? user.role : 'secretary';
 
-      // Show / hide New Account button (Secretary + EA only)
+      const canAdd  = Role.can('account:add');
+      const canAuth = Role.can('account:authorize');
+
       els.btnNew.style.display = canAdd ? 'inline-flex' : 'none';
       if (els.btnEmptyNew) {
         els.btnEmptyNew.style.display = canAdd ? 'inline-flex' : 'none';
       }
 
-      // Approval banner: Director only + pending > 0
       const pendingCount = accounts.filter(a => a.status === 'pending').length;
       const showBanner = canAuth && pendingCount > 0;
       els.approvalBanner.style.display = showBanner ? 'flex' : 'none';
 
-      // Director read-only notice
       if (els.noticeDirector) {
-        els.noticeDirector.style.display =
-          Role.id() === 'director' ? 'flex' : 'none';
+        els.noticeDirector.style.display = (roleId === 'director') ? 'flex' : 'none';
       }
 
-      // Empty state copy varies by role
       if (els.emptyCopy) {
         els.emptyCopy.textContent = canAdd
-          ? 'Try adjusting your search or filters. If you can\'t find who you\'re looking for, you may need to create a new account.'
+          ? "Try adjusting your search or filters. If you can't find who you're looking for, you may need to create a new account."
           : 'Try adjusting your search or filters.';
       }
 
@@ -821,19 +792,11 @@
     };
 
     /* --------------------------------------------------------------------
-       REACT TO ROLE CHANGES
-       -------------------------------------------------------------------- */
-    Bus.on('role:changed', () => {
-      selectedIds.clear();
-      applyRole();
-      Toast.info('Role Switched', `Now viewing as ${Role.current().label}.`);
-    });
-
-    /* --------------------------------------------------------------------
        INIT
        -------------------------------------------------------------------- */
     applyRole();
     loadAccounts();
+
   })();
   </script>
 </body>
